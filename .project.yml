@@ -1,0 +1,4 @@
+name: fierry
+src: src
+deploy:
+  - rls/
