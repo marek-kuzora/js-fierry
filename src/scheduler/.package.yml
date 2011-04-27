@@ -1,0 +1,7 @@
+before:
+  - Async.coffee
+require:
+  - fierry.core
+namespace:
+  core: core
+  pkg:  core.async
