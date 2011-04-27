@@ -5,6 +5,6 @@ Env.string =
   # @param str - String
   # @param idx - Integer split point.
   #
-  splitIndex: (str, idx) ->
+  split_index: (str, idx) ->
    return [str.substr(0, idx), str.substr(idx)]
 

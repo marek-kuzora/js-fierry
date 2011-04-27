@@ -6,7 +6,7 @@ class core.Event
   # @param fn - listener function.
   #
   subscribe: (type, fn) ->
-    @__getListeners(type).push(fn)
+    @__get_listeners(type).push(fn)
     return
 
   #
@@ -15,7 +15,7 @@ class core.Event
   # @param fn - listener function.
   #
   unsubscribe: (type, fn) ->
-    array.erase(@__getListeners(type), fn)
+    array.erase(@__get_listeners(type), fn)
     return
 
   #
@@ -24,13 +24,13 @@ class core.Event
   # @param args - any number of additional event arguments.
   #
   dispatch: (type, args...) ->
-    fn.apply(null, args) for fn in @__getListeners(type)
+    fn.apply(null, args) for fn in @__get_listeners(type)
     return
 
   #
   # Returns listeners subscribed to event of specific type.
   # @param type - event type.
   #
-  __getListeners: (type) ->
+  __get_listeners: (type) ->
     @__eventRegistry ?= {}
     @__eventRegistry[type] ?= []
