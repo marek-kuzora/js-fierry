@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Example</title>
+    <link rel="stylesheet" type="text/css" href="default.css"/>
+  </head>
+
+  <body>
+    <script type="text/javascript" src="/Code/JavaScript/YUI/yui/yui-min.js"></script>
+    <script type="text/javascript" src="fierry.js"></script>
+    <script type="text/javascript" src="test.js"></script>
+
+    <script type="text/javascript">
+      YUI().use("fierry.performance", "fierry.pfc.test", function(Env) {
+        console.log(21)
+        window.performance = Env.performance;
+        window.run = function() { performance.run.apply(performance, arguments); }
+      });
+    </script>
+
+    <div id="stub" />
+
+  </body>
+</html>
+
