@@ -34,28 +34,20 @@ class pkg.Runner
     @dispatch("tests.found", tests)
 
     core.assert cases.length > 0, "No test cases found for suites: #{@_suites}"
-    @_runOnce(cases)
+    core.async_array(cases, @_runOnce)
 
   #
   # Executes the single test case & schedules next one if defined.
-  # @param arr - array of internal test cases [test,arg]
+  # @param i -  internal test cases array item [test,arg]
+  # @param last - true if the given item is last array's last item
   #
-  _runOnce: (arr) =>
-    [test, arg] = arr.shift()
+  _runOnce: (i, last) =>
+    [test, arg] = i
     test.run(arg, true)
 
     @dispatch("test.finished", test, arg)
-    @dispatch("tests.finished") if arr.length == 0
-    #introduce with core.scheduler package in place.
-    #core.async(@_runOnce, arr)  if arr.length != 0
-    Env.later(0, @, @_runOnce, [arr]) if arr.length != 0
-    
-    # For removal later
-    #if arr.length == 0
-    #  visitor = new pkg.ConsoleVisitor()
-    #  for name in @_suites
-    #    @_registry.get(name).accept(visitor)
-
+    @dispatch("tests.finished") if last
+   
   #
   # Extracts Tests instances for testing.
   # @param arr - array of groups/tests names.
