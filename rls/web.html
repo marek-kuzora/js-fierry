@@ -13,7 +13,7 @@
 
     <script type="text/javascript">
       YUI().use("fierry.performance", "fierry.pfc.test", function(Env) {
-        console.log(21)
+        window.core = Env.core;
         window.performance = Env.performance;
         window.run = function() { performance.run.apply(performance, arguments); }
       });
