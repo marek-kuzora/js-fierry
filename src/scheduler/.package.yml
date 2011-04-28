@@ -1,7 +1,7 @@
-before:
-  - Async.coffee
+before: [Async.coffee]
+after:  [.after.coffee]
 require:
   - fierry.core
 namespace:
   core: core
-  pkg:  core.async
+  pkg:  core.scheduler

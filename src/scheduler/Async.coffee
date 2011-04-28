@@ -31,7 +31,7 @@ class pkg.Async
   #
   # Schedules async object for next execution if it's still running.
   #
-  reschedule: ->
+  _reschedule: ->
     if @_running
       time = @_delay || @_interval
       flag = @_scheduler._schedule(@, time)

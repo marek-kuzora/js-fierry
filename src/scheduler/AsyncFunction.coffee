@@ -1,6 +1,6 @@
 class pkg.AsyncFunction extends pkg.Async
 
-  constructor: (@_fn, @_once, scheduler, time) ->
+  constructor: (@_fn, @_periodic, scheduler, time) ->
     super time, scheduler
 
   #
@@ -10,6 +10,5 @@ class pkg.AsyncFunction extends pkg.Async
   execute: ->
     if @_running
       @_fn()
-      @reschedule()
-      @_running = false if @_once
-
+      @_reschedule()
+      @_running = false unless @_periodic
