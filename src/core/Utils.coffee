@@ -14,4 +14,4 @@ core.assert = (condition, message) ->
 core.uid = (obj) ->
   obj.__uid__ ?= ++core.uid.__counter__
 
-core.uid.__counter = 0
+core.uid.__counter__ = 0
