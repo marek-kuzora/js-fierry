@@ -24,10 +24,15 @@ api.registerTest = (test) ->
 #
 api.run = () ->
   runner = new pkg.Runner(pkg.INSTANCE, arguments)
-  listener = new pkg.PfcListener()
+  listener = new pkg.ProgressListener()
 
   runner.subscribe("tests.found", listener.onTestsFound)
   runner.subscribe("test.finished", listener.onTestFinished)
   runner.subscribe("tests.finished", listener.onTestsFinished)
 
   runner.run()
+
+pkg.registerTest
+  name: "array.test.1"
+  run: ->
+    i++

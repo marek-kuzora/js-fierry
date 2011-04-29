@@ -27,7 +27,7 @@ class pkg.Runner
   # Runs the tests corresponding to the given group/test names.
   # @param arr - unprocessed array of group/test names.
   #
-  run: () ->
+  run: ->
     tests = @_extractTests(@_suites)
     cases = @_buildTestCases(tests)
     

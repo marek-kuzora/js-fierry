@@ -7,5 +7,6 @@ require:
 namespace:
   core: core
   array: array
+  string: string
   api: performance
   pkg: performance.internal
