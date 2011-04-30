@@ -1,14 +1,12 @@
 class pkg.Test
 
-  constructor: (test, @_group) ->
+  constructor: (test, @group) ->
     @_results = []
     
-    @name = _group.name + '.' + test.name
+    @name = test.name
     @_run = test.run
     @_after = test.after || (->)
     @_before = test.before || (->)
-
-    @_arg = @measure()
 
   #
   # Accepts the given visitor for retrospection.
@@ -22,6 +20,8 @@ class pkg.Test
   # @param - limit time [ms].
   #
   measure: ->
+    return @_arg if @_arg
+    
     arg = 1
     time = 0
 
@@ -34,7 +34,7 @@ class pkg.Test
       arg *= 2
 
     arr = (@run(arg) for i in [1..pkg.MEASURE_RETRY])
-    return pkg.EXECUTE_LIMIT / array.avg(arr) * arg
+    return @_arg = pkg.EXECUTE_LIMIT / array.avg(arr) * arg
 
   #
   # Runs the test given times and retunrs the elapsed time.
@@ -42,10 +42,8 @@ class pkg.Test
   # @param arg - Integer argument.
   # @param log - Boolean log the result.
   #
-  run: (m_arg) ->
-    arg = if m_arg then m_arg else @_arg
-
-    @_group.runBefore(@)
+  run: (arg) ->
+    @group.runBefore(@)
     @_before()
 
     start = new Date()
@@ -53,9 +51,8 @@ class pkg.Test
     end = new Date()
 
     @_after
-    @_group.runAfter(@)
+    @group.runAfter(@)
     
-    @getResult().register(arg, end - start) unless m_arg
     return end - start
 
   #

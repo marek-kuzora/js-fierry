@@ -42,7 +42,10 @@ class pkg.Runner
   # @param last - true if the given item is last array's last item
   #
   _runOnce: (test, last) =>
-    test.run()
+    arg = test.measure()
+    time = test.run(arg)
+
+    test.getResult().register(arg, time)
 
     @dispatch("test.finished", test)
     @dispatch("tests.finished") if last
