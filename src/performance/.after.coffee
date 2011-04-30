@@ -31,8 +31,3 @@ api.run = () ->
   runner.subscribe("tests.finished", listener.onTestsFinished)
 
   runner.run()
-
-pkg.registerTest
-  name: "array.test.1"
-  run: ->
-    i++

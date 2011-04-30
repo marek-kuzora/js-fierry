@@ -8,6 +8,8 @@ class pkg.Test
     @_after = test.after || (->)
     @_before = test.before || (->)
 
+    @_arg = @measure()
+
   #
   # Accepts the given visitor for retrospection.
   # @param visitor
@@ -19,7 +21,7 @@ class pkg.Test
   # Returns expected number of invocations of @_run in the given time.
   # @param - limit time [ms].
   #
-  measure: () ->
+  measure: ->
     arg = 1
     time = 0
 
@@ -40,7 +42,9 @@ class pkg.Test
   # @param arg - Integer argument.
   # @param log - Boolean log the result.
   #
-  run: (arg, log) ->
+  run: (m_arg) ->
+    arg = if m_arg then marg else @_arg
+
     @group.runBefore(@)
     @_before()
 
@@ -51,7 +55,7 @@ class pkg.Test
     @_after
     @group.runAfter(@)
     
-    @getResult().register(arg, end - start) if log
+    @getResult().register(arg, end - start) unless m_arg
     return end - start
 
   #
@@ -63,7 +67,6 @@ class pkg.Test
 
   #
   # Returns the active test result.
-  # @param count - number of test results. One by default.
   #
-  getResult: (count = 1) ->
+  getResult: ->
     return @_results[@_results.length - 1]

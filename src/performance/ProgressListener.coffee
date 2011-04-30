@@ -9,9 +9,9 @@ class pkg.ProgressListener
   # @param tests
   #
   onTestsFound: (tests) =>
-    names = (test.name for test in tests)
-    console.log "Found", names.length, "test cases:"
-    console.log names
+    console.log "Found", tests.length, "test cases."
+    #names = (test.name for test in tests)
+    #console.log names
 
   #
   # Logs execution time of each test case.

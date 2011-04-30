@@ -41,11 +41,10 @@ class pkg.Runner
   # @param i -  internal test cases array item [test,arg]
   # @param last - true if the given item is last array's last item
   #
-  _runOnce: (i, last) =>
-    [test, arg] = i
-    test.run(arg, true)
+  _runOnce: (test, last) =>
+    test.run()
 
-    @dispatch("test.finished", test, arg)
+    @dispatch("test.finished", test)
     @dispatch("tests.finished") if last
    
   #
@@ -69,9 +68,7 @@ class pkg.Runner
     r = []
     for test in tests
       test.createTestResult()
-
-      arg = Math.round(test.measure())
-      r.push([test, arg]) for i in [1..pkg.EXECUTE_RETRY]
+      r.push(test) for i in [1..pkg.EXECUTE_RETRY]
     return r
 
 #
