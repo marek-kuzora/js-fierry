@@ -1,6 +1,2 @@
-before: [.before.coffee]
 require:
-  - fierry.performance
-namespace:
-  test: performance.registerTest
-  group: performance.registerGroup
+  - fierry.pfc.core.array
