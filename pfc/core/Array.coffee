@@ -2,7 +2,7 @@ group
   name: 'array.concat'
 
 test
-  name: 'array.concat.small'
+  name: 'small'
   before: ->
     @a = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
     @b = ['k']
@@ -10,7 +10,7 @@ test
     @a.concat(@b)
 
 test
-  name: 'array.concat.standard'
+  name: 'standard'
   before: ->
     @a = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
     @b = ['k', 'i', 'j', 'l', 'm']

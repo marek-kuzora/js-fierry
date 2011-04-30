@@ -1,6 +1,7 @@
 class pkg.Registry
   constructor: ->
     @_root = new pkg.Group({name: ''})
+    @_last_group = null
 
   #
   # Registers the performance group.
@@ -11,16 +12,7 @@ class pkg.Registry
     group = new pkg.Group(hash, parent)
 
     parent.add(group)
-
-  #
-  # Registers the performance test case.
-  # @param test - {group, name, run, *args, *before, *after, *retry}
-  #
-  registerTest: (hash) ->
-    parent = @get(@_getParent(hash.name))
-    test = new pkg.Test(hash, parent)
-    
-    parent.add(test)
+    @_last_group = group
 
   #
   # Returns parent for the given group/test name.
@@ -30,6 +22,16 @@ class pkg.Registry
     idx = name.lastIndexOf('.')
     return if idx > -1 then name.substr(0, idx) else ''
 
+  #
+  # Registers the performance test case.
+  # @param test - {group, name, run, *args, *before, *after, *retry}
+  #
+  registerTest: (hash) ->
+    parent = if hash.group then @get(hash.group) else @_last_group
+    test = new pkg.Test(hash, parent)
+    
+    parent.add(test)
+ 
   #
   # Returns the group/test corresponding to the given name.
   # Each name points directly at:

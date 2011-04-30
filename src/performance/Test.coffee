@@ -1,9 +1,9 @@
 class pkg.Test
 
-  constructor: (test, @group) ->
+  constructor: (test, @_group) ->
     @_results = []
     
-    @name = test.name
+    @name = _group.name + '.' + test.name
     @_run = test.run
     @_after = test.after || (->)
     @_before = test.before || (->)
@@ -45,7 +45,7 @@ class pkg.Test
   run: (m_arg) ->
     arg = if m_arg then m_arg else @_arg
 
-    @group.runBefore(@)
+    @_group.runBefore(@)
     @_before()
 
     start = new Date()
@@ -53,7 +53,7 @@ class pkg.Test
     end = new Date()
 
     @_after
-    @group.runAfter(@)
+    @_group.runAfter(@)
     
     @getResult().register(arg, end - start) unless m_arg
     return end - start
