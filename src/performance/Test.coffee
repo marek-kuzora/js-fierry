@@ -24,14 +24,14 @@ class pkg.Test
     
     arg = 1
     time = 0
-
+    
     while time == 0
       time = @run(arg)
       arg *= 10
 
     while time < pkg.MEASURE_LIMIT
-      time = @run(arg)
       arg *= 2
+      time = @run(arg)
 
     arr = (@run(arg) for i in [1..pkg.MEASURE_RETRY])
     return @_arg = pkg.EXECUTE_LIMIT / array.avg(arr) * arg
@@ -52,7 +52,7 @@ class pkg.Test
 
     @_after
     @group.runAfter(@)
-    
+
     return end - start
 
   #

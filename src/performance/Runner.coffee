@@ -44,7 +44,6 @@ class pkg.Runner
   _runOnce: (test, last) =>
     arg = test.measure()
     time = test.run(arg)
-
     test.getResult().register(arg, time)
 
     @dispatch("test.finished", test)
