@@ -15,5 +15,4 @@ test
     @a = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
     @b = ['k', 'i', 'j', 'l', 'm']
   run: ->
-    @a.concat(@b)
-  
+    @a.concat(@b) 

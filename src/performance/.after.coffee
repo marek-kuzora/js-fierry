@@ -26,8 +26,8 @@ api.run = () ->
   runner = new pkg.Runner(pkg.INSTANCE, arguments)
   listener = new pkg.ProgressListener()
 
-  runner.subscribe("tests.found", listener.onTestsFound)
-  runner.subscribe("test.finished", listener.onTestFinished)
-  runner.subscribe("tests.finished", listener.onTestsFinished)
+  runner.subscribe("tests.found", listener.tests_found)
+  runner.subscribe("test.finished", listener.test_finished)
+  runner.subscribe("tests.finished", listener.tests_finished)
 
   runner.run()
