@@ -20,7 +20,13 @@ class pkg.ProgressListener
     @_switch_groups(group) if group != @_group
     
     if @_is_last_entry()
-      console.log @_get_output_name(test), @_get_output_ops(test), "ops/ms"
+      console.log @_get_output_name(test), @_get_output_ops(test), "  ops/ms"
+
+  #
+  # Closes currently open console's group when all tests are finished.
+  #
+  tests_finished: =>
+    console.groupEnd() for i in [0..@_get_group_length()]
 
   #
   # Changes currently active group preserving the group structure.
@@ -56,8 +62,11 @@ class pkg.ProgressListener
   # @param test
   #
   _get_output_ops: (test) ->
-    return Math.round(test.getResult().getAverage() * 100) / 100
+    rgx = /(\d+)(\d{3})(\.\d{2})/
+    ops = test.getResult().getAverage().toFixed(2)
+    ops = ops.replace(rgx, '$1' + ' ' + '$2$3')
 
+    return string.lpad(ops, 10)
   #
   # Returns true if this is the last result from the current test.
   #
@@ -69,9 +78,3 @@ class pkg.ProgressListener
   #
   _get_padding: ->
     return 50 - @_get_group_length() * 2
-
-  #
-  # Closes currently open console's group when all tests are finished.
-  #
-  tests_finished: =>
-    console.groupEnd() for i in [0..@_get_group_length()]
