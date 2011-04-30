@@ -15,3 +15,11 @@ core.uid = (obj) ->
   obj.__uid__ ?= ++core.uid.__counter__
 
 core.uid.__counter__ = 0
+
+#
+# Returns random float or integer if max is defined.
+# @param max - max random value for Integer rand().
+#
+core.rand = (max) ->
+  return Math.random() unless max
+  return Math.round(Math.random()*max)
