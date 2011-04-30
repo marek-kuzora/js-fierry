@@ -43,7 +43,7 @@ class pkg.Test
   # @param log - Boolean log the result.
   #
   run: (m_arg) ->
-    arg = if m_arg then marg else @_arg
+    arg = if m_arg then m_arg else @_arg
 
     @group.runBefore(@)
     @_before()
