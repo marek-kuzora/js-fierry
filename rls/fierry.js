@@ -105,8 +105,20 @@ var core = Env.namespace('core');
 
 (function() {
   Env.string = {
+    lpad: function(str, len) {
+      while (str.length < len) {
+        str = ' ' + str;
+      }
+      return str;
+    },
+    rpad: function(str, len) {
+      while (str.length < len) {
+        str += ' ';
+      }
+      return str;
+    },
     split_index: function(str, idx) {
-      return [str.substr(0, idx), str.substr(idx)];
+      return [str.substr(0, idx), str.substr(idx + 1)];
     }
   };
 }).call(this);
@@ -118,6 +130,7 @@ YUI.add( 'fierry.performance', function( Env ) {
 
 var core = Env.namespace('core');
 var array = Env.namespace('array');
+var string = Env.namespace('string');
 var api = Env.namespace('performance');
 var pkg = Env.namespace('performance.internal');
 (function() {
@@ -149,11 +162,12 @@ var pkg = Env.namespace('performance.internal');
       core.assert(cases.length > 0, "No test cases found for suites: " + this._suites);
       return core.async_array(cases, this._runOnce);
     };
-    Runner.prototype._runOnce = function(i, last) {
-      var arg, test;
-      test = i[0], arg = i[1];
-      test.run(arg, true);
-      this.dispatch("test.finished", test, arg);
+    Runner.prototype._runOnce = function(test, last) {
+      var arg, time;
+      arg = test.measure();
+      time = test.run(arg);
+      test.getResult().register(arg, time);
+      this.dispatch("test.finished", test);
       if (last) {
         return this.dispatch("tests.finished");
       }
@@ -174,14 +188,13 @@ var pkg = Env.namespace('performance.internal');
       return r;
     };
     Runner.prototype._buildTestCases = function(tests) {
-      var arg, i, r, test, _i, _len, _ref;
+      var i, r, test, _i, _len, _ref;
       r = [];
       for (_i = 0, _len = tests.length; _i < _len; _i++) {
         test = tests[_i];
         test.createTestResult();
-        arg = Math.round(test.measure());
         for (i = 1, _ref = pkg.EXECUTE_RETRY; (1 <= _ref ? i <= _ref : i >= _ref); (1 <= _ref ? i += 1 : i -= 1)) {
-          r.push([test, arg]);
+          r.push(test);
         }
       }
       return r;
@@ -199,6 +212,75 @@ var pkg = Env.namespace('performance.internal');
 }).call(this);
 
 (function() {
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  pkg.ProgressListener = (function() {
+    function ProgressListener() {
+      this.tests_finished = __bind(this.tests_finished, this);;
+      this.test_finished = __bind(this.test_finished, this);;
+      this.tests_found = __bind(this.tests_found, this);;      this._count = 0;
+      this._group = '';
+    }
+    ProgressListener.prototype.tests_found = function(tests) {
+      return console.log("Found", tests.length, "test cases.");
+    };
+    ProgressListener.prototype.test_finished = function(test) {
+      var group;
+      group = test.group.name;
+      if (group !== this._group) {
+        this._switch_groups(group);
+      }
+      if (this._is_last_entry()) {
+        return console.log(this._get_output_name(test), this._get_output_ops(test), "  ops/ms");
+      }
+    };
+    ProgressListener.prototype.tests_finished = function() {
+      var i, _ref, _results;
+      _results = [];
+      for (i = 0, _ref = this._get_group_length(); (0 <= _ref ? i <= _ref : i >= _ref); (0 <= _ref ? i += 1 : i -= 1)) {
+        _results.push(console.groupEnd());
+      }
+      return _results;
+    };
+    ProgressListener.prototype._switch_groups = function(group) {
+      var curr, i, j, prev, _ref, _ref2;
+      curr = group.split('.');
+      prev = this._group.split('.');
+      i = 0;
+      while (curr[i] === prev[i]) {
+        i++;
+      }
+      for (j = i, _ref = prev.length - 1; (i <= _ref ? j <= _ref : j >= _ref); (i <= _ref ? j += 1 : j -= 1)) {
+        console.groupEnd();
+      }
+      for (j = i, _ref2 = curr.length - 1; (i <= _ref2 ? j <= _ref2 : j >= _ref2); (i <= _ref2 ? j += 1 : j -= 1)) {
+        console.group(curr[j]);
+      }
+      return this._group = group;
+    };
+    ProgressListener.prototype._get_group_length = function() {
+      return this._group.split('.').length - 1;
+    };
+    ProgressListener.prototype._get_output_name = function(test) {
+      return string.rpad(test.name, this._get_padding());
+    };
+    ProgressListener.prototype._get_output_ops = function(test) {
+      var ops, rgx;
+      rgx = /(\d+)(\d{3})(\.\d{2})/;
+      ops = test.getResult().getAverage().toFixed(2);
+      ops = ops.replace(rgx, '$1' + ' ' + '$2$3');
+      return string.lpad(ops, 10);
+    };
+    ProgressListener.prototype._is_last_entry = function() {
+      return ++this._count % pkg.EXECUTE_RETRY === 0;
+    };
+    ProgressListener.prototype._get_padding = function() {
+      return 50 - this._get_group_length() * 2;
+    };
+    return ProgressListener;
+  })();
+}).call(this);
+
+(function() {
   pkg.Test = (function() {
     function Test(test, group) {
       this.group = group;
@@ -213,6 +295,9 @@ var pkg = Env.namespace('performance.internal');
     };
     Test.prototype.measure = function() {
       var arg, arr, i, time;
+      if (this._arg) {
+        return this._arg;
+      }
       arg = 1;
       time = 0;
       while (time === 0) {
@@ -231,9 +316,9 @@ var pkg = Env.namespace('performance.internal');
         }
         return _results;
       }).call(this);
-      return pkg.EXECUTE_LIMIT / array.avg(arr) * arg;
+      return this._arg = pkg.EXECUTE_LIMIT / array.avg(arr) * arg;
     };
-    Test.prototype.run = function(arg, log) {
+    Test.prototype.run = function(arg) {
       var end, i, start;
       this.group.runBefore(this);
       this._before();
@@ -244,18 +329,12 @@ var pkg = Env.namespace('performance.internal');
       end = new Date();
       this._after;
       this.group.runAfter(this);
-      if (log) {
-        this.getResult().register(arg, end - start);
-      }
       return end - start;
     };
     Test.prototype.createTestResult = function() {
       return this._results.push(new pkg.TestResult());
     };
-    Test.prototype.getResult = function(count) {
-      if (count == null) {
-        count = 1;
-      }
+    Test.prototype.getResult = function() {
       return this._results[this._results.length - 1];
     };
     return Test;
@@ -314,18 +393,14 @@ var pkg = Env.namespace('performance.internal');
       this._root = new pkg.Group({
         name: ''
       });
+      this._last_group = null;
     }
     Registry.prototype.registerGroup = function(hash) {
       var group, parent;
       parent = this.get(this._getParent(hash.name));
       group = new pkg.Group(hash, parent);
-      return parent.add(group);
-    };
-    Registry.prototype.registerTest = function(hash) {
-      var parent, test;
-      parent = this.get(this._getParent(hash.name));
-      test = new pkg.Test(hash, parent);
-      return parent.add(test);
+      parent.add(group);
+      return this._last_group = group;
     };
     Registry.prototype._getParent = function(name) {
       var idx;
@@ -335,6 +410,12 @@ var pkg = Env.namespace('performance.internal');
       } else {
         return '';
       }
+    };
+    Registry.prototype.registerTest = function(hash) {
+      var parent, test;
+      parent = hash.group ? this.get(hash.group) : this._last_group;
+      test = new pkg.Test(hash, parent);
+      return parent.add(test);
     };
     Registry.prototype.get = function(name) {
       var child, group, _ref;
@@ -354,27 +435,6 @@ var pkg = Env.namespace('performance.internal');
       return [name.substr(0, idx), name.substr(idx + 1)];
     };
     return Registry;
-  })();
-}).call(this);
-
-(function() {
-  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-  pkg.PfcListener = (function() {
-    function PfcListener() {
-      this.onTestsFinished = __bind(this.onTestsFinished, this);;
-      this.onTestFinished = __bind(this.onTestFinished, this);;
-      this.onTestsFound = __bind(this.onTestsFound, this);;
-    }
-    PfcListener.prototype.onTestsFound = function(tests) {
-      return console.log("Tests found", tests);
-    };
-    PfcListener.prototype.onTestFinished = function(test, arg) {
-      return console.log("Test finished", test.name, Math.round(test.getResult().getAverage()), "ops");
-    };
-    PfcListener.prototype.onTestsFinished = function() {
-      return console.log("All tests are done!");
-    };
-    return PfcListener;
   })();
 }).call(this);
 
@@ -465,16 +525,22 @@ var pkg = Env.namespace('performance.internal');
   api.run = function() {
     var listener, runner;
     runner = new pkg.Runner(pkg.INSTANCE, arguments);
-    listener = new pkg.PfcListener();
-    runner.subscribe("tests.found", listener.onTestsFound);
-    runner.subscribe("test.finished", listener.onTestFinished);
-    runner.subscribe("tests.finished", listener.onTestsFinished);
+    listener = new pkg.ProgressListener();
+    runner.subscribe("tests.found", listener.tests_found);
+    runner.subscribe("test.finished", listener.test_finished);
+    runner.subscribe("tests.finished", listener.tests_finished);
     return runner.run();
   };
 }).call(this);
 
 
 }, '3.0' ,{requires:['fierry.core', 'fierry.scheduler']});
+
+YUI.add( 'fierry.console', function( Env ) {
+
+var pkg = Env.namespace('console.internal');
+
+}, '3.0' ,{requires:[]});
 
 YUI.add( 'fierry.scheduler', function( Env ) {
 

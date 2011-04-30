@@ -13,7 +13,7 @@ var group = Env.namespace('performance.registerGroup');
     name: 'array.indexOf'
   });
   test({
-    name: 'array.indexOf.empty',
+    name: 'empty',
     before: function() {
       return this.arr = [];
     },
@@ -22,7 +22,7 @@ var group = Env.namespace('performance.registerGroup');
     }
   });
   test({
-    name: 'array.indexOf.standard -first-found',
+    name: 'standard -first-found',
     before: function() {
       return this.arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
     },
@@ -31,7 +31,7 @@ var group = Env.namespace('performance.registerGroup');
     }
   });
   test({
-    name: 'array.indexOf.standard -middle-found',
+    name: 'standard -middle-found',
     before: function() {
       return this.arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
     },
@@ -40,7 +40,7 @@ var group = Env.namespace('performance.registerGroup');
     }
   });
   test({
-    name: 'array.indexOf.standard -last-found',
+    name: 'standard -last-found',
     before: function() {
       return this.arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
     },
@@ -49,7 +49,7 @@ var group = Env.namespace('performance.registerGroup');
     }
   });
   test({
-    name: 'array.indexOf.standard -not-found',
+    name: 'standard -not-found',
     before: function() {
       return this.arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
     },
@@ -58,7 +58,7 @@ var group = Env.namespace('performance.registerGroup');
     }
   });
   test({
-    name: 'array.indexOf.big -found',
+    name: 'big -found',
     before: function() {
       return this.arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
     },
@@ -67,7 +67,7 @@ var group = Env.namespace('performance.registerGroup');
     }
   });
   test({
-    name: 'array.indexOf.big -not-found',
+    name: 'big -not-found',
     before: function() {
       return this.arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
     },
@@ -81,8 +81,11 @@ var group = Env.namespace('performance.registerGroup');
   group({
     name: 'array.join'
   });
+  group({
+    name: 'array.join.str'
+  });
   test({
-    name: 'array.join.small -default-token',
+    name: 'small -default-token',
     before: function() {
       return this.arr = ['a', 'b', 'c', 'd', 'e'];
     },
@@ -91,7 +94,7 @@ var group = Env.namespace('performance.registerGroup');
     }
   });
   test({
-    name: 'array.join.small -custom-token',
+    name: 'small -custom-token',
     before: function() {
       return this.arr = ['a', 'b', 'c', 'd', 'e'];
     },
@@ -100,7 +103,7 @@ var group = Env.namespace('performance.registerGroup');
     }
   });
   test({
-    name: 'array.join.standard',
+    name: 'standard',
     before: function() {
       return this.arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
     },
@@ -109,7 +112,7 @@ var group = Env.namespace('performance.registerGroup');
     }
   });
   test({
-    name: 'array.join.big',
+    name: 'big',
     before: function() {
       return this.arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
     },
@@ -118,7 +121,19 @@ var group = Env.namespace('performance.registerGroup');
     }
   });
   test({
-    name: 'array.join.recursive -small',
+    name: 'big -no-token',
+    before: function() {
+      return this.arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
+    },
+    run: function() {
+      return this.arr.join('');
+    }
+  });
+  group({
+    name: 'array.join.recursive'
+  });
+  test({
+    name: 'small',
     before: function() {
       return this.arr = [['a', 'b', 'c', 'd']];
     },
@@ -127,7 +142,7 @@ var group = Env.namespace('performance.registerGroup');
     }
   });
   test({
-    name: 'array.join.recursive -standard',
+    name: 'standard',
     before: function() {
       return this.arr = ['a', ['b', 'c', 'd'], 'e'];
     },
@@ -136,7 +151,7 @@ var group = Env.namespace('performance.registerGroup');
     }
   });
   test({
-    name: 'array.join.recursive -big',
+    name: 'recursive -big',
     before: function() {
       return this.arr = ['a', ['b', 'c', 'd', 'e'], 'f', 'g', ['h', 'i', 'j', 'k', 'l']];
     },
@@ -144,8 +159,11 @@ var group = Env.namespace('performance.registerGroup');
       return this.arr.join();
     }
   });
+  group({
+    name: 'array.join.int'
+  });
   test({
-    name: 'array.join.int -one-only',
+    name: 'one-only',
     before: function() {
       return this.arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 10];
     },
@@ -154,7 +172,7 @@ var group = Env.namespace('performance.registerGroup');
     }
   });
   test({
-    name: 'array.join.int -all-ints',
+    name: 'all-ints',
     before: function() {
       return this.arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     },
@@ -169,7 +187,7 @@ var group = Env.namespace('performance.registerGroup');
     name: 'array.concat'
   });
   test({
-    name: 'array.concat.small',
+    name: 'small',
     before: function() {
       this.a = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
       return this.b = ['k'];
@@ -179,7 +197,7 @@ var group = Env.namespace('performance.registerGroup');
     }
   });
   test({
-    name: 'array.concat.standard',
+    name: 'standard',
     before: function() {
       this.a = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
       return this.b = ['k', 'i', 'j', 'l', 'm'];
@@ -358,7 +376,10 @@ var pkg = Env.namespace('performance.internal');
       return core.async_array(cases, this._runOnce);
     };
     Runner.prototype._runOnce = function(test, last) {
-      test.run();
+      var arg, time;
+      arg = test.measure();
+      time = test.run(arg);
+      test.getResult().register(arg, time);
       this.dispatch("test.finished", test);
       if (last) {
         return this.dispatch("tests.finished");
@@ -407,30 +428,66 @@ var pkg = Env.namespace('performance.internal');
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   pkg.ProgressListener = (function() {
     function ProgressListener() {
-      this.onTestsFinished = __bind(this.onTestsFinished, this);;
-      this.onTestFinished = __bind(this.onTestFinished, this);;
-      this.onTestsFound = __bind(this.onTestsFound, this);;      this._count = 0;
+      this.tests_finished = __bind(this.tests_finished, this);;
+      this.test_finished = __bind(this.test_finished, this);;
+      this.tests_found = __bind(this.tests_found, this);;      this._count = 0;
       this._group = '';
     }
-    ProgressListener.prototype.onTestsFound = function(tests) {
+    ProgressListener.prototype.tests_found = function(tests) {
       return console.log("Found", tests.length, "test cases.");
     };
-    ProgressListener.prototype.onTestFinished = function(test) {
-      var arg, group, name, _ref;
-      _ref = string.split_index(test.name, test.name.lastIndexOf('.')), group = _ref[0], name = _ref[1];
+    ProgressListener.prototype.test_finished = function(test) {
+      var group;
+      group = test.group.name;
       if (group !== this._group) {
-        console.groupEnd();
-        console.group(group);
-        this._group = group;
+        this._switch_groups(group);
       }
-      if (++this._count % pkg.EXECUTE_RETRY === 0) {
-        name = string.rpad(name, 30);
-        arg = Math.round(test.getResult().getAverage());
-        return console.log(name, arg, "ops/ms");
+      if (this._is_last_entry()) {
+        return console.log(this._get_output_name(test), this._get_output_ops(test), "  ops/ms");
       }
     };
-    ProgressListener.prototype.onTestsFinished = function() {
-      return console.groupEnd();
+    ProgressListener.prototype.tests_finished = function() {
+      var i, _ref, _results;
+      _results = [];
+      for (i = 0, _ref = this._get_group_length(); (0 <= _ref ? i <= _ref : i >= _ref); (0 <= _ref ? i += 1 : i -= 1)) {
+        _results.push(console.groupEnd());
+      }
+      return _results;
+    };
+    ProgressListener.prototype._switch_groups = function(group) {
+      var curr, i, j, prev, _ref, _ref2;
+      curr = group.split('.');
+      prev = this._group.split('.');
+      i = 0;
+      while (curr[i] === prev[i]) {
+        i++;
+      }
+      for (j = i, _ref = prev.length - 1; (i <= _ref ? j <= _ref : j >= _ref); (i <= _ref ? j += 1 : j -= 1)) {
+        console.groupEnd();
+      }
+      for (j = i, _ref2 = curr.length - 1; (i <= _ref2 ? j <= _ref2 : j >= _ref2); (i <= _ref2 ? j += 1 : j -= 1)) {
+        console.group(curr[j]);
+      }
+      return this._group = group;
+    };
+    ProgressListener.prototype._get_group_length = function() {
+      return this._group.split('.').length - 1;
+    };
+    ProgressListener.prototype._get_output_name = function(test) {
+      return string.rpad(test.name, this._get_padding());
+    };
+    ProgressListener.prototype._get_output_ops = function(test) {
+      var ops, rgx;
+      rgx = /(\d+)(\d{3})(\.\d{2})/;
+      ops = test.getResult().getAverage().toFixed(2);
+      ops = ops.replace(rgx, '$1' + ' ' + '$2$3');
+      return string.lpad(ops, 10);
+    };
+    ProgressListener.prototype._is_last_entry = function() {
+      return ++this._count % pkg.EXECUTE_RETRY === 0;
+    };
+    ProgressListener.prototype._get_padding = function() {
+      return 50 - this._get_group_length() * 2;
     };
     return ProgressListener;
   })();
@@ -445,13 +502,15 @@ var pkg = Env.namespace('performance.internal');
       this._run = test.run;
       this._after = test.after || (function() {});
       this._before = test.before || (function() {});
-      this._arg = this.measure();
     }
     Test.prototype.accept = function(visitor) {
       return visitor.onTest(this);
     };
     Test.prototype.measure = function() {
       var arg, arr, i, time;
+      if (this._arg) {
+        return this._arg;
+      }
       arg = 1;
       time = 0;
       while (time === 0) {
@@ -470,11 +529,10 @@ var pkg = Env.namespace('performance.internal');
         }
         return _results;
       }).call(this);
-      return pkg.EXECUTE_LIMIT / array.avg(arr) * arg;
+      return this._arg = pkg.EXECUTE_LIMIT / array.avg(arr) * arg;
     };
-    Test.prototype.run = function(m_arg) {
-      var arg, end, i, start;
-      arg = m_arg ? m_arg : this._arg;
+    Test.prototype.run = function(arg) {
+      var end, i, start;
       this.group.runBefore(this);
       this._before();
       start = new Date();
@@ -484,9 +542,6 @@ var pkg = Env.namespace('performance.internal');
       end = new Date();
       this._after;
       this.group.runAfter(this);
-      if (!m_arg) {
-        this.getResult().register(arg, end - start);
-      }
       return end - start;
     };
     Test.prototype.createTestResult = function() {
@@ -551,18 +606,14 @@ var pkg = Env.namespace('performance.internal');
       this._root = new pkg.Group({
         name: ''
       });
+      this._last_group = null;
     }
     Registry.prototype.registerGroup = function(hash) {
       var group, parent;
       parent = this.get(this._getParent(hash.name));
       group = new pkg.Group(hash, parent);
-      return parent.add(group);
-    };
-    Registry.prototype.registerTest = function(hash) {
-      var parent, test;
-      parent = this.get(this._getParent(hash.name));
-      test = new pkg.Test(hash, parent);
-      return parent.add(test);
+      parent.add(group);
+      return this._last_group = group;
     };
     Registry.prototype._getParent = function(name) {
       var idx;
@@ -572,6 +623,12 @@ var pkg = Env.namespace('performance.internal');
       } else {
         return '';
       }
+    };
+    Registry.prototype.registerTest = function(hash) {
+      var parent, test;
+      parent = hash.group ? this.get(hash.group) : this._last_group;
+      test = new pkg.Test(hash, parent);
+      return parent.add(test);
     };
     Registry.prototype.get = function(name) {
       var child, group, _ref;
@@ -682,9 +739,9 @@ var pkg = Env.namespace('performance.internal');
     var listener, runner;
     runner = new pkg.Runner(pkg.INSTANCE, arguments);
     listener = new pkg.ProgressListener();
-    runner.subscribe("tests.found", listener.onTestsFound);
-    runner.subscribe("test.finished", listener.onTestFinished);
-    runner.subscribe("tests.finished", listener.onTestsFinished);
+    runner.subscribe("tests.found", listener.tests_found);
+    runner.subscribe("test.finished", listener.test_finished);
+    runner.subscribe("tests.finished", listener.tests_finished);
     return runner.run();
   };
 }).call(this);
