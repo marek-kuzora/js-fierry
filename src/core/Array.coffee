@@ -35,6 +35,14 @@ Env.array =
     sum += i for i in arr
     return sum / arr.length
 
+  shuffle: (arr) ->
+    i = arr.length
+    while i
+      j = parseInt(Math.random()*i)
+      x = arr[--i]
+      [arr[i], arr[j]] = [arr[j], x]
+    return arr
+   
   #
   # Returns unique array from the given one.
   # Will work only on array of primitives
@@ -46,3 +54,21 @@ Env.array =
     hash[i] = 0 for i in arr
     r.push(i) for i of hash
     return r
+
+  #
+  # Performs binary search on sorted array.
+  # Returns idx of the found key or -idx if key wasn't found.
+  # @param Array arr
+  # @param Any key
+  #
+  binary_search: (arr, key) ->
+    l = 0
+    h = arr.length - 1
+    while l <= h
+      mid = l + h >> 1
+      mval = arr[mid]
+
+      if mval < key then l = mid + 1
+      else if mval > key then h = mid - 1
+      else return mid
+    return -(l+1)
