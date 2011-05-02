@@ -3,6 +3,7 @@ require:
   - fierry.core
   - fierry.performance
 namespace:
+  core: core
   object: object
   test: performance.registerTest
   group: performance.registerGroup

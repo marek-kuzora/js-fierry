@@ -2,5 +2,8 @@ before: [.before.coffee]
 require:
   - fierry.performance
 namespace:
+  core: core
+  array: array
+  pkg: performance.array
   test: performance.registerTest
   group: performance.registerGroup
