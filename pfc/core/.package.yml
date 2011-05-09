@@ -1,3 +1,5 @@
 require:
   - fierry.pfc.core.array
   - fierry.pfc.core.object
+  - fierry.pfc.core.string
+  - fierry.pfc.core.utils

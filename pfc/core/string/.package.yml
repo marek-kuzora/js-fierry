@@ -1,0 +1,8 @@
+before: [.before.coffee]
+require:
+  - fierry.performance
+namespace:
+  core: core
+  pkg: performance.string
+  test: performance.registerTest
+  group: performance.registerGroup

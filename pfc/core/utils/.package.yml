@@ -1,0 +1,13 @@
+before: [.before.coffee]
+require:
+  - fierry.core
+  - fierry.resources
+  - fierry.performance
+namespace:
+  core: core
+  array: array
+  rarray: resources.array
+
+  pkg: performance.utils
+  test: performance.registerTest
+  group: performance.registerGroup
