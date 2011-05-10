@@ -1,6 +1,10 @@
 group
   name: 'string.sequential-read'
 
+#
+# About 2x faster than direct, char-at access.
+# Currently can handle 25k string in less than 1ms.
+#
 group
   name: 'string.sequential-read.char-code-at'
 
