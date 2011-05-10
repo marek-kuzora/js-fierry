@@ -17,9 +17,9 @@ Env.array =
 
   #
   # Erases all instances of the given item from the array.
-  # @param arr
-  # @param it - item to remove.
-  # @param i - offset
+  # @param Array arr
+  # @param Any it - item to remove.
+  # @param Integer i - offset.
   #
   erase: (arr, it, i=0) ->
     while i < arr.length
@@ -28,13 +28,17 @@ Env.array =
 
   #
   # Returns average value from array of numbers.
-  # @param arr
+  # @param Array arr
   #
   avg: (arr) ->
     sum = 0
     sum += i for i in arr
     return sum / arr.length
 
+  #
+  # Shuffles the given array.
+  # @param Array arr
+  #
   shuffle: (arr) ->
     i = arr.length
     while i
@@ -42,11 +46,11 @@ Env.array =
       x = arr[--i]
       [arr[i], arr[j]] = [arr[j], x]
     return arr
-   
+
   #
   # Returns unique array from the given one.
   # Will work only on array of primitives
-  # @param arr
+  # @param Array arr
   #
   unique: (arr) ->
     r = []
@@ -58,12 +62,15 @@ Env.array =
   #
   # Performs binary search on sorted array.
   # Returns idx of the found key or -idx if key wasn't found.
+  #   Transformation for splicing the new element: idx = -1*(idx+1)
+  # Works only on primitive array content!
   # @param Array arr
   # @param Any key
   #
   binary_search: (arr, key) ->
     l = 0
     h = arr.length - 1
+
     while l <= h
       mid = l + h >> 1
       mval = arr[mid]

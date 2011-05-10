@@ -1,12 +1,3 @@
-arr_1m_1_step = (i for i in [0..1000000])
-arr_1m_2_step = (2 * i for i in [0..1000000])
-
-arr_100k_1_step = (i for i in [0..100000])
-arr_100k_2_step = (2 * i for i in [0..100000])
-
-arr_10k_1_step = (i for i in [0..10000])
-arr_10k_2_step = (2 * i for i in [0..10000])
-
 #
 # Tests for binary-search of sorted arrays.
 # Results shows that pfc degrades really slow with size of the array.
@@ -14,75 +5,84 @@ arr_10k_2_step = (2 * i for i in [0..10000])
 group
   name: 'array.bsearch'
 
+group
+  name: 'array.bsearch.int'
+
 test
-  name: '   10 000 -step-1'
+  name: ' 10 000 -step-1'
   before: ->
     @i = 0
     @max = 10000
-    @ints = arr_10k_1_step
+    @ints = gen.int_array(10000, 1, true)
   run: ->
     array.binary_search(@ints, @i++ % @max)
 
 test
-  name: '   10 000 -step-2'
+  name: ' 10 000 -step-5'
   before: ->
     @i = 0
     @max = 10000
-    @ints = arr_10k_2_step
+    @ints = gen.int_array(10000, 5, true)
   run: ->
     array.binary_search(@ints, @i++ % @max)
 
 test
-  name: '  100 000 -step-1'
+  name: '100 000 -step-1'
   before: ->
     @i = 0
     @max = 100000
-    @ints = arr_100k_1_step
+    @ints = gen.int_array(100000, 1, true)
   run: ->
     array.binary_search(@ints, @i++ % @max)
 
 test
-  name: '  100 000 -step-2'
+  name: '100 000 -step-5'
   before: ->
     @i = 0
     @max = 100000
-    @ints = arr_100k_2_step
+    @ints = gen.int_array(100000, 5, true)
   run: ->
     array.binary_search(@ints, @i++ % @max)
+
+#
+# BSearch on String is extremely slow - over 6-8x slower than with numbers!
+#
+group
+  name: 'array.bsearch.string'
+
 
 test
-  name: '1 000 000 -step-1'
+  name: ' 10 000  -5-length'
   before: ->
     @i = 0
-    @max = 1000000
-    @ints = arr_1m_1_step
+    @max = 10000
+    @ints = gen.string_array(10000, 5)
   run: ->
-    array.binary_search(@ints, @i++ % @max)
+    array.binary_search(@ints, @ints[@i % @max])
 
 test
-  name: '1 000 000 -step-2'
+  name: ' 10 000 -20-length'
   before: ->
     @i = 0
-    @max = 1000000
-    @ints = arr_1m_2_step
+    @max = 10000
+    @ints = gen.string_array(10000, 20)
   run: ->
-    array.binary_search(@ints, @i++ % @max)
-  
-###
-arr = [1, 3, 5, 7, 9, 11]
-console.log array.binary_search(arr, -1)
-console.log array.binary_search(arr, 0)
-console.log array.binary_search(arr, 2)
-console.log array.binary_search(arr, 4)
-console.log array.binary_search(arr, 6)
-console.log array.binary_search(arr, 8)
-console.log array.binary_search(arr, 10)
-console.log array.binary_search(arr, 12)
+    array.binary_search(@ints, @ints[@i % @max])
 
-# Proper inserting element after found that not-existing through the binary search!
-# Fast & convinient :)
-for i in [-7..-1]
-  arr = [1, 3, 5, 7, 9, 11]
-  arr.splice(-1*(i+1), 0, 'z')
-  console.log i, arr
-###
+test
+  name: '100 000  -5-length'
+  before: ->
+    @i = 0
+    @max = 100000
+    @ints = gen.string_array(100000, 5)
+  run: ->
+    array.binary_search(@ints, @ints[@i % @max])
+
+test
+  name: '100 000 -20-length'
+  before: ->
+    @i = 0
+    @max = 100000
+    @ints = gen.string_array(100000, 20)
+  run: ->
+    array.binary_search(@ints, @ints[@i % @max])
