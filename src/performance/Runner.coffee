@@ -30,7 +30,7 @@ class pkg.Runner
   run: ->
     tests = @_extractTests(@_suites)
     cases = @_buildTestCases(tests)
-    
+
     @dispatch("tests.found", tests)
 
     core.assert cases.length > 0, "No test cases found for suites: #{@_suites}"
@@ -48,7 +48,7 @@ class pkg.Runner
 
     @dispatch("test.finished", test)
     @dispatch("tests.finished") if last
-   
+
   #
   # Extracts Tests instances for testing.
   # @param arr - array of groups/tests names.
