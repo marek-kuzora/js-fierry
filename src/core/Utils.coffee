@@ -21,5 +21,5 @@ core.uid.__counter__ = 0
 # @param max - max random value for Integer rand().
 #
 core.rand = (max) ->
-  return Math.random() unless max
-  return Math.round(Math.random()*max)
+  return Math.random() if max == undefined
+  return Math.round(Math.random()*max) #TODO Can be faster? >> << operations??
