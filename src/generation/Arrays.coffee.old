@@ -1,0 +1,70 @@
+#
+# Generates array of random ints in any order.
+#
+pkg.random_ints = (count, step = 1) ->
+  r = pkg._rint_registry
+  key = count + '_' + step
+
+  return r[key] ?= array.shuffle(step * i for i in [0..count])
+pkg._rint_registry = {}
+
+#
+# Generates sorted array of random ints.
+#
+pkg.sorted_ints = (count, step = 1) ->
+  r = pkg._sint_registry
+  key = count + '_' + step
+
+  return r[key] ?= (step * i for i in [0..count])
+pkg._sint_registry = {}
+
+
+pkg.random_strings = (count, len, standard = true) ->
+  r = pkg._rstr_registry
+  key = count + '_' + step + '_' + standard
+
+  #return r[key] ?= 
+
+
+pkg._rstr_registry = {}
+
+
+
+
+# Binary Search cant work on shuffled!!! :@
+#
+# Int arrays.
+#
+pkg.int_1mln_1_step = array.shuffle(i for i in [0..1000000])
+pkg.int_1mln_2_step = array.shuffle(2 * i for i in [0..1000000])
+
+pkg.int_100k_1_step = array.shuffle(i for i in [0..100000])
+pkg.int_100k_2_step = array.shuffle(2 * i for i in [0..100000])
+
+pkg.int_10k_1_step = array.shuffle(i for i in [0..10000])
+pkg.int_10k_2_step = array.shuffle(2 * i for i in [0..10000])
+
+#
+# String arrays.
+# Huge range of characters - 255 instead of ~50 usually used.
+#
+pkg.str_500k_20_len = do ->
+  set = {}
+  for i in [1..500000]
+    arr = for j in [1..20]
+      String.fromCharCode(core.rand(255))
+    set[arr.join('')] = true
+  return Object.keys(set)
+
+pkg.str_500k_10_len = array.shuffle(str.substr(0, 10) for str in pkg.str_500k_20_len)
+pkg.str_500k_5_len = array.shuffle(str.substr(0, 5) for str in pkg.str_500k_20_len)
+
+pkg.str_100k_20_len = array.shuffle(pkg.str_500k_20_len.splice(0, 100000))
+pkg.str_100k_10_len = array.shuffle(pkg.str_500k_10_len.splice(0, 100000))
+pkg.str_100k_5_len = array.shuffle(pkg.str_500k_5_len.splice(0, 100000))
+
+pkg.str_10k_20_len = array.shuffle(pkg.str_500k_20_len.splice(0, 10000))
+pkg.str_10k_10_len = array.shuffle(pkg.str_500k_10_len.splice(0, 10000))
+pkg.str_10k_5_len = array.shuffle(pkg.str_500k_5_len.splice(0, 10000))
+
+console.log 'Generated int & string arrays for testing.'
