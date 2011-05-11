@@ -1,5 +1,5 @@
 group
-  name: 'string.match'
+  name: 'string.regexp.match'
 
 test
   name: 'regexp -same'

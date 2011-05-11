@@ -3,7 +3,7 @@
 # LastIndexOf seems to be faster with finding its 'first' element
 #
 group
-  name: 'string.index_of'
+  name: 'string.regexp.index-of'
 
 test
   name: 'start'

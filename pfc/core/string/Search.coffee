@@ -1,5 +1,5 @@
 group
-  name: 'string.search'
+  name: 'string.regexp.search'
 
 test
   name: 'string'

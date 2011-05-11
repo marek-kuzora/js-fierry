@@ -1,5 +1,5 @@
 group
-  name: 'string.replace'
+  name: 'string.regexp.replace'
 
 test
   name: '30 chars -0-replace'
