@@ -1,16 +1,21 @@
 #
 # Predefined test cases for 3 different test groups.
-# TODO For now, these test cases prefer naive approach because all of the elements are already created :/
-# I should probably build each element using createElement and append manualy??
+#
+
+#
+# This test case assumes that all of dom elements are already created.
 #
 naive_replace =
-  name: 'naive'
+  name: 'naive -cached'
   run: ->
     @stub.appendChild(e.cloneNode(true)) for e in @arr
     @stub.innerHTML = ''
 
+#
+# This test case assumes that all of dom elements are already created.
+#
 fragment_replace =
-  name: 'fragment'
+  name: 'fragment -cached'
   run: ->
     frag = document.createDocumentFragment()
     frag.appendChild(e) for e in @arr
@@ -32,8 +37,20 @@ mixed_html_replace =
 group
   name: 'dom.replace.small'
   before: ->
-    @html = '<div></div><span>text node</span><a href="www.example.com"></a>'
+    @html = '<div></div><span>text node</span><a></a>'
     @arr = dom.create_html(@html)
+
+test
+  name: 'naive'
+  run: ->
+    @arr = []
+    @arr[0] = document.createElement('div')
+    @arr[1] = document.createElement('span')
+    @arr[2] = document.createElement('a')
+
+    @arr[1].appendChild(document.createTextNode('text node'))
+    @stub.appendChild(e) for e in @arr
+    @stub.innerHTML = ''
 
 test naive_replace
 test fragment_replace
@@ -45,8 +62,27 @@ group
   before: ->
     @html = '<a>A</a><a>B</a><a>C</a><a>D</a><a>E</a><a>F</a><a>G</a><a>H</a><a>I</a><a>J</a><a>K</a>
              <a>L</a><a>M</a><a>N</a><a>O</a><a>P</a><a>R</a><a>S</a><a>T</a><a>U</a><a>W</a><a>X</a>
-             <a>Y</a><a>Z</a>'
+             <a>Y</a><a>Z</a><a>_</a>'
     @arr = dom.create_html(@html)
+
+test
+  name: 'naive'
+  run: ->
+    for _ in [1..25]
+      a = document.createElement('a')
+      a.appendChild(document.createTextNode('A'))
+      @stub.appendChild(a)
+    @stub.innerHTML = ''
+
+test
+  name: 'naive -bad'
+  run: ->
+    for _ in [1..25]
+      a = document.createElement('a')
+      @stub.appendChild(a)
+      a.appendChild(document.createTextNode('A'))
+    @stub.innerHTML = ''
+
 
 test naive_replace
 test fragment_replace
@@ -69,6 +105,55 @@ group
             </div></div></div>
             '''
     @arr = dom.create_html(@html)
+
+test
+  name: 'naive'
+  run: ->
+    for _i in [0..1]
+      div_0 = document.createElement('div')
+      div_1 = document.createElement('div')
+      div_2 = document.createElement('div')
+      for _j in [0..2]
+        p = document.createElement('p')
+        a = document.createElement('a')
+        s = document.createElement('span')
+
+        dom.append_text(s, 'text node')
+        a.appendChild(s)
+        p.appendChild(a)
+        div_2.appendChild(p)
+
+      div_1.appendChild(div_2)
+      div_0.appendChild(div_1)
+      @stub.appendChild(div_0)
+    @stub.innerHTML = ''
+
+#
+# This test case uses wrong order when appending children
+#
+test
+  name: 'naive -bad'
+  run: ->
+    for _i in [0..1]
+      div_0 = document.createElement('div')
+      div_1 = document.createElement('div')
+      div_2 = document.createElement('div')
+
+      @stub.appendChild(div_0)
+      div_0.appendChild(div_1)
+      div_1.appendChild(div_2)
+
+      for _j in [0..2]
+        p = document.createElement('p')
+        a = document.createElement('a')
+        s = document.createElement('span')
+
+        div_2.appendChild(p)
+        p.appendChild(a)
+        a.appendChild(s)
+        dom.append_text(s, 'text node')
+
+    @stub.innerHTML = ''
 
 test naive_replace
 test fragment_replace
