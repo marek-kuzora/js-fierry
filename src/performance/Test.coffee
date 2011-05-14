@@ -2,7 +2,7 @@ class pkg.Test
 
   constructor: (test, @group) ->
     @_results = []
-    
+
     @name = test.name
     @_run = test.run
     @_after = test.after || (->)
@@ -21,10 +21,10 @@ class pkg.Test
   #
   measure: ->
     return @_arg if @_arg
-    
+
     arg = 1
     time = 0
-    
+
     while time == 0
       time = @run(arg)
       arg *= 10

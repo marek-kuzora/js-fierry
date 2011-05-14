@@ -9,7 +9,7 @@
     <script type="text/javascript" src="/Code/JavaScript/YUI/yui/yui-min.js"></script>
     <script type="text/javascript" src="fierry.pfc.js"></script>
     <script type="text/javascript">
-      YUI().use("fierry.performance", "fierry.pfc.core", function(Env) {
+      YUI().use("fierry.performance", "fierry.pfc.core", "fierry.pfc.dom", function(Env) {
         window.core = Env.core;
         window.performance = Env.performance;
         window.run = function() { performance.run.apply(performance, arguments); }

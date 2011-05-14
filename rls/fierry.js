@@ -18,6 +18,78 @@ var core = Env.namespace('core');
 }).call(this);
 
 (function() {
+  Env.object = {
+    get: function(o, p) {
+      var i, _i, _len;
+      for (_i = 0, _len = p.length; _i < _len; _i++) {
+        i = p[_i];
+        if (o === void 0) {
+          return;
+        }
+        o = o[i];
+      }
+      return o;
+    },
+    set: function(o, p, v) {
+      var e, i, l, _ref;
+      i = 0;
+      l = p.length - 1;
+      while (l--) {
+        e = p[i++];
+        (_ref = o[e]) != null ? _ref : o[e] = {};
+        o = o[e];
+      }
+      return o[p[i]] = v;
+    }
+  };
+}).call(this);
+
+(function() {
+  core.App = (function() {
+    function App() {
+      this._stop_arr = [];
+      this._start_arr = [];
+      this._running = false;
+    }
+    App.prototype.start = function() {
+      var fn, _i, _len, _ref, _results;
+      this._running = true;
+      _ref = this._start_arr;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        fn = _ref[_i];
+        _results.push(fn());
+      }
+      return _results;
+    };
+    App.prototype.stop = function() {
+      var fn, _i, _len, _ref, _results;
+      this._running = false;
+      _ref = this._stop_arr;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        fn = _ref[_i];
+        _results.push(fn());
+      }
+      return _results;
+    };
+    App.prototype.is_running = function() {
+      return this._running;
+    };
+    App.prototype.is_stopped = function() {
+      return !this._running;
+    };
+    App.prototype.add_start_handler = function(fn) {
+      this._start_arr.push(fn);
+    };
+    App.prototype.add_stop_handler = function(fn) {
+      this._stop_arr.push(fn);
+    };
+    return App;
+  })();
+}).call(this);
+
+(function() {
   var __slice = Array.prototype.slice;
   core.Event = (function() {
     function Event() {}
@@ -56,6 +128,12 @@ var core = Env.namespace('core');
     return (_ref = obj.__uid__) != null ? _ref : obj.__uid__ = ++core.uid.__counter__;
   };
   core.uid.__counter__ = 0;
+  core.rand = function(max) {
+    if (max === void 0) {
+      return Math.random();
+    }
+    return Math.round(Math.random() * max);
+  };
 }).call(this);
 
 (function() {
@@ -87,6 +165,16 @@ var core = Env.namespace('core');
       }
       return sum / arr.length;
     },
+    shuffle: function(arr) {
+      var i, j, x, _ref;
+      i = arr.length;
+      while (i) {
+        j = parseInt(Math.random() * i);
+        x = arr[--i];
+        _ref = [arr[j], x], arr[i] = _ref[0], arr[j] = _ref[1];
+      }
+      return arr;
+    },
     unique: function(arr) {
       var hash, i, r, _i, _len;
       r = [];
@@ -99,6 +187,23 @@ var core = Env.namespace('core');
         r.push(i);
       }
       return r;
+    },
+    binary_search: function(arr, key) {
+      var h, l, mid, mval;
+      l = 0;
+      h = arr.length - 1;
+      while (l <= h) {
+        mid = l + h >> 1;
+        mval = arr[mid];
+        if (mval < key) {
+          l = mid + 1;
+        } else if (mval > key) {
+          h = mid - 1;
+        } else {
+          return mid;
+        }
+      }
+      return -(l + 1);
     }
   };
 }).call(this);
@@ -121,6 +226,10 @@ var core = Env.namespace('core');
       return [str.substr(0, idx), str.substr(idx + 1)];
     }
   };
+}).call(this);
+
+(function() {
+  core.app = new core.App();
 }).call(this);
 
 
@@ -305,8 +414,8 @@ var pkg = Env.namespace('performance.internal');
         arg *= 10;
       }
       while (time < pkg.MEASURE_LIMIT) {
-        time = this.run(arg);
         arg *= 2;
+        time = this.run(arg);
       }
       arr = (function() {
         var _ref, _results;
@@ -536,9 +645,146 @@ var pkg = Env.namespace('performance.internal');
 
 }, '3.0' ,{requires:['fierry.core', 'fierry.scheduler']});
 
-YUI.add( 'fierry.console', function( Env ) {
+YUI.add( 'fierry.storage', function( Env ) {
 
-var pkg = Env.namespace('console.internal');
+var object = Env.namespace('object');
+var assert = Env.namespace('core.assert');
+var pkg = Env.namespace('core.storage');
+(function() {
+  pkg.Storage = (function() {
+    function Storage() {
+      this._nps = {};
+      this._root = {};
+      this._rules = {};
+    }
+    Storage.prototype.get = function(arr) {
+      return object.get(this._root, arr);
+    };
+    Storage.prototype.set = function(arr, val) {
+      object.set(this._root, arr, val);
+      if (core.app.is_running()) {
+        return this._get_np(arr).set_dirty();
+      }
+    };
+    Storage.prototype.register = function(arr, fn) {
+      return this._get_np(arr).register(fn);
+    };
+    Storage.prototype.unregister = function(arr, fn) {
+      return this._get_np(arr).unregister(fn);
+    };
+    Storage.prototype.register_rule = function(path) {
+      var head, idx, _base, _ref;
+      assert(core.app.is_stopped(), 'Application should be stopped');
+      idx = path.indexOf('.');
+      head = path.substr(0, idx > 0 ? idx : void 0);
+      path = path.replace(/\./g, "\\.");
+      path = path.replace(/\*/g, "[-a-zA-Z0-9_]+");
+      path += "(?![-a-zA-Z0-9_])";
+      (_ref = (_base = this._rules)[head]) != null ? _ref : _base[head] = [];
+      return this._rules[head].push(new RegExp('^' + path));
+    };
+    Storage.prototype._get_np = function(arr) {
+      var path, _base, _ref;
+      path = this._get_np_path(arr);
+      return (_ref = (_base = this._nps)[path]) != null ? _ref : _base[path] = new pkg.NotifyPoint();
+    };
+    Storage.prototype._get_np_path = function(arr) {
+      var max, raw, rule, rules, tmp, _i, _len;
+      max = '';
+      rules = this._rules[arr[0]];
+      if (rules) {
+        raw = arr.join('.');
+        for (_i = 0, _len = rules.length; _i < _len; _i++) {
+          rule = rules[_i];
+          tmp = raw.match(rule);
+          if (tmp && tmp[0].length > max.length) {
+            max = tmp[0];
+          }
+        }
+      }
+      return max;
+    };
+    return Storage;
+  })();
+}).call(this);
+
+
+}, '3.0' ,{requires:['fierry.core']});
+
+YUI.add( 'fierry.ui', function( Env ) {
+
+(function() {
+  ui.into(document.body, [
+    {
+      type: 'div',
+      attrs: {
+        id: 'cokolwiek',
+        "class": 'fafa'
+      },
+      content: [
+        {
+          type: 'span',
+          attrs: {
+            text: 'title',
+            font: 'ui'
+          },
+          content: [
+            {
+              type: 'span',
+              attrs: {
+                text: '!',
+                font: 'b'
+              }
+            }
+          ]
+        }, {
+          type: 'br'
+        }, {
+          type: 'span',
+          attrs: {
+            text: 'some text'
+          }
+        }
+      ]
+    }, {
+      type: 'div'
+    }
+  ]);
+  fn('1', {
+    attr: 'v1'
+  }, fn('2', {
+    attr: 'v2'
+  }, fn('3')));
+  fn('1', {
+    attr: 'v1'
+  }, fn('2'), fn('3'));
+  fn('1', {
+    attr: 'v1'
+  }, fn('2', fn('3')));
+  ui.into(document.body, ui.append('div', {
+    id: 'cokolwiek',
+    "class": 'fafa'
+  }), ui.append('br', 'dad', 'fafa', 'dada'), ui.append('br', ui.append('span', {
+    text: 'title',
+    font: 'ui'
+  }, ui.append('span', {
+    text: '!',
+    font: 'b'
+  }, ui.append('br'))), ui.append('span', {
+    text: 'some text'
+  })), ui.append('div'));
+  ui.define('template');
+  ui.cond({
+    "if": current_user.is_logged()
+  }, ui.append('span', {
+    text: current_user.email
+  }));
+  ui.loop({
+    item: i,
+    array: '..data'
+  });
+}).call(this);
+
 
 }, '3.0' ,{requires:[]});
 
@@ -704,6 +950,142 @@ var pkg = Env.namespace('core.scheduler');
   };
   core.async_array = function(arr, fn) {
     return pkg.INSTANCE.async_array(arr, fn);
+  };
+}).call(this);
+
+
+}, '3.0' ,{requires:['fierry.core']});
+
+YUI.add( 'fierry.generation', function( Env ) {
+
+var core = Env.namespace('core');
+var array = Env.namespace('array');
+var pkg = Env.namespace('core.generation');
+(function() {
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  pkg.IntGenerator = (function() {
+    function IntGenerator() {
+      this._ireg = {};
+    }
+    IntGenerator.prototype.int_array = function(count, step, sorted) {
+      var k, _base, _ref;
+      if (step == null) {
+        step = 1;
+      }
+      if (sorted == null) {
+        sorted = false;
+      }
+      k = "" + count + "_" + sorted;
+      return (_ref = (_base = this._ireg)[k]) != null ? _ref : _base[k] = __bind(function() {
+        var arr, i, j;
+        i = 0;
+        arr = (function() {
+          var _results;
+          _results = [];
+          for (j = 1; (1 <= count ? j <= count : j >= count); (1 <= count ? j += 1 : j -= 1)) {
+            _results.push(i += core.rand(step - 1) + 1);
+          }
+          return _results;
+        })();
+        if (!sorted) {
+          array.shuffle(arr);
+        }
+        return arr;
+      }, this)();
+    };
+    return IntGenerator;
+  })();
+}).call(this);
+
+(function() {
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  pkg.StringGenerator = (function() {
+    function StringGenerator() {
+      this._sreg = {};
+      this._min_char = 32;
+      this._max_count = {};
+      this._max_length = 20;
+    }
+    StringGenerator.prototype.string_array = function(count, length, range, sorted) {
+      var k, _base, _ref;
+      if (length == null) {
+        length = 10;
+      }
+      if (range == null) {
+        range = 200;
+      }
+      if (sorted == null) {
+        sorted = false;
+      }
+      k = "" + count + "_" + length + "_" + range + "_" + sorted;
+      return (_ref = (_base = this._sreg)[k]) != null ? _ref : _base[k] = __bind(function() {
+        var arr, str;
+        arr = this._get_string_array(count, range);
+        arr = (function() {
+          var _i, _len, _results;
+          _results = [];
+          for (_i = 0, _len = arr.length; _i < _len; _i++) {
+            str = arr[_i];
+            _results.push(str.substr(0, length));
+          }
+          return _results;
+        })();
+        if (sorted) {
+          arr.sort();
+        }
+        return arr;
+      }, this)();
+    };
+    StringGenerator.prototype._get_string_array = function(count, range) {
+      var k, _base, _ref;
+      k = "" + count + "_" + this._max_length + "_" + range + "_false";
+      return (_ref = (_base = this._sreg)[k]) != null ? _ref : _base[k] = this._gen_string_array(count, range);
+    };
+    StringGenerator.prototype._gen_string_array = function(count, range) {
+      var arr, char, i, j, str, _, _results;
+      _results = [];
+      for (_ = 1; (1 <= count ? _ <= count : _ >= count); (1 <= count ? _ += 1 : _ -= 1)) {
+        arr = (function() {
+          var _ref, _results;
+          _results = [];
+          for (j = 1, _ref = this._max_length; (1 <= _ref ? j <= _ref : j >= _ref); (1 <= _ref ? j += 1 : j -= 1)) {
+            i = core.rand(range) + this._min_char;
+            _results.push(char = String.fromCharCode(i));
+          }
+          return _results;
+        }).call(this);
+        _results.push(str = arr.join(''));
+      }
+      return _results;
+    };
+    StringGenerator.prototype.big_string = function(length, range) {
+      var key, _base, _ref;
+      if (range == null) {
+        range = 200;
+      }
+      key = "" + length + "_" + range;
+      return (_ref = (_base = this._sreg)[key]) != null ? _ref : _base[key] = __bind(function() {
+        var arr, count;
+        count = Math.ceil(length / this._max_length);
+        arr = this._get_string_array(count, range);
+        return arr.join('');
+      }, this)();
+    };
+    return StringGenerator;
+  })();
+}).call(this);
+
+(function() {
+  pkg.INT_INSTANCE = new pkg.IntGenerator();
+  pkg.STRING_INSTANCE = new pkg.StringGenerator();
+  pkg.int_array = function(count, step, sorted) {
+    return pkg.INT_INSTANCE.int_array(count, step, sorted);
+  };
+  pkg.string_array = function(count, length, range, sorted) {
+    return pkg.STRING_INSTANCE.string_array(count, length, range, sorted);
+  };
+  pkg.big_string = function(length, range) {
+    return pkg.STRING_INSTANCE.big_string(length, range);
   };
 }).call(this);
 
