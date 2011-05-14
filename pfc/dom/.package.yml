@@ -1,6 +1,8 @@
 before: [.before.coffee]
 require:
+  - fierry.dom
   - fierry.performance
 namespace:
+  dom:    dom
   test:   performance.registerTest
   group:  performance.registerGroup
