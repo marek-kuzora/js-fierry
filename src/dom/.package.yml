@@ -1,0 +1,6 @@
+after: [.after.coffee]
+require:
+  - fierry.core
+namespace:
+  core:  core
+  array: array
