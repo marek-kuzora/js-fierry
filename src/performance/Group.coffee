@@ -2,10 +2,11 @@ class pkg.Group
 
   constructor: (group, @parent) ->
     @name = group.name
-    
+
     @_nodes = []
     @_after = group.after || (->)
     @_before = group.before || (->)
+    @_min_arg = group.min_arg || 0
 
   #
   # Accepts the given visitor for retrospection.
@@ -38,7 +39,7 @@ class pkg.Group
       return n
 
     throw new Error("Node not found #{@name}.#{name}")
-    
+
   #
   # Extracts tests from the group.
   # If recursive is provided, extracts tests from the child groups also.
@@ -66,3 +67,7 @@ class pkg.Group
   runAfter: (ctx) ->
     @_after.call(ctx)
     @parent.runAfter(ctx) if @parent
+
+  get_min_arg: ->
+    return @_min_arg || @parent.get_min_arg() if @parent
+    return @_min_arg

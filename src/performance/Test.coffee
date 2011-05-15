@@ -7,6 +7,7 @@ class pkg.Test
     @_run = test.run
     @_after = test.after || (->)
     @_before = test.before || (->)
+    @_min_arg = test.min_arg || group.get_min_arg()
 
   #
   # Accepts the given visitor for retrospection.
@@ -34,7 +35,10 @@ class pkg.Test
       time = @run(arg)
 
     arr = (@run(arg) for i in [1..pkg.MEASURE_RETRY])
-    return @_arg = pkg.EXECUTE_LIMIT / array.avg(arr) * arg
+    
+    @_arg = pkg.EXECUTE_LIMIT / array.avg(arr) * arg
+    @_arg = @_min_arg if @_arg < @_min_arg
+    return @_arg
 
   #
   # Runs the test given times and retunrs the elapsed time.
