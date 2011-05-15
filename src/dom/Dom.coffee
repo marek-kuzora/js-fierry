@@ -1,9 +1,5 @@
 class core.Dom
 
-  # TODO maybe should remove @_div and define only in create_html?
-  constructor: ->
-    @_div = document.createElement('div')
-
   #
   # Returns element with the given id.
   # @param String id
@@ -12,7 +8,7 @@ class core.Dom
     return document.getElementById(id)
 
   #
-  # Replace innerHTML of the given element
+  # Replace innerHTML of the given element.
   # @param HTMLElement e
   # @param String html
   #
@@ -24,14 +20,14 @@ class core.Dom
     return n
 
   #
-  # Creates HTMLElement(s) from the given string
+  # Creates HTMLElement(s) from the given string.
   # @param String html
   #
   create_html: (html) ->
-    div = @_div.cloneNode()
+    div = document.createElement('div')
     div.innerHTML = html
-    nodes = array.to_array(div.childNodes)
 
+    nodes = array.to_array(div.childNodes)
     return nodes[0] if nodes.length is 1
     return nodes
 

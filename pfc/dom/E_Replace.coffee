@@ -1,7 +1,10 @@
+group
+  name: 'dom.replace'
+  min_arg: 2500
+
 #
 # Predefined test cases for 3 different test groups.
 #
-
 naive_replace =
   name: 'naive -cached'
   run: ->
