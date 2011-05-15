@@ -16,9 +16,9 @@ class core.Dom
   # @param HTMLElement e
   # @param String html
   #
-  replace_html: (e, html = '') ->
+  replace_html: (e, html) ->
     n = e.cloneNode(false)
-    n.innerHTML = html
+    n.innerHTML = html if html
 
     e.parentNode.replaceChild(n, e)
     return n
@@ -34,3 +34,6 @@ class core.Dom
 
     return nodes[0] if nodes.length is 1
     return nodes
+
+  append_text: (e, text) ->
+    e.appendChild(document.createTextNode(text))
