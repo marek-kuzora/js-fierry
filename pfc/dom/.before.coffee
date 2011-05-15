@@ -6,7 +6,5 @@ group
     @stub = dom.replace_html(@stub)
     
 group
-  name: 'dom.create'
-
-group
   name: 'dom.replace'
+  min_arg: 2500
