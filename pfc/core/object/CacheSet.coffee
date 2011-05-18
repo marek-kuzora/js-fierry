@@ -1,5 +1,5 @@
 group
-  name: 'object.cache'
+  name: 'object.cache.set'
 
 test
   name: 'random_int'
