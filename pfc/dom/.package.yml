@@ -1,6 +1,7 @@
 before: [.before.coffee]
 require:
   - fierry.dom
+  - fierry.ui
   - fierry.performance
 namespace:
   dom:    dom
