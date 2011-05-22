@@ -1,13 +1,13 @@
 class pkg.ConsoleVisitor
-  
-  onGroupStart: (group) ->
+
+  on_group_start: (group) ->
      console.group(group.name)
 
-  onGroupEnd: (group) ->
+  on_group_end: (group) ->
     console.groupEnd()
 
-  onTest: (test) ->
+  on_test: (test) ->
     name = test.name.substr(test.name.lastIndexOf('.')+1)
-    res = test.getResult()
+    res = test.get_result()
 
-    console.log(name, "---", Math.round(res.getAverage()), "ops")
+    console.log(name, "---", Math.round(res.get_average()), "ops")

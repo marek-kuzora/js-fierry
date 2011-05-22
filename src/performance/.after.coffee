@@ -7,16 +7,16 @@ pkg.INSTANCE = new pkg.Registry()
 # Registers the performance group.
 # @param group - {name, *parent, *args, *before, *after}
 #
-api.registerGroup = (group) ->
-  pkg.INSTANCE.registerGroup(group)
+api.register_group = (group) ->
+  pkg.INSTANCE.register_group(group)
 
 
 #
 # Registers the performance test case.
 # @param test - {group, name, run, *args, *before, *after, *retry}
 #
-api.registerTest = (test) ->
-  pkg.INSTANCE.registerTest(test)
+api.register_test = (test) ->
+  pkg.INSTANCE.register_test(test)
 
 #
 # Runs the tests corresponding to the given group/test names.

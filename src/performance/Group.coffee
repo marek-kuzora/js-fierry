@@ -13,9 +13,9 @@ class pkg.Group
   # @param visitor
   #
   accept: (visitor) ->
-    visitor.onGroupStart(@)
+    visitor.on_group_start(@)
     node.accept(visitor) for node in @_nodes
-    visitor.onGroupEnd(@)
+    visitor.on_group_end(@)
 
 
   #
@@ -45,28 +45,28 @@ class pkg.Group
   # If recursive is provided, extracts tests from the child groups also.
   # @returns array of test instances.
   #
-  getTests: () ->
+  get_tests: () ->
     arr = []
     for n in @_nodes
       if n instanceof pkg.Test  then arr.push(n)
-      if n instanceof pkg.Group then arr = arr.concat(n.getTests())
+      if n instanceof pkg.Group then arr = arr.concat(n.get_tests())
     return arr
 
   #
   # Runs before method starting with the top parent group and going down.
   # @param ctx - execution context.
   #
-  runBefore: (ctx) ->
-    @parent.runBefore(ctx) if @parent
+  run_before: (ctx) ->
+    @parent.run_before(ctx) if @parent
     @_before.call(ctx)
 
   #
   # Runs after method starting with this group and going up to the parent group.
   # @param ctx - execution context.
   #
-  runAfter: (ctx) ->
+  run_after: (ctx) ->
     @_after.call(ctx)
-    @parent.runAfter(ctx) if @parent
+    @parent.run_after(ctx) if @parent
 
   get_min_arg: ->
     return @_min_arg || @parent.get_min_arg() if @parent

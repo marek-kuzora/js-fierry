@@ -14,7 +14,7 @@ class pkg.Test
   # @param visitor
   #
   accept: (visitor) ->
-    visitor.onTest(@)
+    visitor.on_test(@)
 
   #
   # Returns expected number of invocations of @_run in the given time.
@@ -47,7 +47,7 @@ class pkg.Test
   # @param log - Boolean log the result.
   #
   run: (arg) ->
-    @group.runBefore(@)
+    @group.run_before(@)
     @_before()
 
     start = new Date()
@@ -55,19 +55,19 @@ class pkg.Test
     end = new Date()
 
     @_after
-    @group.runAfter(@)
+    @group.run_after(@)
 
     return end - start
 
   #
   # Creates new active test result.
   #
-  createTestResult: ->
+  create_test_result: ->
     @_results.push(new pkg.TestResult())
 
 
   #
   # Returns the active test result.
   #
-  getResult: ->
+  get_result: ->
     return @_results[@_results.length - 1]

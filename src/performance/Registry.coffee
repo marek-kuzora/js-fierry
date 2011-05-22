@@ -7,8 +7,8 @@ class pkg.Registry
   # Registers the performance group.
   # @param group - {name, *parent, *args, *before, *after}
   #
-  registerGroup: (hash) ->
-    parent = @get(@_getParent(hash.name))
+  register_group: (hash) ->
+    parent = @get(@_get_parent(hash.name))
     group = new pkg.Group(hash, parent)
 
     parent.add(group)
@@ -18,7 +18,7 @@ class pkg.Registry
   # Returns parent for the given group/test name.
   # @param name - group/test name.
   #
-  _getParent: (name) ->
+  _get_parent: (name) ->
     idx = name.lastIndexOf('.')
     return if idx > -1 then name.substr(0, idx) else ''
 
@@ -26,7 +26,7 @@ class pkg.Registry
   # Registers the performance test case.
   # @param test - {group, name, run, *args, *before, *after, *retry}
   #
-  registerTest: (hash) ->
+  register_test: (hash) ->
     parent = if hash.group then @get(hash.group) else @_last_group
     test = new pkg.Test(hash, parent)
     
@@ -42,7 +42,7 @@ class pkg.Registry
   get: (name) ->
     group = @_root
     while name.length > 0
-      [child, name] = @_getFirstChild(name)
+      [child, name] = @_get_first_child(name)
       group = group.get(child)
     return group
 
@@ -50,7 +50,7 @@ class pkg.Registry
   # Returns first child of the given group/test name.
   # @param name - group/test name.
   #
-  _getFirstChild: (name) ->
+  _get_first_child: (name) ->
     idx = name.indexOf('.')
     idx = name.length if idx == -1
     return [name.substr(0, idx), name.substr(idx+1)]

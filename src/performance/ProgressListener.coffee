@@ -63,7 +63,7 @@ class pkg.ProgressListener
   #
   _get_output_ops: (test) ->
     rgx = /(\d+)(\d{3})(\.\d{2})/
-    ops = test.getResult().getAverage().toFixed(2)
+    ops = test.get_result().get_average().toFixed(2)
     ops = ops.replace(rgx, '$1' + ' ' + '$2$3')
 
     return string.lpad(ops, 10)

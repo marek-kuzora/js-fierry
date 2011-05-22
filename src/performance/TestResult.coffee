@@ -13,7 +13,7 @@ class pkg.TestResult
   #
   # Returns average number of operations per milisecond.
   #
-  getAverage: () ->
+  get_average: () ->
     sum = 0
     sum += ops for ops in @_registry
     return sum / @_registry.length
@@ -21,5 +21,5 @@ class pkg.TestResult
   #
   # Returns array of number of operations per milisecond.
   #
-  getAll: () ->
+  get_all: () ->
     return @_registry
