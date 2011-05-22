@@ -6,6 +6,5 @@ namespace:
   core:  core
   gen:   core.generation
 
-  pkg:   performance.string
-  test:  performance.registerTest
-  group: performance.registerGroup
+  test:   performance.register_test
+  group:  performance.register_group

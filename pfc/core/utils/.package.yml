@@ -5,5 +5,5 @@ require:
 namespace:
   core:   core
   array:  array
-  test:   performance.registerTest
-  group:  performance.registerGroup
+  test:   performance.register_test
+  group:  performance.register_group
