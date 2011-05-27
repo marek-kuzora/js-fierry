@@ -1,5 +1,5 @@
 class core.App
-  
+
   constructor: ->
     @_stop_arr = []
     @_start_arr = []
