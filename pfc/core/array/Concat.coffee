@@ -34,5 +34,3 @@ test
           'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
   run: ->
     @a.concat(@b)
-
-      

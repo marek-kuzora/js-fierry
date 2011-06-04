@@ -2,6 +2,6 @@ after: [.after.coffee]
 require:
   - fierry.core
 namespace:
-  pkg:    ui
+  pkg:    dj
   rtm:    core.runtime
   assert: core.assert

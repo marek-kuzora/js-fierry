@@ -1,0 +1,6 @@
+require:
+  - fierry.dj.actions
+  - fierry.dj.services
+  - fierry.dj.executors
+namespace:
+  pkg: dj

@@ -11,6 +11,10 @@ class core.Runtime
   # Requests should be threated as readonly.
   # @param {type,...} r
   #
+
+  #TODO maybe it is better to have push(type, req) and the type just define how to handle that data?
+  # I would need to push into @_requests another hash! {req:req, type: type} ??
+  # Or having @_requests as a hash or arrays instead of simple array.
   push: (r) ->
     @_requests.push(r)
 
@@ -20,7 +24,8 @@ class core.Runtime
   # @param Object service
   #
   register_service: (name, service) ->
-    assert app.is_stopped(), 'Cannot register new services if app is running'
+    if core.app.is_running()
+      throw new Error 'Cannot register new services if app is running'
     @_services[name] = service
 
   #
@@ -28,7 +33,8 @@ class core.Runtime
 	# @param {order, run, ...} executor
 	#
   register_executor: (type, exec) ->
-    assert app.is_stopped(), 'Cannot register new executors if app is running'
+    if core.app.is_running()
+      throw new Error 'Cannot register new executors if app is running'
     @_executors[type] = exec
 
   #
@@ -36,28 +42,29 @@ class core.Runtime
   # Performes depedency injection on services & executors
   #
   setup: =>
-    for service of @_services
-      for name in service.services
-        assert @_services[name], "Service #{name} not found"
-        service[name] = @_services[name]
+    for _, service of @_services
+      for key, name of service.services || []
+        if !@_services[name]
+          throw new Error "Service #{name} not found"
+        service[key] = @_services[name]
 
-    for exec of @_executors
-      for name in exec.services
-         assert @_services[name], "Service #{name} not found"
-         exec[name] = @_services[name]
+    for _, exec of @_executors
+      for key, name of exec.services || []
+        if !@_services[name]
+          throw new Error "Service #{name} not found"
+        exec[key] = @_services[name]
 
   #
   # Flushes the accumulated requests into application changes.
   # Clears services using cleanup() method if defined.
   #
   flush: ->
-    until array.empty(@_requests)
+    while @_requests.length != 0
       r = @_requests.shift()
 
-      assert @_requests[r.type], "Executor for #{r.type} not found"
+      core.assert @_executors[r.type], "Executor for #{r.type} not found"
       @_executors[r.type].run(r)
 
     for service in @_services
       service.cleanup() if service.cleanup
-
-    @_requests = {}
+    return

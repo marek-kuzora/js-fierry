@@ -1,0 +1,8 @@
+after: [.after.coffee]
+require:
+  - fierry.core
+  - fierry.dj.services
+namespace:
+  pkg:    dj
+  rtm:    core.runtime
+  assert: core.assert

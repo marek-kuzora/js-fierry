@@ -1,7 +1,7 @@
 # TODO Documentation!
 rtm.register_executor 'dj.into'
   services:
-    uid: 'uid.registry'
+    uid: 'dj.uid'
 
   #
   # Executes 'dj.into' requests from DeclarativeJ language.
@@ -32,9 +32,8 @@ rtm.register_executor 'dj.into'
 
     @traverse_ref(n, ref) for n in ref.nodes
 
-  #
-  #
-  #
+  # TODO create the intoCls action instead
+  # TODO update the liveRef creation in UidService!!
   attach_live_ref: (ref, live_refs) ->
     for l in live_refs
       live_ref = {ref: ref, parent: l}
