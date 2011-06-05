@@ -26,8 +26,8 @@ class core.Runtime
 
   #
   # Registers the given request for later processing in a batch.
-  # Request will be executed with all other accumulated requests on flush().
-  # Requests should be threated as readonly.
+  # - Request will be executed with all other accumulated requests on flush().
+  # - Requests should be threated as readonly.
   # @param String type
   # @param {...} req
   #
@@ -46,7 +46,7 @@ class core.Runtime
 
   #
   # Flushes the accumulated requests into application changes.
-  # Clears services using cleanup() method if defined.
+  # - Clears services using cleanup() method if defined.
   #
   flush: ->
     while @_requests.length != 0
@@ -68,8 +68,8 @@ class core.Runtime
 
   #
   # Setups the resource after application is loaded.
-  # Performs depedency injection of requested services.
-  # Setups the resource if necessary.
+  # - Performs depedency injection of requested services.
+  # - Setups the resource if necessary.
   # @param resource
   #
   _setup_resource: (resource) ->
