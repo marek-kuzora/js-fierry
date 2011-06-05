@@ -1,4 +1,4 @@
-before: [AbstractAction.coffee]
+before: [IAction.coffee, AbstractAction.coffee]
 require:
   - fierry.core
   - fierry.dj.services
