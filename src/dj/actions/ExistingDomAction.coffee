@@ -9,4 +9,26 @@ class pkg.ExistingDomAction extends pkg.AbstractAction
     @_ref = ref
     @_nodes = []
 
+  #
+  # Creates the action's child nodes.
+  # - This method is unsupported in ExistingDomAction.
+  #
+  create_nodes: ->
+    throw new Error "Unsupported method"
+
+  #
+  # Attaches action to its parent.
+  # - This method is unsupported in ExistingDomAction.
+  #
+  attach: ->
+    throw new Error "Unsupported method"
+
+  #
+  # Detaches action from its parent.
+  # - This method is unsupported in ExistingDomAction.
+  #
+  detach: ->
+    throw new Error "Unsupported method"
+
+
 pkg.register_action 'existing_dom', pkg.ExistingDomAction

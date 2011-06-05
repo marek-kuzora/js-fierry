@@ -1,5 +1,4 @@
-# TODO add proper API for nodes handling?
-class pkg.AbstractAction
+class pkg.AbstractAction extends pkg.IAction
 
   constructor: (ref, parent) ->
     @_ref = ref
@@ -39,3 +38,12 @@ class pkg.AbstractAction
   #
   get_last_node: ->
     return @_nodes[@_nodes.length - 1]
+
+  create_nodes: ->
+    for ref in @_ref.nodes
+      action = @_actions.get ref, @
+
+      action.create()
+      action.create_nodes()
+      action.attach()
+      action.finalize()

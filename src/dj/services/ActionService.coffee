@@ -10,6 +10,8 @@ class Service
   #
   register: (name, handler) ->
     assert !@_reg[name], "Action #{name} already exists"
+
+    handler.prototype._actions = @
     @_reg[name] = handler
 
   #
