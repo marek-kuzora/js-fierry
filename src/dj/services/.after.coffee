@@ -4,4 +4,4 @@
 # @param {} handler
 #
 pkg.register_action = (name, handler) ->
-  rtm.push {type: 'dj.action', name: name, handler: handler}
+  rtm.execute_on_service 'dj.actions', -> @register name, handler
