@@ -1,22 +1,38 @@
 class Service
 
+  services:
+    actions: 'dj.actions'
+
   constructor: ->
     @_uids = {}
+    
+  #
+  # Setups the service on application startup.
+  #
+  setup: ->
     @_retrospect_html(document.body)
-
+  
   #
   # Traverse through the DOM hierarchy to retrieve & cache found ids.
   # @param HTMLElement e
   #
   _retrospect_html: (e) ->
     return if e instanceof Text
+
     if id = e.getAttribute('id')
       @_uids[id] =
         ref:  {nodes: []}
-        live: [{dom: e, nodes: []}]
+        live: [@_create_live(e)]
 
     @_retrospect_html(n) for n in e.childNodes
     return
+  
+  #
+  # Creates ExistingDomAction from HTMLElement.
+  # @param HTMLElement e
+  #
+  _create_live: (e) ->
+    return @actions.get {type: 'existing_dom', dom: e}
 
   #
   # Caches reference structure by its id.

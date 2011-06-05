@@ -1,8 +1,8 @@
 class Service
-  
+
   constructor: ->
     @_reg = {}
-    
+
   #
   # Registers handler for the action with the given name.
   # @param String name
@@ -16,8 +16,10 @@ class Service
   # Returns handler for the action with the given name.
   # @param String name
   #
-  get: (name) ->
-    assert @_reg[name], "Action #{name} not found"
-    return @_reg[name]
+  get: (ref, parent) ->
+    name = ref.type
 
-rtm.register_service('dj.actions', new Service())
+    assert @_reg[name], "Action #{name} not found"
+    return new @_reg[name] ref, parent
+
+rtm.register_service 'dj.actions', new Service()
