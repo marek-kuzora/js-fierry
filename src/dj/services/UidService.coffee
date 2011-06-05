@@ -1,7 +1,7 @@
 class Service
 
   services:
-    actions: 'dj.actions'
+    _actions: 'dj.actions'
 
   constructor: ->
     @_uids = {}
@@ -32,7 +32,7 @@ class Service
   # @param HTMLElement e
   #
   _create_live: (e) ->
-    return @actions.get {type: 'existing_dom', dom: e}
+    return @_actions.get {type: 'existing_dom', dom: e}
 
   #
   # Caches reference structure by its id.
