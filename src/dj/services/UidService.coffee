@@ -68,4 +68,7 @@ class Service
     assert @_uids[id], "Uid entry for #{id} not found"
     return @_uids[id].live
 
+#
+# Registers service as dj.uid
+#
 rtm.register_service('dj.uid', new Service())

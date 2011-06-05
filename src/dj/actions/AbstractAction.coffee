@@ -15,8 +15,6 @@ class pkg.AbstractAction extends pkg.IAction
   _setup_structure: (parent) ->
     @_parent = parent
     @_before = parent.get_last_node()
-
-    @_parent.push_node @
     @_before.set_after_sibling @
 
   #
@@ -39,11 +37,9 @@ class pkg.AbstractAction extends pkg.IAction
   get_last_node: ->
     return @_nodes[@_nodes.length - 1]
 
+  #
+  # (see: src/dj/actions/IAction.coffee)
+  #
   create_nodes: ->
     for ref in @_ref.nodes
-      action = @_actions.get ref, @
-
-      action.create()
-      action.create_nodes()
-      action.attach()
-      action.finalize()
+      @push_node @_actions.get_created ref, @

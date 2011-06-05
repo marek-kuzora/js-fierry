@@ -9,11 +9,10 @@ rtm.register_executor 'dj.into'
   #
   run: (req) ->
     parent = @_uid.get_ref(req.id)
-    parent.nodes = parent.nodes.concat(req.nodes)  # weak..
-    
     live_refs = @_uid.get_live(req.id)
 
     for n in req.nodes
+      parent.nodes.push(n)
       @traverse_ref(n, parent)
       @attach_live_ref(n, live_refs)
     return
@@ -42,4 +41,4 @@ rtm.register_executor 'dj.into'
   attach_live_ref: (ref, parents) ->
     for p in parents
       console.log 'dj.subtree', ref
-      #rtm.push_request 'dj.subtree', @_actions.get(ref, p)
+      #p.push_node @_actions.get_created(ref, p)
