@@ -6,19 +6,6 @@ class core.Runtime
     @_executors = {}
 
   #
-  # Registers the given request for later processing in a batch.
-  # Request will be executed with all other accumulated requests on flush().
-  # Requests should be threated as readonly.
-  # @param {type,...} r
-  #
-
-  #TODO maybe it is better to have push(type, req) and the type just define how to handle that data?
-  # I would need to push into @_requests another hash! {req:req, type: type} ??
-  # Or having @_requests as a hash or arrays instead of simple array.
-  push: (r) ->
-    @_requests.push(r)
-
-  #
   # Registers a service under the given name.
   # @param String name
   # @param Object service
@@ -32,27 +19,30 @@ class core.Runtime
   # Registers the executor for requests processing.
 	# @param {order, run, ...} executor
 	#
-  register_executor: (type, exec) ->
+  register_executor: (type, executor) ->
     if core.app.is_running()
       throw new Error 'Cannot register new executors if app is running'
-    @_executors[type] = exec
+    @_executors[type] = executor
 
   #
-  # Setups the executors after application is loaded.
-  # Performes depedency injection on services & executors
+  # Registers the given request for later processing in a batch.
+  # Request will be executed with all other accumulated requests on flush().
+  # Requests should be threated as readonly.
+  # @param String type
+  # @param {...} req
   #
-  setup: =>
-    for _, service of @_services
-      for key, name of service.services || []
-        if !@_services[name]
-          throw new Error "Service #{name} not found"
-        service[key] = @_services[name]
+  push_request: (type, request) ->
+    @_requests.push {type: type, req: request}
 
-    for _, exec of @_executors
-      for key, name of exec.services || []
-        if !@_services[name]
-          throw new Error "Service #{name} not found"
-        exec[key] = @_services[name]
+  #
+  # Executes provided function inside the service with specified name.
+  # @param String name
+  # @param -> fn
+  #
+  execute_on_service: (name, fn) ->
+    if !@_services[name]
+      throw new Error "Service #{name} not found."
+    return fn.call @_services[name]
 
   #
   # Flushes the accumulated requests into application changes.
@@ -60,11 +50,32 @@ class core.Runtime
   #
   flush: ->
     while @_requests.length != 0
-      r = @_requests.shift()
+      {type, req} = @_requests.shift()
 
-      core.assert @_executors[r.type], "Executor for #{r.type} not found"
-      @_executors[r.type].run(r)
+      core.assert @_executors[type], "Executor for #{type} not found"
+      @_executors[type].run req
 
     for service in @_services
       service.cleanup() if service.cleanup
     return
+
+  #
+  # Setups executors and services on application startup.
+  #
+  _setup: =>
+    @_setup_resource service  for _, service of @_services
+    @_setup_resource executor for _, executor of @_executors
+
+  #
+  # Setups the resource after application is loaded.
+  # Performs depedency injection of requested services.
+  # Setups the resource if necessary.
+  # @param resource
+  #
+  _setup_resource: (resource) ->
+    for key, name of resource.services || {}
+      if !@_services[name]
+        throw new Error "Service #{name} not found."
+      resource[key] = @_services[name]
+
+    resource.setup() if resource.setup

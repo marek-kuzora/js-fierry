@@ -1,3 +1,7 @@
+#
+# fierry.core provides basic functionality to the fierry framework.
+# Inside this package developer should not access core namespace from anywhere but .after.coffee.
+#
 after: [.after.coffee]
 namespace:
   core: core
