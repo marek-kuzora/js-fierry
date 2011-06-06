@@ -14,8 +14,10 @@ class pkg.AbstractAction extends pkg.IAction
   #
   _setup_structure: (parent) ->
     @_parent = parent
-    @_before = parent.get_last_node()
-    @_before.set_after_sibling @
+
+    if @_parent.has_nodes()
+      @_before = parent.get_last_node()
+      @_before.set_after_sibling(@)
 
   #
   # Pushes action's new child node.
@@ -30,6 +32,12 @@ class pkg.AbstractAction extends pkg.IAction
   #
   set_after_sibling: (after) ->
     @_after = after
+
+  #
+  # Returns true if action has any child nodes.
+  #
+  has_nodes: ->
+    return @_nodes.length != 0
 
   #
   # Returns current action's last node.

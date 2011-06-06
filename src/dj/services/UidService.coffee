@@ -10,7 +10,7 @@ class Service
   # Setups the service on application startup.
   #
   setup: ->
-    @_retrospect_html(document.body)
+    @_retrospect_html document.body
   
   #
   # Traverse through the DOM hierarchy to retrieve & cache found ids.
@@ -19,10 +19,10 @@ class Service
   _retrospect_html: (e) ->
     return if e instanceof Text
 
-    if id = e.getAttribute('id')
+    if id = e.getAttribute 'id'
       @_uids[id] =
         ref:  {nodes: []}
-        live: [@_create_live(e)]
+        live: [@_create_live e]
 
     @_retrospect_html(n) for n in e.childNodes
     return
@@ -50,7 +50,7 @@ class Service
   #
   cache_live: (id, live) ->
     assert @_uids[id], "Uid entry for #{id} not found"
-    @_uids[id].live.push(live)
+    @_uids[id].live.push live
 
   #
   # Retrieves reference structure by its id.
@@ -71,4 +71,4 @@ class Service
 #
 # Registers service as dj.uid
 #
-rtm.register_service('dj.uid', new Service())
+rtm.register_service 'dj.uid', new Service()

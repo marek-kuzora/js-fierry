@@ -30,15 +30,6 @@ rtm.register_executor 'dj.into'
 
     @traverse_ref(n, ref) for n in ref.nodes
 
-  # TODO create the intoCls action instead
-  # TODO update the liveRef creation in UidService!!
-  #attach_live_ref: (ref, parents) ->
-  #  for l in parents
-  #    live_ref = {ref: ref, parent: l}
-  #    l.nodes.push(live_ref) # no need - action will add itself to its parent!
-  #    rtm.push_request 'dj.subtree', live_ref
-
   attach_live_ref: (ref, parents) ->
     for p in parents
-      console.log 'dj.subtree', ref
-      #p.push_node @_actions.get_created(ref, p)
+      p.push_node @_actions.get_created(ref, p)
