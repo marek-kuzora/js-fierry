@@ -1,0 +1,13 @@
+after: [.after.coffee]
+require:
+  - fierry.core
+  - fierry.scheduler
+namespace:
+  core:   core
+  array:  array
+  object: object
+
+  app:    core.app
+  uid:    core.uid
+  assert: core.assert
+  pkg:    core.storage
