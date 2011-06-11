@@ -26,9 +26,10 @@ Env.array =
       mval = arr[mid]
 
       if mval < key then l = mid + 1
-      else if mval > key then h = mid - 1
-      else return mid
-    return -(l+1)
+      else h = mid - 1
+
+    if mval == key then return mid
+    else return -(l+1)
 
   #
   # Returns true if array contains the given item.

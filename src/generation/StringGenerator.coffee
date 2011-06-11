@@ -3,7 +3,7 @@ class pkg.StringGenerator
   constructor: ->
     @_sreg = {}
 
-    @_min_char = 32
+    @_min_char = 0
     @_max_count = {}
     @_max_length = 20
 
@@ -14,7 +14,7 @@ class pkg.StringGenerator
   # @param Integer range - possible different values of single character.
   # @param Boolean sorted - if true, returns sorted array.
   #
-  string_array: (count, length = 10, range = 200, sorted = false) ->
+  string_array: (count, length = 10, sorted = false, range = 127) ->
     k = "#{count}_#{length}_#{range}_#{sorted}"
 
     return @_sreg[k] ?= do =>
@@ -39,10 +39,10 @@ class pkg.StringGenerator
   # @param Integer count
   # @param Integer range - possible different values of single character.
   #
-  _gen_string_array: (count, range) ->
+  _gen_string_array: (count, range, min_char = @_min_char) ->
     for _ in [1..count]
       arr = for j in [1..@_max_length]
-        i = core.rand(range) + @_min_char
+        i = core.rand(range) + min_char
         char = String.fromCharCode(i)
       str = arr.join('')
 
