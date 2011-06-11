@@ -31,17 +31,19 @@ class pkg.Storage
     @_rules[head] ?= []
     @_rules[head].push(new RegExp('^' + path))
 
-  _get_np: (arr) ->
-    path = @_get_np_path(arr)
-    return @_nps[path] ?= new pkg.NotifyPoint()
+  _get_np: (arr, str) ->
+    str = arr.join('.') unless str # later we need to use str from arr.
 
-  _get_np_path: (arr) ->
+    return @_nps[str] ?= do =>
+      np = @_get_np_path(arr, str)
+      @_nps[np] ?= new pkg.NotifyPoint()
+
+  _get_np_path: (arr, raw) ->
     max = ''
     rules = @_rules[arr[0]]
 
-    if rules
-      raw = arr.join('.')
-      for rule in rules
-        tmp = raw.match(rule)
-        max = tmp[0] if tmp && tmp[0].length > max.length
+    for rule in rules
+      tmp = raw.match(rule)
+      max = tmp[0] if tmp and tmp[0].length > max.length
     return max
+
