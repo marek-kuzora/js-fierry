@@ -58,6 +58,13 @@ Env.array =
     return
 
   #
+  # Returns if the given object is array.
+  # @param Any o
+  #
+  is: (o) ->
+    return core.type(o) is 'array'
+
+  #
   # Shuffles the given array.
   # @param Array arr
   #

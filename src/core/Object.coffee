@@ -25,6 +25,5 @@ Env.object =
     l = p.length - 1
     while l--
       e = p[i++]
-      o[e] ?= {}
-      o = o[e]
+      o = o[e] ?= {}
     o[p[i]] = v
