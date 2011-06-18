@@ -23,3 +23,12 @@ core.uid.__counter__ = 0
 core.rand = (max) ->
   return Math.random() if max == undefined
   return Math.round(Math.random()*max) #TODO Can be faster? >> << operations??
+
+#
+# Sums running time of multiple operations happening sequentially
+# @param Number[] ops - array of k_ops/ms.
+#
+core.sum_ops = (ops...) ->
+  sum = 0
+  sum += 1 / (op * 1000) for op in ops
+  return 1 / sum / 1000
