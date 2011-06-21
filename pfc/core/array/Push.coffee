@@ -1,9 +1,9 @@
 #
-# Unshift operation seams extemally slow.
-# Working together, they get around 10k ops/ms that is 4x slower than push-pop handling.
+# Push & pop are fast enought when it comes to handling arrays.
+# Working together, they get over 40k ops/ms for small arrays.
 #
 group
-  name: 'array.shift-unshift'
+  name: 'array.push-pop'
   before: ->
     @i = 0
     @empty = []
@@ -11,30 +11,30 @@ group
 
 
 test
-  name: '-shift-only'
+  name: '-pop-only'
   run: ->
-    @full.shift()
+    @full.pop()
 
 test
-  name: '-unshift-only'
+  name: '-push-only'
   run: ->
-    @empty.unshift(@i++)
+    @empty.push(@i++)
 
 test
   name: ' 5 chars'
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e']
   run: ->
-    @arr.unshift('f')
-    @arr.shift()
+    @arr.push('f')
+    @arr.pop()
 
 test
   name: '10 chars'
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
   run: ->
-    @arr.unshift('k')
-    @arr.shift()
+    @arr.push('k')
+    @arr.pop()
 
 test
   name: '50 chars'
@@ -45,5 +45,5 @@ test
            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'
            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
   run: ->
-    @arr.unshift('k')
-    @arr.shift()
+    @arr.push('k')
+    @arr.pop()

@@ -5,28 +5,37 @@ group
   name: 'array.join.str'
 
 test
-  name: 'small -default-token'
+  name: ' 5 length -primitive'
+  before: ->
+    @arr = ['a', 'b', 'c', 'd', 'e']
+  run: ->
+    str = ''
+    for i in @arr
+      str += if str then '.' + i else i
+
+test
+  name: ' 5 length -default-token'
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e']
   run: ->
     @arr.join()
 
 test
-  name: 'small -custom-token'
+  name: ' 5 length -custom-token'
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e']
   run: ->
     @arr.join('.-.')
 
 test
-  name: 'standard'
+  name: '10 length'
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
   run: ->
     @arr.join()
 
 test
-  name: 'big'
+  name: '40 length'
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'
             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'
@@ -36,7 +45,7 @@ test
     @arr.join()
 
 test
-  name: 'big -no-token'
+  name: '40 length -no-token'
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'
             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'
@@ -61,7 +70,7 @@ test
     @arr = ['a', ['b', 'c', 'd'], 'e']
   run: ->
     @arr.join()
-    
+
 test
   name: 'recursive -big'
   before: ->
@@ -73,14 +82,14 @@ group
   name: 'array.join.int'
 
 test
-  name: 'one-only'
+  name: '10 length -one-int'
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 10]
   run: ->
     @arr.join()
 
 test
-  name: 'all-ints'
+  name: '10 length -all-ints'
   before: ->
     @arr = [1,2,3,4,5,6,7,8,9,10]
   run: ->
