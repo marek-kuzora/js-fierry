@@ -1,6 +1,6 @@
 #
-# Creating objects using simple hashes
-# Efficient enough when creating transport-only objects. 
+# Creating objects using simple hashes.
+# Efficient enough when creating transport-only objects.
 #
 group
   name: 'create.object'
@@ -22,6 +22,24 @@ test
   name: '10 length'
   run: ->
     h = {a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8, i: 9, j: 10}
+
+#
+# Creating objects with nested objects using hashes.
+# Performance stands at 6-8k ops/ms which is slower than anticipated.
+#
+group
+  name: 'create.object.nested'
+
+test
+  name: ' 5 length'
+  run: ->
+    h = {a: 1, b: 2, c: {c: 3}, d: 4, e: {e: 5}}
+
+test
+  name: '10 length'
+  run: ->
+    h = {a: 1, b: 2, c: {c: 3}, d: 4, e: {e: 5}, f: 6, g: 7, h: {h: 8}, i: 9, j: 10}
+
 
 #
 # Creating objects using Object.create().

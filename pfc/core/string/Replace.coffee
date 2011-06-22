@@ -2,9 +2,9 @@ group
   name: 'string.regexp.replace'
 
 test
-  name: ' 1 char -1 replace'
+  name: '20 chars -1 replace'
   before: ->
-    @str = 'aaa|bbb|ccc|ddd|eee|fff'
+    @str = 'aaa|bbb|ccc|ddd|eee|'
   run: ->
     @str.replace(/a/, '&')
 
