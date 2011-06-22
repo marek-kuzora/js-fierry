@@ -4,5 +4,6 @@ require:
   - fierry.performance
 namespace:
   dom:    dom
+  pkg:    performance.dom
   test:   performance.register_test
   group:  performance.register_group
