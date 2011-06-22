@@ -3,11 +3,17 @@ require:
   - fierry.core
   - fierry.scheduler
 namespace:
-  core:   core
-  array:  array
-  object: object
+  # Core
+  core:    core
+  array:   array
+  object:  object
 
-  app:    core.app
-  uid:    core.uid
-  assert: core.assert
-  pkg:    core.storage
+  # Helpers
+  app:     core.app
+  uid:     core.uid
+  assert:  core.assert
+  
+  # Internal namespaces
+  dao:     core.dao
+  pkg:     core.storage
+  storage: core.storage

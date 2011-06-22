@@ -1,29 +1,39 @@
-class pkg.Notifier
+class storage.Notifier
 
   constructor: ->
     @_dirty = []
     @_visited = []
 
+  #
+  # Sets the given function as dirty.
+  # The function will be executed at the nearest notify.
+  #
+  # @param Function fn
+  #
   set_dirty: (fn) ->
-    unless @_visited[uid(fn)]
-      @_visited[uid(fn)]
+    unless @_visited[uid fn]
+      @_visited[uid fn] = true
       @_dirty.push(fn)
 
-  # I probably don't need here any shift...
-  # I could have array index and iterate untill i reach the i == length-1.
-  # After each fn invocation I would 
+  #
+  # Executes all queued dirty functions.
+  # Commonly used to notify listeners about storage changes.
+  #
   notify: =>
-    until array.empty(@_dirty)
-      fn = @_dirty.shift()
-
-      fn()
-      @_visited[uid(fn)] = false
-
-  # TODO better formatting...
-  notify_new: =>
     i = 0
-    while i < @_dirty.length
-      fn = @_dirty[i++]
-      fn()
-      @_visited[uid(fn)] = false
-    @_dirty = []
+    l = @_dirty.length
+
+    while i < l
+      @_execute(i++)
+      l = @_dirty.length if i is l
+
+  #
+  # Executes the function with specified index.
+  #
+  # @param Integer i - function index.
+  #
+  _execute: (i) ->
+    fn = @_dirty[i]
+    fn()
+
+    @_visited[uid fn] = false
