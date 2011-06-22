@@ -1,5 +1,5 @@
 class core.Event
-  
+
   #
   # Subscribes the function to listen for events of the given type.
   # @param type - event type.
