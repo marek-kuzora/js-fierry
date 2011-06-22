@@ -1,3 +1,276 @@
+YUI.add( 'fierry.dj', function( Env ) {
+
+var pkg = Env.namespace('dj');
+
+}, '3.0' ,{requires:['fierry.dj.actions', 'fierry.dj.services', 'fierry.dj.executors']});
+
+YUI.add( 'fierry.dj.actions', function( Env ) {
+
+var pkg = Env.namespace('dj');
+var rtm = Env.namespace('core.runtime');
+var assert = Env.namespace('core.assert');
+(function() {
+  pkg.IAction = (function() {
+    function IAction() {}
+    IAction.prototype.create = function() {};
+    IAction.prototype.create_nodes = function() {};
+    IAction.prototype.finalize = function() {};
+    IAction.prototype.attach = function() {};
+    IAction.prototype.detach = function() {};
+    IAction.prototype.update = function() {};
+    return IAction;
+  })();
+}).call(this);
+
+(function() {
+  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
+    for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
+    function ctor() { this.constructor = child; }
+    ctor.prototype = parent.prototype;
+    child.prototype = new ctor;
+    child.__super__ = parent.prototype;
+    return child;
+  };
+  pkg.AbstractAction = (function() {
+    __extends(AbstractAction, pkg.IAction);
+    function AbstractAction(ref, parent) {
+      this._ref = ref;
+      this._nodes = [];
+      this._setup_structure(parent);
+    }
+    AbstractAction.prototype._setup_structure = function(parent) {
+      this._parent = parent;
+      if (this._parent.has_nodes()) {
+        this._before = parent.get_last_node();
+        return this._before.set_after_sibling(this);
+      }
+    };
+    AbstractAction.prototype.push_node = function(node) {
+      return this._nodes.push(node);
+    };
+    AbstractAction.prototype.set_after_sibling = function(after) {
+      return this._after = after;
+    };
+    AbstractAction.prototype.has_nodes = function() {
+      return this._nodes.length !== 0;
+    };
+    AbstractAction.prototype.get_last_node = function() {
+      return this._nodes[this._nodes.length - 1];
+    };
+    AbstractAction.prototype.create_nodes = function() {
+      var ref, _i, _len, _ref, _results;
+      _ref = this._ref.nodes;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        ref = _ref[_i];
+        _results.push(this.push_node(this._actions.get_created(ref, this)));
+      }
+      return _results;
+    };
+    return AbstractAction;
+  })();
+}).call(this);
+
+(function() {
+  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
+    for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
+    function ctor() { this.constructor = child; }
+    ctor.prototype = parent.prototype;
+    child.prototype = new ctor;
+    child.__super__ = parent.prototype;
+    return child;
+  };
+  pkg.DomAction = (function() {
+    __extends(DomAction, pkg.AbstractAction);
+    function DomAction(ref, parent) {
+      DomAction.__super__.constructor.call(this, ref, parent);
+      this._attrs = ref.attrs();
+      this._attached = false;
+    }
+    DomAction.prototype.create = function() {
+      this._attrs = this._ref.attrs();
+      return this._node = this.create_node();
+    };
+    DomAction.prototype.create_node = function() {
+      throw new Error('Unsupported method');
+    };
+    DomAction.prototype.get_dom_reference = function() {
+      return this._node;
+    };
+    DomAction.prototype.attach = function() {
+      var pnode;
+      pnode = this._parent.get_dom_reference();
+      if (this._after && this._after.is_attached()) {
+        return pnode.insertBefore(this._node, this._after.get_dom_reference());
+      } else {
+        return pnode.appendChild(this._node);
+      }
+    };
+    DomAction.prototype.is_attached = function() {
+      return this._node.parentNode !== null;
+    };
+    DomAction.prototype.detach = function() {
+      return this._node.parentNode.removeChild(this._node);
+    };
+    return DomAction;
+  })();
+}).call(this);
+
+(function() {
+  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
+    for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
+    function ctor() { this.constructor = child; }
+    ctor.prototype = parent.prototype;
+    child.prototype = new ctor;
+    child.__super__ = parent.prototype;
+    return child;
+  };
+  pkg.TextAction = (function() {
+    function TextAction() {
+      TextAction.__super__.constructor.apply(this, arguments);
+    }
+    __extends(TextAction, pkg.DomAction);
+    TextAction.prototype.create_node = function() {
+      var node;
+      node = document.createElement('span');
+      node.innerHTML = this._attrs.text;
+      return node;
+    };
+    return TextAction;
+  })();
+  pkg.register_action('dom:text', pkg.TextAction);
+}).call(this);
+
+(function() {
+  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
+    for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
+    function ctor() { this.constructor = child; }
+    ctor.prototype = parent.prototype;
+    child.prototype = new ctor;
+    child.__super__ = parent.prototype;
+    return child;
+  };
+  pkg.HeaderAction = (function() {
+    function HeaderAction() {
+      HeaderAction.__super__.constructor.apply(this, arguments);
+    }
+    __extends(HeaderAction, pkg.DomAction);
+    HeaderAction.prototype.create_node = function() {
+      var node;
+      node = document.createElement('h1');
+      node.className = this._ref.classes.join(' ');
+      return node;
+    };
+    return HeaderAction;
+  })();
+  pkg.register_action('dom:h1', pkg.HeaderAction);
+}).call(this);
+
+(function() {
+  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
+    for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
+    function ctor() { this.constructor = child; }
+    ctor.prototype = parent.prototype;
+    child.prototype = new ctor;
+    child.__super__ = parent.prototype;
+    return child;
+  };
+  pkg.ExistingDomAction = (function() {
+    __extends(ExistingDomAction, pkg.AbstractAction);
+    function ExistingDomAction(ref) {
+      this._ref = ref;
+      this._nodes = [];
+    }
+    ExistingDomAction.prototype.get_dom_reference = function() {
+      return this._ref.dom;
+    };
+    ExistingDomAction.prototype.create_nodes = function() {
+      throw new Error('Unsupported method');
+    };
+    ExistingDomAction.prototype.attach = function() {
+      throw new Error('Unsupported method');
+    };
+    ExistingDomAction.prototype.detach = function() {
+      throw new Error('Unsupported method');
+    };
+    return ExistingDomAction;
+  })();
+  pkg.register_action('existing_dom', pkg.ExistingDomAction);
+}).call(this);
+
+(function() {
+  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
+    for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
+    function ctor() { this.constructor = child; }
+    ctor.prototype = parent.prototype;
+    child.prototype = new ctor;
+    child.__super__ = parent.prototype;
+    return child;
+  };
+  pkg.DivAction = (function() {
+    function DivAction() {
+      DivAction.__super__.constructor.apply(this, arguments);
+    }
+    __extends(DivAction, pkg.DomAction);
+    DivAction.prototype.create_node = function() {
+      var node;
+      node = document.createElement('div');
+      if (this._ref.id) {
+        node.id = this._ref.id;
+      }
+      return node;
+    };
+    return DivAction;
+  })();
+  pkg.register_action('dom:div', pkg.DivAction);
+}).call(this);
+
+
+}, '3.0' ,{requires:['fierry.core', 'fierry.dj.services']});
+
+YUI.add( 'fierry.dom', function( Env ) {
+
+var core = Env.namespace('core');
+var array = Env.namespace('array');
+(function() {
+  core.Dom = (function() {
+    function Dom() {}
+    Dom.prototype.$ = function(id) {
+      return document.getElementById(id);
+    };
+    Dom.prototype.replace_html = function(e, html) {
+      var n;
+      n = e.cloneNode(false);
+      if (html) {
+        n.innerHTML = html;
+      }
+      e.parentNode.replaceChild(n, e);
+      return n;
+    };
+    Dom.prototype.create_html = function(html) {
+      var div, nodes;
+      div = document.createElement('div');
+      div.innerHTML = html;
+      nodes = array.to_array(div.childNodes);
+      if (nodes.length === 1) {
+        return nodes[0];
+      }
+      return nodes;
+    };
+    Dom.prototype.append_text = function(e, text) {
+      return e.appendChild(document.createTextNode(text));
+    };
+    return Dom;
+  })();
+}).call(this);
+
+(function() {
+  Env.dom = new core.Dom();
+}).call(this);
+
+
+}, '3.0' ,{requires:['fierry.core']});
+
 YUI.add( 'fierry.core', function( Env ) {
 
 var core = Env.namespace('core');
@@ -36,11 +309,42 @@ var core = Env.namespace('core');
       l = p.length - 1;
       while (l--) {
         e = p[i++];
-        (_ref = o[e]) != null ? _ref : o[e] = {};
-        o = o[e];
+        o = (_ref = o[e]) != null ? _ref : o[e] = {};
       }
       return o[p[i]] = v;
     }
+  };
+}).call(this);
+
+(function() {
+  core.type = function(o) {
+    var t;
+    if (o === null) {
+      return 'null';
+    }
+    t = typeof o;
+    if (t !== 'object') {
+      return t;
+    }
+    switch (o.toString()) {
+      case '[object Date]':
+        return 'date';
+      case '[object Array]':
+        return 'array';
+      case '[object Number]':
+        return 'number';
+      case '[object Object]':
+        return 'object';
+      case '[object RegExp]':
+        return 'regexp';
+      case '[object String]':
+        return 'string';
+      case '[object Boolean]':
+        return 'boolean';
+      case '[object Function]':
+        return 'function';
+    }
+    return 'object';
   };
 }).call(this);
 
@@ -118,6 +422,7 @@ var core = Env.namespace('core');
 }).call(this);
 
 (function() {
+  var __slice = Array.prototype.slice;
   core.assert = function(condition, message) {
     if (!condition) {
       throw new Error(message);
@@ -127,17 +432,55 @@ var core = Env.namespace('core');
     var _ref;
     return (_ref = obj.__uid__) != null ? _ref : obj.__uid__ = ++core.uid.__counter__;
   };
-  core.uid.__counter__ = 0;
+  core.uid.__counter__ = 1;
   core.rand = function(max) {
     if (max === void 0) {
       return Math.random();
     }
     return Math.round(Math.random() * max);
   };
+  core.sum_ops = function() {
+    var op, ops, sum, _i, _len;
+    ops = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    sum = 0;
+    for (_i = 0, _len = ops.length; _i < _len; _i++) {
+      op = ops[_i];
+      sum += 1 / (op * 1000);
+    }
+    return 1 / sum / 1000;
+  };
 }).call(this);
 
 (function() {
   Env.array = {
+    avg: function(arr) {
+      var i, sum, _i, _len;
+      sum = 0;
+      for (_i = 0, _len = arr.length; _i < _len; _i++) {
+        i = arr[_i];
+        sum += i;
+      }
+      return sum / arr.length;
+    },
+    binary_search: function(arr, key) {
+      var h, l, mid, mval;
+      l = 0;
+      h = arr.length - 1;
+      while (l <= h) {
+        mid = l + h >> 1;
+        mval = arr[mid];
+        if (mval < key) {
+          l = mid + 1;
+        } else {
+          h = mid - 1;
+        }
+      }
+      if (mval === key) {
+        return mid;
+      } else {
+        return -(l + 1);
+      }
+    },
     contains: function(arr, it) {
       return arr.indexOf(it) === !-1;
     },
@@ -156,14 +499,8 @@ var core = Env.namespace('core');
         }
       }
     },
-    avg: function(arr) {
-      var i, sum, _i, _len;
-      sum = 0;
-      for (_i = 0, _len = arr.length; _i < _len; _i++) {
-        i = arr[_i];
-        sum += i;
-      }
-      return sum / arr.length;
+    is: function(o) {
+      return core.type(o) === 'array';
     },
     shuffle: function(arr) {
       var i, j, x, _ref;
@@ -174,6 +511,9 @@ var core = Env.namespace('core');
         _ref = [arr[j], x], arr[i] = _ref[0], arr[j] = _ref[1];
       }
       return arr;
+    },
+    to_array: function(arr) {
+      return Array.prototype.slice.call(arr);
     },
     unique: function(arr) {
       var hash, i, r, _i, _len;
@@ -187,23 +527,6 @@ var core = Env.namespace('core');
         r.push(i);
       }
       return r;
-    },
-    binary_search: function(arr, key) {
-      var h, l, mid, mval;
-      l = 0;
-      h = arr.length - 1;
-      while (l <= h) {
-        mid = l + h >> 1;
-        mval = arr[mid];
-        if (mval < key) {
-          l = mid + 1;
-        } else if (mval > key) {
-          h = mid - 1;
-        } else {
-          return mid;
-        }
-      }
-      return -(l + 1);
     }
   };
 }).call(this);
@@ -229,11 +552,145 @@ var core = Env.namespace('core');
 }).call(this);
 
 (function() {
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  core.Runtime = (function() {
+    function Runtime() {
+      this._setup = __bind(this._setup, this);;      this._requests = [];
+      this._services = {};
+      this._executors = {};
+    }
+    Runtime.prototype.register_service = function(name, service) {
+      if (core.app.is_running()) {
+        throw new Error('Cannot register new services if app is running');
+      }
+      return this._services[name] = service;
+    };
+    Runtime.prototype.register_executor = function(type, executor) {
+      if (core.app.is_running()) {
+        throw new Error('Cannot register new executors if app is running');
+      }
+      return this._executors[type] = executor;
+    };
+    Runtime.prototype.push_request = function(type, request) {
+      return this._requests.push({
+        type: type,
+        req: request
+      });
+    };
+    Runtime.prototype.execute_on_service = function(name, fn) {
+      if (!this._services[name]) {
+        throw new Error("Service " + name + " not found.");
+      }
+      return fn.call(this._services[name]);
+    };
+    Runtime.prototype.flush = function() {
+      var req, service, type, _i, _len, _ref, _ref2;
+      while (this._requests.length !== 0) {
+        _ref = this._requests.shift(), type = _ref.type, req = _ref.req;
+        core.assert(this._executors[type], "Executor for " + type + " not found");
+        this._executors[type].run(req);
+      }
+      _ref2 = this._services;
+      for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+        service = _ref2[_i];
+        if (service.cleanup) {
+          service.cleanup();
+        }
+      }
+    };
+    Runtime.prototype._setup = function() {
+      var executor, service, _, _ref, _ref2, _results;
+      _ref = this._services;
+      for (_ in _ref) {
+        service = _ref[_];
+        this._setup_resource(service);
+      }
+      _ref2 = this._executors;
+      _results = [];
+      for (_ in _ref2) {
+        executor = _ref2[_];
+        _results.push(this._setup_resource(executor));
+      }
+      return _results;
+    };
+    Runtime.prototype._setup_resource = function(resource) {
+      var key, name, _ref;
+      _ref = resource.services || {};
+      for (key in _ref) {
+        name = _ref[key];
+        if (!this._services[name]) {
+          throw new Error("Service " + name + " not found.");
+        }
+        resource[key] = this._services[name];
+      }
+      if (resource.setup) {
+        return resource.setup();
+      }
+    };
+    return Runtime;
+  })();
+}).call(this);
+
+(function() {
   core.app = new core.App();
+  core.runtime = new core.Runtime();
+  core.app.add_start_handler(core.runtime._setup);
 }).call(this);
 
 
 }, '3.0' ,{requires:[]});
+
+YUI.add( 'fierry.dj.executors', function( Env ) {
+
+var pkg = Env.namespace('dj');
+var rtm = Env.namespace('core.runtime');
+var assert = Env.namespace('core.assert');
+(function() {
+  rtm.register_executor('dj.into', {
+    services: {
+      _uid: 'dj.uid',
+      _actions: 'dj.actions'
+    },
+    run: function(req) {
+      var live_refs, n, parent, _i, _len, _ref;
+      parent = this._uid.get_ref(req.id);
+      live_refs = this._uid.get_live(req.id);
+      _ref = req.nodes;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        n = _ref[_i];
+        parent.nodes.push(n);
+        this.traverse_ref(n, parent);
+        this.attach_live_ref(n, live_refs);
+      }
+    },
+    traverse_ref: function(ref, parent) {
+      var n, _i, _len, _ref, _results;
+      if (ref.id) {
+        this._uid.cache_ref(ref.id, ref);
+      }
+      ref.parent = parent;
+      _ref = ref.nodes;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        n = _ref[_i];
+        _results.push(this.traverse_ref(n, ref));
+      }
+      return _results;
+    },
+    attach_live_ref: function(ref, parents) {
+      var p, _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = parents.length; _i < _len; _i++) {
+        p = parents[_i];
+        _results.push(p.push_node(this._actions.get_created(ref, p)));
+      }
+      return _results;
+    }
+  });
+}).call(this);
+
+
+}, '3.0' ,{requires:['fierry.core', 'fierry.dj.services']});
 
 YUI.add( 'fierry.performance', function( Env ) {
 
@@ -246,10 +703,10 @@ var pkg = Env.namespace('performance.internal');
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   pkg.Runner = (function() {
     function Runner(registry, arr) {
-      this._runOnce = __bind(this._runOnce, this);;      this._registry = registry;
-      this._suites = this._removeDuplicates(arr);
+      this._run_once = __bind(this._run_once, this);;      this._registry = registry;
+      this._suites = this._remove_duplicates(arr);
     }
-    Runner.prototype._removeDuplicates = function(arr) {
+    Runner.prototype._remove_duplicates = function(arr) {
       var bool, i;
       arr = Array.prototype.slice.call(arr).sort();
       i = 1;
@@ -265,23 +722,23 @@ var pkg = Env.namespace('performance.internal');
     };
     Runner.prototype.run = function() {
       var cases, tests;
-      tests = this._extractTests(this._suites);
-      cases = this._buildTestCases(tests);
+      tests = this._extract_tests(this._suites);
+      cases = this._build_test_cases(tests);
       this.dispatch("tests.found", tests);
       core.assert(cases.length > 0, "No test cases found for suites: " + this._suites);
-      return core.async_array(cases, this._runOnce);
+      return core.async_array(cases, this._run_once);
     };
-    Runner.prototype._runOnce = function(test, last) {
+    Runner.prototype._run_once = function(test, last) {
       var arg, time;
       arg = test.measure();
       time = test.run(arg);
-      test.getResult().register(arg, time);
+      test.get_result().register(arg, time);
       this.dispatch("test.finished", test);
       if (last) {
         return this.dispatch("tests.finished");
       }
     };
-    Runner.prototype._extractTests = function(arr) {
+    Runner.prototype._extract_tests = function(arr) {
       var name, obj, r, _i, _len;
       r = [];
       for (_i = 0, _len = arr.length; _i < _len; _i++) {
@@ -291,17 +748,17 @@ var pkg = Env.namespace('performance.internal');
           r.push(obj);
         }
         if (obj instanceof pkg.Group) {
-          r = r.concat(obj.getTests());
+          r = r.concat(obj.get_tests());
         }
       }
       return r;
     };
-    Runner.prototype._buildTestCases = function(tests) {
+    Runner.prototype._build_test_cases = function(tests) {
       var i, r, test, _i, _len, _ref;
       r = [];
       for (_i = 0, _len = tests.length; _i < _len; _i++) {
         test = tests[_i];
-        test.createTestResult();
+        test.create_test_result();
         for (i = 1, _ref = pkg.EXECUTE_RETRY; (1 <= _ref ? i <= _ref : i >= _ref); (1 <= _ref ? i += 1 : i -= 1)) {
           r.push(test);
         }
@@ -375,7 +832,7 @@ var pkg = Env.namespace('performance.internal');
     ProgressListener.prototype._get_output_ops = function(test) {
       var ops, rgx;
       rgx = /(\d+)(\d{3})(\.\d{2})/;
-      ops = test.getResult().getAverage().toFixed(2);
+      ops = test.get_result().get_average().toFixed(2);
       ops = ops.replace(rgx, '$1' + ' ' + '$2$3');
       return string.lpad(ops, 10);
     };
@@ -398,9 +855,10 @@ var pkg = Env.namespace('performance.internal');
       this._run = test.run;
       this._after = test.after || (function() {});
       this._before = test.before || (function() {});
+      this._min_arg = test.min_arg || group.get_min_arg();
     }
     Test.prototype.accept = function(visitor) {
-      return visitor.onTest(this);
+      return visitor.on_test(this);
     };
     Test.prototype.measure = function() {
       var arg, arr, i, time;
@@ -425,11 +883,15 @@ var pkg = Env.namespace('performance.internal');
         }
         return _results;
       }).call(this);
-      return this._arg = pkg.EXECUTE_LIMIT / array.avg(arr) * arg;
+      this._arg = pkg.EXECUTE_LIMIT / array.avg(arr) * arg;
+      if (this._arg < this._min_arg) {
+        this._arg = this._min_arg;
+      }
+      return this._arg;
     };
     Test.prototype.run = function(arg) {
       var end, i, start;
-      this.group.runBefore(this);
+      this.group.run_before(this);
       this._before();
       start = new Date();
       for (i = 0; (0 <= arg ? i <= arg : i >= arg); (0 <= arg ? i += 1 : i -= 1)) {
@@ -437,13 +899,13 @@ var pkg = Env.namespace('performance.internal');
       }
       end = new Date();
       this._after;
-      this.group.runAfter(this);
+      this.group.run_after(this);
       return end - start;
     };
-    Test.prototype.createTestResult = function() {
+    Test.prototype.create_test_result = function() {
       return this._results.push(new pkg.TestResult());
     };
-    Test.prototype.getResult = function() {
+    Test.prototype.get_result = function() {
       return this._results[this._results.length - 1];
     };
     return Test;
@@ -453,17 +915,17 @@ var pkg = Env.namespace('performance.internal');
 (function() {
   pkg.ConsoleVisitor = (function() {
     function ConsoleVisitor() {}
-    ConsoleVisitor.prototype.onGroupStart = function(group) {
+    ConsoleVisitor.prototype.on_group_start = function(group) {
       return console.group(group.name);
     };
-    ConsoleVisitor.prototype.onGroupEnd = function(group) {
+    ConsoleVisitor.prototype.on_group_end = function(group) {
       return console.groupEnd();
     };
-    ConsoleVisitor.prototype.onTest = function(test) {
+    ConsoleVisitor.prototype.on_test = function(test) {
       var name, res;
       name = test.name.substr(test.name.lastIndexOf('.') + 1);
-      res = test.getResult();
-      return console.log(name, "---", Math.round(res.getAverage()), "ops");
+      res = test.get_result();
+      return console.log(name, "---", Math.round(res.get_average()), "ops");
     };
     return ConsoleVisitor;
   })();
@@ -479,7 +941,7 @@ var pkg = Env.namespace('performance.internal');
         return this._registry.push(arg / time);
       }
     };
-    TestResult.prototype.getAverage = function() {
+    TestResult.prototype.get_average = function() {
       var ops, sum, _i, _len, _ref;
       sum = 0;
       _ref = this._registry;
@@ -489,7 +951,7 @@ var pkg = Env.namespace('performance.internal');
       }
       return sum / this._registry.length;
     };
-    TestResult.prototype.getAll = function() {
+    TestResult.prototype.get_all = function() {
       return this._registry;
     };
     return TestResult;
@@ -504,14 +966,14 @@ var pkg = Env.namespace('performance.internal');
       });
       this._last_group = null;
     }
-    Registry.prototype.registerGroup = function(hash) {
+    Registry.prototype.register_group = function(hash) {
       var group, parent;
-      parent = this.get(this._getParent(hash.name));
+      parent = this.get(this._get_parent(hash.name));
       group = new pkg.Group(hash, parent);
       parent.add(group);
       return this._last_group = group;
     };
-    Registry.prototype._getParent = function(name) {
+    Registry.prototype._get_parent = function(name) {
       var idx;
       idx = name.lastIndexOf('.');
       if (idx > -1) {
@@ -520,7 +982,7 @@ var pkg = Env.namespace('performance.internal');
         return '';
       }
     };
-    Registry.prototype.registerTest = function(hash) {
+    Registry.prototype.register_test = function(hash) {
       var parent, test;
       parent = hash.group ? this.get(hash.group) : this._last_group;
       test = new pkg.Test(hash, parent);
@@ -530,12 +992,12 @@ var pkg = Env.namespace('performance.internal');
       var child, group, _ref;
       group = this._root;
       while (name.length > 0) {
-        _ref = this._getFirstChild(name), child = _ref[0], name = _ref[1];
+        _ref = this._get_first_child(name), child = _ref[0], name = _ref[1];
         group = group.get(child);
       }
       return group;
     };
-    Registry.prototype._getFirstChild = function(name) {
+    Registry.prototype._get_first_child = function(name) {
       var idx;
       idx = name.indexOf('.');
       if (idx === -1) {
@@ -555,16 +1017,17 @@ var pkg = Env.namespace('performance.internal');
       this._nodes = [];
       this._after = group.after || (function() {});
       this._before = group.before || (function() {});
+      this._min_arg = group.min_arg || 0;
     }
     Group.prototype.accept = function(visitor) {
       var node, _i, _len, _ref;
-      visitor.onGroupStart(this);
+      visitor.on_group_start(this);
       _ref = this._nodes;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         node = _ref[_i];
         node.accept(visitor);
       }
-      return visitor.onGroupEnd(this);
+      return visitor.on_group_end(this);
     };
     Group.prototype.add = function(node) {
       var n, name, _i, _len, _ref;
@@ -592,7 +1055,7 @@ var pkg = Env.namespace('performance.internal');
       }
       throw new Error("Node not found " + this.name + "." + name);
     };
-    Group.prototype.getTests = function() {
+    Group.prototype.get_tests = function() {
       var arr, n, _i, _len, _ref;
       arr = [];
       _ref = this._nodes;
@@ -602,22 +1065,28 @@ var pkg = Env.namespace('performance.internal');
           arr.push(n);
         }
         if (n instanceof pkg.Group) {
-          arr = arr.concat(n.getTests());
+          arr = arr.concat(n.get_tests());
         }
       }
       return arr;
     };
-    Group.prototype.runBefore = function(ctx) {
+    Group.prototype.run_before = function(ctx) {
       if (this.parent) {
-        this.parent.runBefore(ctx);
+        this.parent.run_before(ctx);
       }
       return this._before.call(ctx);
     };
-    Group.prototype.runAfter = function(ctx) {
+    Group.prototype.run_after = function(ctx) {
       this._after.call(ctx);
       if (this.parent) {
-        return this.parent.runAfter(ctx);
+        return this.parent.run_after(ctx);
       }
+    };
+    Group.prototype.get_min_arg = function() {
+      if (this.parent) {
+        return this._min_arg || this.parent.get_min_arg();
+      }
+      return this._min_arg;
     };
     return Group;
   })();
@@ -625,11 +1094,11 @@ var pkg = Env.namespace('performance.internal');
 
 (function() {
   pkg.INSTANCE = new pkg.Registry();
-  api.registerGroup = function(group) {
-    return pkg.INSTANCE.registerGroup(group);
+  api.register_group = function(group) {
+    return pkg.INSTANCE.register_group(group);
   };
-  api.registerTest = function(test) {
-    return pkg.INSTANCE.registerTest(test);
+  api.register_test = function(test) {
+    return pkg.INSTANCE.register_test(test);
   };
   api.run = function() {
     var listener, runner;
@@ -647,59 +1116,82 @@ var pkg = Env.namespace('performance.internal');
 
 YUI.add( 'fierry.storage', function( Env ) {
 
+var core = Env.namespace('core');
+var array = Env.namespace('array');
 var object = Env.namespace('object');
+var app = Env.namespace('core.app');
+var uid = Env.namespace('core.uid');
 var assert = Env.namespace('core.assert');
+var dao = Env.namespace('core.dao');
 var pkg = Env.namespace('core.storage');
+var storage = Env.namespace('core.storage');
 (function() {
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   pkg.Storage = (function() {
     function Storage() {
       this._nps = {};
       this._root = {};
       this._rules = {};
     }
-    Storage.prototype.get = function(arr) {
-      return object.get(this._root, arr);
+    Storage.prototype.get = function(expr) {
+      return object.get(this._root, this._to_array(expr));
     };
-    Storage.prototype.set = function(arr, val) {
-      object.set(this._root, arr, val);
-      if (core.app.is_running()) {
-        return this._get_np(arr).set_dirty();
+    Storage.prototype.set = function(expr, val) {
+      object.set(this._root, this._to_array(expr), val);
+      if (app.is_running()) {
+        return this._get_np(expr).set_dirty();
       }
     };
-    Storage.prototype.register = function(arr, fn) {
-      return this._get_np(arr).register(fn);
+    Storage.prototype._to_array = function(expr) {
+      if (dao.is(expr)) {
+        return expr.to_array();
+      } else {
+        return expr;
+      }
     };
-    Storage.prototype.unregister = function(arr, fn) {
-      return this._get_np(arr).unregister(fn);
+    Storage.prototype.register = function(expr, fn) {
+      return this._get_np(expr).register(fn);
     };
-    Storage.prototype.register_rule = function(path) {
+    Storage.prototype.unregister = function(expr, fn) {
+      return this._get_np(expr).unregister(fn);
+    };
+    Storage.prototype.register_rule = function(raw) {
       var head, idx, _base, _ref;
-      assert(core.app.is_stopped(), 'Application should be stopped');
-      idx = path.indexOf('.');
-      head = path.substr(0, idx > 0 ? idx : void 0);
-      path = path.replace(/\./g, "\\.");
-      path = path.replace(/\*/g, "[-a-zA-Z0-9_]+");
-      path += "(?![-a-zA-Z0-9_])";
+      assert(app.is_stopped(), 'Application should be stopped');
+      idx = raw.indexOf('.');
+      head = raw.substr(0, idx > 0 ? idx : void 0);
+      raw = raw.replace(/\./g, "\\.");
+      raw = raw.replace(/\*/g, "[-a-zA-Z0-9_]+");
+      raw += "(?![-a-zA-Z0-9_])";
       (_ref = (_base = this._rules)[head]) != null ? _ref : _base[head] = [];
-      return this._rules[head].push(new RegExp('^' + path));
+      return this._rules[head].push(new RegExp('^' + raw));
     };
-    Storage.prototype._get_np = function(arr) {
-      var path, _base, _ref;
-      path = this._get_np_path(arr);
-      return (_ref = (_base = this._nps)[path]) != null ? _ref : _base[path] = new pkg.NotifyPoint();
+    Storage.prototype._get_np = function(expr, str) {
+      var arr, _base, _ref;
+      if (dao.is(expr)) {
+        arr = expr.to_array();
+        str = expr.to_string();
+      } else {
+        arr = expr;
+        if (!str) {
+          str = expr.join('.');
+        }
+      }
+      return (_ref = (_base = this._nps)[str]) != null ? _ref : _base[str] = __bind(function() {
+        var np, _base, _ref;
+        np = this._get_np_path(arr[0], str);
+        return (_ref = (_base = this._nps)[np]) != null ? _ref : _base[np] = new pkg.NotifyPoint();
+      }, this)();
     };
-    Storage.prototype._get_np_path = function(arr) {
-      var max, raw, rule, rules, tmp, _i, _len;
+    Storage.prototype._get_np_path = function(head, raw) {
+      var max, rule, rules, tmp, _i, _len;
       max = '';
-      rules = this._rules[arr[0]];
-      if (rules) {
-        raw = arr.join('.');
-        for (_i = 0, _len = rules.length; _i < _len; _i++) {
-          rule = rules[_i];
-          tmp = raw.match(rule);
-          if (tmp && tmp[0].length > max.length) {
-            max = tmp[0];
-          }
+      rules = this._rules[head];
+      for (_i = 0, _len = rules.length; _i < _len; _i++) {
+        rule = rules[_i];
+        tmp = raw.match(rule);
+        if (tmp && tmp[0].length > max.length) {
+          max = tmp[0];
         }
       }
       return max;
@@ -708,85 +1200,639 @@ var pkg = Env.namespace('core.storage');
   })();
 }).call(this);
 
-
-}, '3.0' ,{requires:['fierry.core']});
-
-YUI.add( 'fierry.ui', function( Env ) {
+(function() {
+  storage.Abstract = (function() {
+    function Abstract() {
+      this._nps = {};
+      this._root = {};
+    }
+    Abstract.prototype.get = function(arr) {
+      return object.get(this._root, arr);
+    };
+    Abstract.prototype.set = function(arr, v, str) {
+      if (str == null) {
+        str = '';
+      }
+      object.set(this._root, arr, v);
+      if (app.is_running()) {
+        return this._get_np(arr).set_dirty();
+      }
+    };
+    Abstract.prototype.register = function(arr, fn, str) {
+      if (str == null) {
+        str = '';
+      }
+      return this._get_np(arr, str).register(fn);
+    };
+    Abstract.prototype.unregister = function(arr, fn, str) {
+      if (str == null) {
+        str = '';
+      }
+      return this._get_np(arr, str).unregister(fn);
+    };
+    Abstract.prototype._get_np = function(arr, str) {
+      throw new Error('Unsupported method');
+    };
+    return Abstract;
+  })();
+}).call(this);
 
 (function() {
-  ui.into(document.body, [
-    {
-      type: 'div',
-      attrs: {
-        id: 'cokolwiek',
-        "class": 'fafa'
-      },
-      content: [
-        {
-          type: 'span',
-          attrs: {
-            text: 'title',
-            font: 'ui'
-          },
-          content: [
-            {
-              type: 'span',
-              attrs: {
-                text: '!',
-                font: 'b'
-              }
-            }
-          ]
-        }, {
-          type: 'br'
-        }, {
-          type: 'span',
-          attrs: {
-            text: 'some text'
-          }
-        }
-      ]
-    }, {
-      type: 'div'
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  storage.Notifier = (function() {
+    function Notifier() {
+      this.notify = __bind(this.notify, this);;      this._dirty = [];
+      this._visited = [];
     }
-  ]);
-  fn('1', {
-    attr: 'v1'
-  }, fn('2', {
-    attr: 'v2'
-  }, fn('3')));
-  fn('1', {
-    attr: 'v1'
-  }, fn('2'), fn('3'));
-  fn('1', {
-    attr: 'v1'
-  }, fn('2', fn('3')));
-  ui.into(document.body, ui.append('div', {
-    id: 'cokolwiek',
-    "class": 'fafa'
-  }), ui.append('br', 'dad', 'fafa', 'dada'), ui.append('br', ui.append('span', {
-    text: 'title',
-    font: 'ui'
-  }, ui.append('span', {
-    text: '!',
-    font: 'b'
-  }, ui.append('br'))), ui.append('span', {
-    text: 'some text'
-  })), ui.append('div'));
-  ui.define('template');
-  ui.cond({
-    "if": current_user.is_logged()
-  }, ui.append('span', {
-    text: current_user.email
-  }));
-  ui.loop({
-    item: i,
-    array: '..data'
-  });
+    Notifier.prototype.set_dirty = function(fn) {
+      if (!this._visited[uid(fn)]) {
+        this._visited[uid(fn)] = true;
+        return this._dirty.push(fn);
+      }
+    };
+    Notifier.prototype.notify = function() {
+      var i, l, _results;
+      i = 0;
+      l = this._dirty.length;
+      _results = [];
+      while (i < l) {
+        this._execute(i++);
+        _results.push(i === l ? l = this._dirty.length : void 0);
+      }
+      return _results;
+    };
+    Notifier.prototype._execute = function(i) {
+      var fn;
+      fn = this._dirty[i];
+      fn();
+      return this._visited[uid(fn)] = false;
+    };
+    return Notifier;
+  })();
+}).call(this);
+
+(function() {
+  storage.NotifyPoint = (function() {
+    function NotifyPoint() {
+      this._queue = [];
+    }
+    NotifyPoint.prototype.register = function(fn) {
+      if (array.contains(this._queue, fn)) {
+        return this._queue.push(fn);
+      }
+    };
+    NotifyPoint.prototype.unregister = function(fn) {
+      return array.erase(this._queue, fn);
+    };
+    NotifyPoint.prototype.set_dirty = function() {
+      var o, _i, _len, _ref, _results;
+      _ref = this._queue;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        o = _ref[_i];
+        _results.push(pkg.NOTIFIER_INSTANCE.set_dirty(o));
+      }
+      return _results;
+    };
+    return NotifyPoint;
+  })();
+}).call(this);
+
+(function() {
+  dao.is = function(expr) {
+    return false;
+  };
+  dao.create = function() {};
+  dao.is_complex = function(dao) {
+    return dao[1] && dao[1].charCodeAt(0) === pkg.DOT_CHAR_CODE;
+  };
+}).call(this);
+
+(function() {
+  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
+    for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
+    function ctor() { this.constructor = child; }
+    ctor.prototype = parent.prototype;
+    child.prototype = new ctor;
+    child.__super__ = parent.prototype;
+    return child;
+  };
+  storage.Local = (function() {
+    __extends(Local, storage.Abstract);
+    function Local() {
+      Local.__super__.constructor.call(this);
+      this._daos = {};
+    }
+    Local.prototype.get_dao = function(str, arr) {};
+    Local.prototype._get_np = function(arr, str) {
+      var _base, _name, _ref;
+      return (_ref = (_base = this._nps)[_name = arr[0]]) != null ? _ref : _base[_name] = new storage.NotifyPoint();
+    };
+    return Local;
+  })();
+}).call(this);
+
+(function() {
+  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
+    for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
+    function ctor() { this.constructor = child; }
+    ctor.prototype = parent.prototype;
+    child.prototype = new ctor;
+    child.__super__ = parent.prototype;
+    return child;
+  }, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  storage.Global = (function() {
+    __extends(Global, storage.Abstract);
+    function Global() {
+      Global.__super__.constructor.call(this);
+      this._rules = {};
+    }
+    Global.prototype.register_rule = function(raw) {
+      var head, idx, _base, _ref;
+      assert(app.is_stopped(), 'Application should be stopped');
+      idx = raw.indexOf('.');
+      head = raw.substr(0, idx > 0 ? idx : void 0);
+      raw = raw.replace(/\./g, "\\.");
+      raw = raw.replace(/\*/g, "[-a-zA-Z0-9_]+");
+      raw += "(?![-a-zA-Z0-9_])";
+      (_ref = (_base = this._rules)[head]) != null ? _ref : _base[head] = [];
+      return this._rules[head].push(new RegExp('^' + raw));
+    };
+    Global.prototype._get_np = function(arr, str) {
+      var _base, _ref;
+      if (!str) {
+        str = arr.join('.');
+      }
+      return (_ref = (_base = this._nps)[str]) != null ? _ref : _base[str] = __bind(function() {
+        var np, _base, _ref;
+        np = this._get_np_path(arr[0], str);
+        return (_ref = (_base = this._nps)[np]) != null ? _ref : _base[np] = new pkg.NotifyPoint();
+      }, this)();
+    };
+    Global.prototype._get_np_path = function(head, raw) {
+      var max, rule, rules, tmp, _i, _len;
+      max = '';
+      rules = this._rules[head];
+      for (_i = 0, _len = rules.length; _i < _len; _i++) {
+        rule = rules[_i];
+        tmp = raw.match(rule);
+        if (tmp && tmp[0].length > max.length) {
+          max = tmp[0];
+        }
+      }
+      return max;
+    };
+    return Global;
+  })();
+}).call(this);
+
+(function() {
+  pkg.STORAGE_INSTANCE = new storage.Global();
+  pkg.NOTIFIER_INSTANCE = new storage.Notifier();
+  core.async(pkg.NOTIFIER_INSTANCE.notify, 10);
 }).call(this);
 
 
-}, '3.0' ,{requires:[]});
+}, '3.0' ,{requires:['fierry.core', 'fierry.scheduler']});
+
+YUI.add( 'fierry.dj.services', function( Env ) {
+
+var pkg = Env.namespace('dj');
+var rtm = Env.namespace('core.runtime');
+var assert = Env.namespace('core.assert');
+(function() {
+  var Service;
+  Service = (function() {
+    function Service() {
+      this._reg = {};
+    }
+    Service.prototype.register = function(name, handler) {
+      assert(!this._reg[name], "Action " + name + " already exists");
+      handler.prototype._actions = this;
+      return this._reg[name] = handler;
+    };
+    Service.prototype.get = function(ref, parent) {
+      var name;
+      name = ref.type;
+      assert(this._reg[name], "Action " + name + " not found");
+      return new this._reg[name](ref, parent);
+    };
+    Service.prototype.get_created = function(ref, parent) {
+      var action;
+      action = this.get(ref, parent);
+      action.create();
+      action.create_nodes();
+      action.attach();
+      action.finalize();
+      return action;
+    };
+    return Service;
+  })();
+  rtm.register_service('dj.actions', new Service());
+}).call(this);
+
+(function() {
+  var Service;
+  Service = (function() {
+    Service.prototype.services = {
+      _actions: 'dj.actions'
+    };
+    function Service() {
+      this._uids = {};
+    }
+    Service.prototype.setup = function() {
+      return this._retrospect_html(document.body);
+    };
+    Service.prototype._retrospect_html = function(e) {
+      var id, n, _i, _len, _ref;
+      if (e instanceof Text) {
+        return;
+      }
+      if (id = e.getAttribute('id')) {
+        this._uids[id] = {
+          ref: {
+            nodes: []
+          },
+          live: [this._create_live(e)]
+        };
+      }
+      _ref = e.childNodes;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        n = _ref[_i];
+        this._retrospect_html(n);
+      }
+    };
+    Service.prototype._create_live = function(e) {
+      return this._actions.get({
+        type: 'existing_dom',
+        dom: e
+      });
+    };
+    Service.prototype.cache_ref = function(id, ref) {
+      assert(!this._uids[id], "Uid entry for " + id + " already defined");
+      return this._uids[id] = {
+        ref: ref,
+        live: []
+      };
+    };
+    Service.prototype.cache_live = function(id, live) {
+      assert(this._uids[id], "Uid entry for " + id + " not found");
+      return this._uids[id].live.push(live);
+    };
+    Service.prototype.get_ref = function(id) {
+      assert(this._uids[id], "Uid entry for " + id + " not found");
+      return this._uids[id].ref;
+    };
+    Service.prototype.get_live = function(id) {
+      assert(this._uids[id], "Uid entry for " + id + " not found");
+      return this._uids[id].live;
+    };
+    return Service;
+  })();
+  rtm.register_service('dj.uid', new Service());
+}).call(this);
+
+(function() {
+  pkg.register_action = function(name, handler) {
+    return rtm.execute_on_service('dj.actions', function() {
+      return this.register(name, handler);
+    });
+  };
+}).call(this);
+
+
+}, '3.0' ,{requires:['fierry.core']});
+
+YUI.add( 'fierry.ui2', function( Env ) {
+
+var pkg = Env.namespace('ui');
+var rtm = Env.namespace('core.runtime');
+var assert = Env.namespace('core.assert');
+(function() {
+  var Service;
+  Service = (function() {
+    function Service() {
+      this._reg = {};
+    }
+    Service.prototype.register = function(name, handler) {
+      assert(!this._reg[name], "Action " + name + " already exists");
+      return this._reg[name] = handler;
+    };
+    Service.prototype.get = function(name) {
+      assert(this._reg[name], "Action " + name + " not found");
+      return this._reg[name];
+    };
+    return Service;
+  })();
+  rtm.register_service('dj.actions', new Service());
+}).call(this);
+
+(function() {
+  rtm.register_executor('dj.subtree', {
+    services: {
+      uid: 'dj.uid',
+      actions: 'dj.actions'
+    },
+    run: function(req) {
+      return console.log('processed', req);
+    }
+  });
+}).call(this);
+
+(function() {
+  /*
+
+  executor
+    order: '1.2'
+
+    services:
+      nodes: 'nodes'
+      index: 'nodes.indexed'
+
+    # How can I use that to get info if the executor should be runned?
+    requests:
+      arr: 'dom.attach'
+
+    run: ->
+      for req in @arr
+        parent = @nodes.resolve(req.parentID)
+        before = if req.beforeID then @nodes.resolve(req.beforeID) else null
+        @index.setCached(req.node, parent, before)
+
+
+    ui.into document.body, [
+    type: 'div'
+    attrs:
+      id: 'cokolwiek'
+      class: 'fafa'
+    content: [
+      type: 'span'
+      attrs:
+        text: 'title'
+        font: 'ui'
+      content: [
+        type: 'span'
+        attrs:
+          text: '!'
+          font: 'b'
+      ]
+    ,
+      type: 'br'
+    ,
+      type: 'span'
+      attrs:
+        text: 'some text'
+    ]
+  ,
+    type: 'div'
+  ]
+
+  ui.into document.body,
+
+    # I could use the fist line to define all in custom syntax. id, class, etc
+    # But if so, there would be no uid there...
+    ui.append 'div #fafa'
+      id: 'cokolwiek'
+      class: 'fafa'
+
+    ui.append 'br', # musze miec tutaj , jak chce wciecie a nie definiuje attrybutow!
+                    # To dziala zamiast wciec! Brak wciecia i ',' definiuje dziecko tez :/
+
+      ui.append 'span'
+        text: 'title'
+        font: 'ui'
+
+        ui.append 'span'
+          text: '!'
+          font: 'b'
+
+          ui.append 'br'
+
+      ui.append 'span'
+        text: 'some text'
+
+    ui.append 'div'
+
+  # Here I would like to import all dom, tpl, text functions from ui namespace in batch
+  # It should be easy to import in batch for this use case!
+  ui.into '#body',                # only id is accepted at the moment
+
+    dom 'div #left'
+      uid: 'left'                 # Defines uid - that element can be a target of ui.into
+
+      dom 'h1 .title .center',    # Defines classes for the element. All spaces are trimmed.
+        text '=Navigation'        # Defines text after = There can be space before first letter - trim it
+        text 'b] =!'              # Probably needed syntax for defining attrs or default attr (here font)
+
+      tpl 'menu:left'             # Invokes template. Can specify additional arguments to customize
+
+    dom 'div #main'
+      uid: 'main'
+
+    dom 'div #right'
+      uid: 'right'
+
+  ui.define 'menu:left',
+    dom 'ul',
+      dom 'li =first'
+      dom 'li =second'
+
+  # Template definition
+  ui.define 'template'
+
+  # Experimenting...
+  ui.cond
+    if: current_user.is_logged()
+
+    ui.append 'span'
+      text: current_user.email
+
+  ui.loop
+    item: i
+    array: '..data'
+
+  # Have to build in a way, that I could run it multiple times.*/
+}).call(this);
+
+(function() {
+  rtm.register_executor('dj.into', {
+    services: {
+      uid: 'dj.uid'
+    },
+    run: function(req) {
+      var live_refs, n, parent, _i, _len, _ref;
+      parent = this.uid.get_ref(req.id);
+      parent.nodes = parent.nodes.concat(req.nodes);
+      live_refs = this.uid.get_live(req.id);
+      _ref = req.nodes;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        n = _ref[_i];
+        this.traverse_ref(n, parent);
+        this.attach_live_ref(n, live_refs);
+      }
+    },
+    traverse_ref: function(ref, parent) {
+      var n, _i, _len, _ref, _results;
+      if (ref.id) {
+        this.uid.cache_ref(ref.id, ref);
+      }
+      ref.parent = parent;
+      _ref = ref.nodes;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        n = _ref[_i];
+        _results.push(this.traverse_ref(n, ref));
+      }
+      return _results;
+    },
+    attach_live_ref: function(ref, live_refs) {
+      var l, live_ref, _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = live_refs.length; _i < _len; _i++) {
+        l = live_refs[_i];
+        live_ref = {
+          ref: ref,
+          parent: l
+        };
+        l.nodes.push(live_ref);
+        _results.push(rtm.push({
+          type: 'dj.subtree',
+          ref: live_ref
+        }));
+      }
+      return _results;
+    }
+  });
+}).call(this);
+
+(function() {
+  var __slice = Array.prototype.slice;
+  pkg.Structure = (function() {
+    function Structure() {
+      this._reg = {};
+      this._refs = this._retrospect_html(document.body);
+      this._struct = {};
+    }
+    Structure.prototype._retrospect_html = function(e) {
+      var h, n;
+      h = {
+        type: 'dom-ready',
+        html: e
+      };
+      if (!(e instanceof Text)) {
+        h.uid = e.getAttribute('id');
+      }
+      h.nodes = (function() {
+        var _i, _len, _ref, _results;
+        _ref = e.childNodes;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          n = _ref[_i];
+          _results.push(this._retrospect_html(n));
+        }
+        return _results;
+      }).call(this);
+      if (h.uid) {
+        this._reg[h.uid] = {
+          ref: h,
+          struct: []
+        };
+      }
+      return h;
+    };
+    Structure.prototype.inject_into = function() {
+      var children, id, node, nodes, _i, _len, _results;
+      id = arguments[0], nodes = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      children = this._reg[id].ref.nodes;
+      _results = [];
+      for (_i = 0, _len = nodes.length; _i < _len; _i++) {
+        node = nodes[_i];
+        _results.push(children.push(node));
+      }
+      return _results;
+    };
+    return Structure;
+  })();
+}).call(this);
+
+(function() {
+  var Service;
+  Service = (function() {
+    function Service() {
+      this._uids = {};
+      this._retrospect_html(document.body);
+    }
+    Service.prototype._retrospect_html = function(e) {
+      var id, n, _i, _len, _ref;
+      if (e instanceof Text) {
+        return;
+      }
+      if (id = e.getAttribute('id')) {
+        this._uids[id] = {
+          ref: {
+            nodes: []
+          },
+          live: [
+            {
+              dom: e,
+              nodes: []
+            }
+          ]
+        };
+      }
+      _ref = e.childNodes;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        n = _ref[_i];
+        this._retrospect_html(n);
+      }
+    };
+    Service.prototype.cache_ref = function(id, ref) {
+      assert(!this._uids[id], "Uid entry for " + id + " already defined");
+      return this._uids[id] = {
+        ref: ref,
+        live: []
+      };
+    };
+    Service.prototype.cache_live = function(id, live) {
+      assert(this._uids[id], "Uid entry for " + id + " not found");
+      return this._uids[id].live.push(live);
+    };
+    Service.prototype.get_ref = function(id) {
+      assert(this._uids[id], "Uid entry for " + id + " not found");
+      return this._uids[id].ref;
+    };
+    Service.prototype.get_live = function(id) {
+      assert(this._uids[id], "Uid entry for " + id + " not found");
+      return this._uids[id].live;
+    };
+    return Service;
+  })();
+  rtm.register_service('dj.uid', new Service());
+}).call(this);
+
+(function() {
+  rtm.register_executor('dj.action', {
+    services: {
+      actions: 'dj.actions'
+    },
+    run: function(req) {
+      return this.actions.register(req.name, req.handler);
+    }
+  });
+}).call(this);
+
+(function() {
+  pkg.register_action = function(name, handler) {
+    return rtm.push({
+      type: 'dj.action',
+      name: name,
+      handler: handler
+    });
+  };
+}).call(this);
+
+
+}, '3.0' ,{requires:['fierry.core']});
 
 YUI.add( 'fierry.scheduler', function( Env ) {
 
@@ -1002,20 +2048,20 @@ var pkg = Env.namespace('core.generation');
   pkg.StringGenerator = (function() {
     function StringGenerator() {
       this._sreg = {};
-      this._min_char = 32;
+      this._min_char = 0;
       this._max_count = {};
       this._max_length = 20;
     }
-    StringGenerator.prototype.string_array = function(count, length, range, sorted) {
+    StringGenerator.prototype.string_array = function(count, length, sorted, range) {
       var k, _base, _ref;
       if (length == null) {
         length = 10;
       }
-      if (range == null) {
-        range = 200;
-      }
       if (sorted == null) {
         sorted = false;
+      }
+      if (range == null) {
+        range = 127;
       }
       k = "" + count + "_" + length + "_" + range + "_" + sorted;
       return (_ref = (_base = this._sreg)[k]) != null ? _ref : _base[k] = __bind(function() {
@@ -1041,15 +2087,18 @@ var pkg = Env.namespace('core.generation');
       k = "" + count + "_" + this._max_length + "_" + range + "_false";
       return (_ref = (_base = this._sreg)[k]) != null ? _ref : _base[k] = this._gen_string_array(count, range);
     };
-    StringGenerator.prototype._gen_string_array = function(count, range) {
+    StringGenerator.prototype._gen_string_array = function(count, range, min_char) {
       var arr, char, i, j, str, _, _results;
+      if (min_char == null) {
+        min_char = this._min_char;
+      }
       _results = [];
       for (_ = 1; (1 <= count ? _ <= count : _ >= count); (1 <= count ? _ += 1 : _ -= 1)) {
         arr = (function() {
           var _ref, _results;
           _results = [];
           for (j = 1, _ref = this._max_length; (1 <= _ref ? j <= _ref : j >= _ref); (1 <= _ref ? j += 1 : j -= 1)) {
-            i = core.rand(range) + this._min_char;
+            i = core.rand(range) + min_char;
             _results.push(char = String.fromCharCode(i));
           }
           return _results;
