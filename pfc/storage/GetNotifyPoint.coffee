@@ -40,7 +40,7 @@ pkg.get_np_tests = ->
 group
   name: 'storage.np'
   before: ->
-    @storage = new core.storage.Storage()
+    @storage = new core.storage.Global()
 
     @i = 0
     @str = pkg.permutate_paths(5000)
