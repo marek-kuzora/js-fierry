@@ -3,8 +3,9 @@ require:
   - fierry.generation
   - fierry.performance
 namespace:
-  core:  core
-  gen:   core.generation
+  core:   core
+  string: string
+  gen:    core.generation
 
   test:   performance.register_test
   group:  performance.register_group

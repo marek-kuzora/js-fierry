@@ -2,6 +2,13 @@ group
   name: 'string.split'
 
 test
+  name: 'to_array'
+  before: ->
+    @str = 'simple.path.with.five.parts'
+  run: ->
+    @str.split('')
+
+test
   name: 'character'
   before: ->
     @str = 'simple.path.with.five.parts'
@@ -9,7 +16,7 @@ test
     @str.split('.')
 
 test
-  name: 'regrex'
+  name: 'regexp'
   before: ->
     @str = 'simple.path/with.six.parts/yep'
   run: ->

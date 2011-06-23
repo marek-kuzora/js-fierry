@@ -1,7 +1,25 @@
 Env.string =
 
   #
+  # Returns index of specified character.
+  # Accepts only 1-length characters.
+  #
+  # @param String str
+  # @param String char
+  #
+  char_index_of: (str, char) ->
+    i = 0
+    c = str.charCodeAt(0)
+    e = char.charCodeAt(0)
+  
+    until c
+      return i if c is e
+      c = str.charCodeAt(++i)
+    return -1
+
+  #
   # Returns new String padded with spaces to the left, matching the specified length.
+  #
   # @param str - String
   # @param len - Number
   #
@@ -11,6 +29,7 @@ Env.string =
 
   #
   # Returns new String padded with spaces to the right, matching the specified length.
+  #
   # @param str - String
   # @param len - Number
   #
@@ -20,6 +39,7 @@ Env.string =
 
   #
   # Splits sting into two using the given index.
+  #
   # @param str - String
   # @param idx - Integer split point.
   #
