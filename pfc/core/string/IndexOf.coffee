@@ -54,11 +54,11 @@ test
     @str.lastIndexOf('---') != -1
 
 #
-# These tests returns 14/45/20k ops/ms.
-# It is unrealistic, because the smallest number of steps has the first test...
+# These tests returns 28k/11k/3k ops/ms.
+# Performance degradates too fast for the method to be usable.
 #
 group
-  name: 'string.regexp.index-of.code-at'
+  name: 'string.regexp.index-of.char_index_of'
 
 test
   name: '25 chars -fast-found'

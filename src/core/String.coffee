@@ -11,8 +11,8 @@ Env.string =
     i = 0
     c = str.charCodeAt(0)
     e = char.charCodeAt(0)
-  
-    until c
+    
+    while c
       return i if c is e
       c = str.charCodeAt(++i)
     return -1
