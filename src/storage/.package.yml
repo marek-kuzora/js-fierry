@@ -1,4 +1,9 @@
-after: [.after.coffee]
+before:
+  - Abstract.coffee
+  - NotifyPoint.coffee
+  - PlainDao.coffee
+after:
+  - .after.coffee
 require:
   - fierry.core
   - fierry.scheduler

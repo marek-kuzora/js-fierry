@@ -1,6 +1,9 @@
 group
   name: 'storage'
 
+group
+  name: 'dao'
+
 #
 # 10 predefined path segments.
 #

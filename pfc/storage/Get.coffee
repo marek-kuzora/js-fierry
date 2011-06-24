@@ -1,7 +1,7 @@
 group
   name: 'storage.get'
   before: ->
-    @storage = new core.storage.Global()
+    @storage = new core.Storage()
     @storage._root =
       user:
         name: 'Bilbo'

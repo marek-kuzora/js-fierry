@@ -2,6 +2,7 @@ class storage.NotifyPoint
 
   constructor: ->
     @_queue = []
+    @_enabled = true
 
   #
   # Registers listener for NP if not already registered.
@@ -20,7 +21,18 @@ class storage.NotifyPoint
     array.erase(@_queue, fn)
 
   #
+  # Sets NP as enabled or disabled.
+  # Disabled NP will not set its listeners dirty on np.set_dirty().
+  #
+  # @param Boolean enabled
+  #
+  set_enabled: (enabled) ->
+    @_enabled = enabled
+
+  #
   # Sets all registered listeners as dirty in the storage.Notifier.
   #
-  set_dirty: ->
-    pkg.NOTIFIER_INSTANCE.set_dirty(o) for o in @_queue
+  set_dirty: =>
+    if @_enabled
+      pkg.NOTIFIER_INSTANCE.set_dirty(o) for o in @_queue
+    return

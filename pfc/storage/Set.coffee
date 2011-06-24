@@ -13,25 +13,25 @@ test
   before: ->
     @arr = (str.split('.') for str in pkg.permutate_paths(5000, 1))
   run: ->
-    @storage.set(@arr[@i++ % 5000], 'value')
+    @storage.set(@arr[@i++ % 5000], null, 'value')
 
 test
   name: '2 length'
   before: ->
     @arr = (str.split('.') for str in pkg.permutate_paths(5000, 2))
   run: ->
-    @storage.set(@arr[@i++ % 5000], 'value')
+    @storage.set(@arr[@i++ % 5000], null, 'value')
 
 test
   name: '3 length'
   before: ->
     @arr = (str.split('.') for str in pkg.permutate_paths(5000, 3))
   run: ->
-    @storage.set(@arr[@i++ % 5000], 'value')
+    @storage.set(@arr[@i++ % 5000], null, 'value')
 
 test
   name: '5 length'
   before: ->
     @arr = (str.split('.') for str in pkg.permutate_paths(5000, 5))
   run: ->
-    @storage.set(@arr[@i++ % 5000], 'value')
+    @storage.set(@arr[@i++ % 5000], null, 'value')
