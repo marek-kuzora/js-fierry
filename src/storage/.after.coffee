@@ -13,7 +13,7 @@ dao.set = (str, v, instance, no_evaluate) ->
   pkg.DAO_INSTANCE.set(str, v, instance, no_evaluate)
 
 dao.create = (is_global, str, arr, instance) ->
-  return pkg.DAO_INSTANCE.cache_dao(is_global, str, arr, instance)
+  return pkg.DAO_INSTANCE.create(is_global, str, arr, instance)
 
 
 storage.get = (arr) ->
@@ -39,3 +39,11 @@ storage.register_rule = (raw) ->
 
 
 core.async(pkg.NOTIFIER_INSTANCE.notify, 10)
+
+# dziala! :)
+# Potrzeba testow na pewno na tworzenie samego dao
+# Potem testow na pobieranie danych...
+# I testow na utworzenie & pobranie tego, co trzeba
+# Plain mam, complex use-case tez trzeba.
+core.storage.set(['user'], 'user', {name: 'Bilbo', surname: 'Baggins', status: 'guest'})
+core.storage.get(['user'])

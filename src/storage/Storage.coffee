@@ -7,7 +7,7 @@ class core.Storage
 
   constructor: ->
     @_nps = {}
-    @_daos = {}
+    @_daos = []
     @_root = {}
     @_rules = {}
 
@@ -80,7 +80,7 @@ class core.Storage
   #
   _get_np: (arr, str) ->
     str = arr.join('.') unless str
-
+    
     return @_nps[str] ?= do =>
       np = @_get_np_path(arr[0], str)
       @_nps[np] ?= new pkg.NotifyPoint()
@@ -95,9 +95,10 @@ class core.Storage
     max = ''
     rules = @_rules[head]
 
-    for rule in rules
-      tmp = raw.match(rule)
-      max = tmp[0] if tmp and tmp[0].length > max.length
+    if rules
+      for rule in rules
+        tmp = raw.match(rule)
+        max = tmp[0] if tmp and tmp[0].length > max.length
     
     return head if max is ''
     return max
@@ -120,10 +121,41 @@ class core.Storage
     @_rules[head] ?= []
     @_rules[head].push(new RegExp('^' + raw))
 
-  # Dao object ma wszelkie informacje aby stworzyc obiekt dao!
-  # W praktyce chce aby cache byl wywolywany tylko 1 raz??
-  cache_dao: (str, dao) ->
-    @_daos[str] = dao
+  #
+  # Creates and caches dao if not found.
+  #
+  # @param String str
+  # @param Array arr
+  # @param core.Storage storage 
+  #
+  create_dao: (str, arr, storage) ->
+    daos = @_daos[uid storage] ?= {}
+    daos[str] ?= @_strategy_create(str, arr, storage)
 
-  get_dao: (str) ->
-    return @_daos[str]
+  #
+  # Creates the appropriate dao instance.
+  #
+  # @param String str
+  # @param Array arr
+  # @param core.Storage storage
+  #
+  _strategy_create: (str, arr, storage) ->
+    return new dao.Complex(str, arr, storage) if @_is_complex(str)
+    return new dao.Plain(str, arr, storage)
+
+  #
+  # Returns true if String representation of the path is complex.
+  #
+  # @param String str
+  #
+  _is_complex: (str) ->
+    return str.indexOf('{') isnt -1
+
+  #
+  # Returns dao from the cache.
+  #
+  # @param String str
+  # @param core.Storage storage
+  #
+  get_dao: (str, storage) ->
+    return @_daos[uid storage][str]

@@ -1,9 +1,11 @@
 class dao.Plain extends storage.NotifyPoint
 
-  constructor: (@_str, @_storage, @_array) ->
+  constructor: (@_str, @_array, @_storage) ->
     super
     @_update()
 
+  # I would like to cache retrieved value and update on each change
+  # But I don't know how to cope with indirect expressions...
   get: (arr, no_evaluate) ->
     v = @_storage.get(@_array)
 
@@ -25,4 +27,7 @@ class dao.Plain extends storage.NotifyPoint
     @_storage.set(@_array, @_str, nv)
 
   _update: ->
-    @_storage.register(@_array, @str, @set_dirty)
+    @_storage.register(@_array, @str, @_refresh)
+
+  _refresh: =>
+    @set_dirty()

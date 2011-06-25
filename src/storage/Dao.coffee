@@ -44,13 +44,23 @@ class core.Dao
   # @param Object instance
   #
   _get_dao: (str, instance) ->
-    cache = @_retrieve_dao_cache(@_is_global(str), instance)
-    return cache.get_dao(str)
+    global   = @_is_global(str)
+    instance = @_retrieve_dao_cache(global, instance)
+
+    if global
+      str = str.substr(2)
+      storage = pkg.STORAGE_INSTANCE
+    else
+      str = str.substr(1)
+      storage = instance
+    
+    return instance.get_dao(str, storage)
 
   #
   # Creates dao expression and caches in the given dao_cache.
+  # It is assumed that String representation will be given without
+  # any leading dots.
   # TODO it should be also possible to omit is_global & arr parameters!
-  # TODO currently dao instance is created even if the str name exists...
   #
   # @param Boolean is_global
   # @param String str
@@ -58,10 +68,10 @@ class core.Dao
   # @param Object instance
   #
   create: (is_global, str, arr, instance) ->
-    cache   = @_retrieve_dao_cache(is_global, instance)
-    storage = if is_global then pkg.STORAGE_INSTANCE else cache
+    instance = @_retrieve_dao_cache(is_global, instance)
+    storage  = if is_global then pkg.STORAGE_INSTANCE else instance
 
-    cache.cache_dao(str, @_strategy_create(str, arr, storage))
+    instance.create_dao(str, arr, storage)
 
   #
   # Returns dao_cache from the given instance object.
@@ -77,25 +87,6 @@ class core.Dao
       return pkg.STORAGE_INSTANCE
 
     throw new Error 'No dao cache found for local dao expression'
-
-  #
-  # Creates the proper dao instance.
-  #
-  # @param String str
-  # @param Array arr
-  # @param core.Storage storage
-  #
-  _strategy_create: (str, arr, storage) ->
-    return new dao.Complex(str, arr, storage) if @_is_complex(str)
-    return new dao.Plain(str, arr, storage)
-
-  #
-  # Returns true if String representation of the path is complex.
-  #
-  # @param String str
-  #
-  _is_complex: (str) ->
-    return str.indexOf('{')
 
   #
   # Returns true if String representation of the path is global.

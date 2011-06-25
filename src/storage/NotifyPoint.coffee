@@ -32,7 +32,7 @@ class storage.NotifyPoint
   #
   # Sets all registered listeners as dirty in the storage.Notifier.
   #
-  set_dirty: =>
+  set_dirty: ->
     if @_enabled
       pkg.NOTIFIER_INSTANCE.set_dirty(o) for o in @_queue
     return
