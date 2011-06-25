@@ -1,33 +1,35 @@
 pkg.get_np_tests = ->
   test
-    name: '    1 path'
-    run: ->
-      @storage._get_np(@arr[0], @str[0])
-
-  test
-    name: '   50 paths'
+    name: '    50 paths'
     run: ->
       i = @i++ % 50
       @storage._get_np(@arr[i], @str[i])
 
   test
-    name: '  500 paths'
+    name: '   500 paths'
     run: ->
       i = @i++ % 500
       @storage._get_np(@arr[i], @str[i])
 
   test
-    name: '2 500 paths'
+    name: ' 2 500 paths'
     run: ->
       i = @i++ % 2500
       @storage._get_np(@arr[i], @str[i])
 
 
   test
-    name: '5 000 paths'
+    name: ' 5 000 paths'
     run: ->
       i = @i++ % 5000
       @storage._get_np(@arr[i], @str[i])
+
+  test
+    name: '10 000 paths'
+    run: ->
+      i = @i++ % 10000
+      @storage._get_np(@arr[i], @str[i])
+
 
 #
 # Tests for getting the NotifyPoint for the given path.
@@ -43,7 +45,7 @@ group
     @storage = new core.Storage()
 
     @i = 0
-    @str = pkg.permutate_paths(5000)
+    @str = pkg.permutate_paths(10000)
     @arr = (str.split('.') for str in @str)
 
 group

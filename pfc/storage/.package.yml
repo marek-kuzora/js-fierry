@@ -2,8 +2,10 @@ before: [.before.coffee]
 require:
   - fierry.storage
 namespace:
-  core:   core
-  dao:    core.dao
-  pkg:    performance.storage
-  test:   performance.register_test
-  group:  performance.register_group
+  core:    core
+  dao:     core.dao
+  storage: core.storage
+
+  pkg:     performance.storage
+  test:    performance.register_test
+  group:   performance.register_group
