@@ -53,6 +53,5 @@ class pkg.PathGenerator
   #
   _permutate_paths: (arr, count, length) ->
     l = arr.length
-
     while count--
-      (arr[core.rand(l)] for _ in [0..length - 1]).join('.')
+      (arr[rand l-1] for _ in [0..length - 1]).join('.')
