@@ -38,7 +38,7 @@ group
     @instance = {get_local_storage: -> return storage }
 
     @i = 0
-    @str = pkg.permutate_paths(10000)
+    @str = gen.path_array(10000).slice()
     @arr = (str.split('.') for str in @str)
 
 group

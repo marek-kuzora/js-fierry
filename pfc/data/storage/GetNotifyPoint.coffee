@@ -45,13 +45,13 @@ group
     @storage = new core.Storage()
 
     @i = 0
-    @str = pkg.permutate_paths(10000)
+    @str = gen.path_array(10000)
     @arr = (str.split('.') for str in @str)
 
 group
   name: 'storage.np.1 rule'
   before: ->
-    for rule in pkg.permutate_rules(1)
+    for rule in gen.rules_array(1)
       @storage.register_rule(rule)
 
 pkg.get_np_tests()
@@ -59,7 +59,7 @@ pkg.get_np_tests()
 group
   name: 'storage.np.5 rules'
   before: ->
-    for rule in pkg.permutate_rules(5)
+    for rule in gen.rules_array(5)
       @storage.register_rule(rule)
 
 pkg.get_np_tests()
