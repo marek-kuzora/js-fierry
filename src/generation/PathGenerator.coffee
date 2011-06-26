@@ -10,7 +10,7 @@ class pkg.PathGenerator
   # @param count - generated array size.
   # @param length - each path length.
   #
-  path_array: (arr, count, length = 5) ->
+  path_array: (count, length = 5, arr = pkg.PATHS_ARRAY) ->
     key = "#{uid arr}_#{count}_#{length}"
     return @_reg[key] ?= @_get_path_array(arr, count, length)
 
@@ -22,13 +22,13 @@ class pkg.PathGenerator
   # @param count - number of rules per head.
   # @param length - each path length.
   #
-  rules_array: (arr, count, length = 5) ->
+  rules_array: (count, length = 5, arr = pkg.PATHS_ARRAY) ->
     l = arr.length
     arr = @path_array(arr, count * l, length - 1, arr)
 
     for path, i in arr
-      arr[i % l] + '.' + path.replace(arr[rand l], '*')
-  
+      arr[i % l] + '.' + path.replace(arr[rand l-1], '*')
+
   #
   # Returns array of paths with the given count & length.
   #
