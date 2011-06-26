@@ -5,6 +5,7 @@ class pkg.IntGenerator
 
   #
   # Generates array of unique ints.
+  #
   # @param Integer count
   # @param Integer step - max incrementation step, > 1.
   # @param Boolean sorted - if true, returns sorted array.

@@ -4,4 +4,7 @@ require:
 namespace:
   core:  core
   array: array
+  
+  uid:   core.uid
+  rand:  core.rand
   pkg:   core.generation

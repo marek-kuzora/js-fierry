@@ -2,13 +2,12 @@ class pkg.StringGenerator
 
   constructor: ->
     @_sreg = {}
-
     @_min_char = 0
-    @_max_count = {}
     @_max_length = 20
 
   #
   # Generates array of unique (mostly) strings.
+  #
   # @param Integer count
   # @param Integer length
   # @param Integer range - possible different values of single character.
@@ -26,6 +25,7 @@ class pkg.StringGenerator
 
   #
   # Returns array of strings  with the given count & range.
+  #
   # @param Integer count
   # @param Integer range - possible different values of single character.
   #
@@ -36,6 +36,7 @@ class pkg.StringGenerator
   #
   # Generates array of unique strings with the given count & range.
   # Each string's lengths is equal to @_max_length
+  #
   # @param Integer count
   # @param Integer range - possible different values of single character.
   #
@@ -48,6 +49,7 @@ class pkg.StringGenerator
 
   #
   # Generates string of the specified length.
+  #
   # @param Integer length
   # @param Integer range - possible different values of single character.
   #
