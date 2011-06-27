@@ -1,4 +1,3 @@
-after: [.after.coffee]
 require:
   - fierry.core
   - fierry.dj.services
