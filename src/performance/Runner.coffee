@@ -33,8 +33,8 @@ class pkg.Runner
 
     @dispatch("tests.found", tests)
 
-    core.assert cases.length > 0, "No test cases found for suites: #{@_suites}"
-    core.async_array(cases, @_run_once)
+    assert cases.length > 0, "No test cases found for suites: #{@_suites}"
+    scheduler.async_array(cases, @_run_once)
 
   #
   # Executes the single test case & schedules next one if defined.

@@ -17,7 +17,6 @@ class pkg.Group
     node.accept(visitor) for node in @_nodes
     visitor.on_group_end(@)
 
-
   #
   # Adds new node as a child.
   # @param node - group/test object.

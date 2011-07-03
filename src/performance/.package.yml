@@ -1,12 +1,16 @@
-after: 
+after:
   - .after.coffee
 require:
   - fierry.core
   - fierry.scheduler
 
 namespace:
-  core: core
-  array: array
-  string: string
-  api: performance
-  pkg: performance.internal
+  core:    core
+  array:   array
+  string:  string
+
+  assert:  core.assert
+  pfc:     performance
+  pkg:     performance.internal
+
+  scheduler: core.scheduler.RAW

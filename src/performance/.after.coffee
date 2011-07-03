@@ -3,26 +3,26 @@
 #
 pkg.INSTANCE = new pkg.Registry()
 
+
 #
 # Registers the performance group.
 # @param group - {name, *parent, *args, *before, *after}
 #
-api.register_group = (group) ->
+pfc.register_group = (group) ->
   pkg.INSTANCE.register_group(group)
-
 
 #
 # Registers the performance test case.
 # @param test - {group, name, run, *args, *before, *after, *retry}
 #
-api.register_test = (test) ->
+pfc.register_test = (test) ->
   pkg.INSTANCE.register_test(test)
 
 #
 # Runs the tests corresponding to the given group/test names.
 # @param arguments - unprocessed array of group/test names.
 #
-api.run = () ->
+pfc.run = () ->
   runner = new pkg.Runner(pkg.INSTANCE, arguments)
   listener = new pkg.ProgressListener()
 
