@@ -31,7 +31,7 @@ class pkg.Scheduler
   #
   _run_loop: =>
     for async in @_registry.shift() || []
-      @_cache[core.uid(async)]= false
+      @_cache[uid async]= false
       async.execute()
 
   #
@@ -40,22 +40,14 @@ class pkg.Scheduler
   # @param delay - Number
   #
   _schedule: (async, delay) ->
-    return false if @_cache[core.uid(async)]
+    return false if @_cache[uid async]
 
     i = Math.max(0, Math.round(delay / @_interval) - 1)
     @_registry[i] ?= []
     @_registry[i].push(async)
 
-    @_cache[core.uid(async)] = true
+    @_cache[uid async] = true
     return true
-
-  #
-  # Clears singleton state.
-  #
-  __clear: ->
-    @stop()
-    @_cache = {}
-    @_registry = []
 
   #
   # Starts the scheduler.

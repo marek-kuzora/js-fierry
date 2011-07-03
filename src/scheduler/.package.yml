@@ -4,4 +4,8 @@ require:
   - fierry.core
 namespace:
   core: core
+
+  uid:  core.uid
   pkg:  core.scheduler
+
+  behaviour:  core.app.add_behavior
