@@ -7,20 +7,22 @@ class core.Runtime
 
   #
   # Registers a service under the given name.
+  #
   # @param String name
   # @param Object service
   #
   register_service: (name, service) ->
-    if core.app.is_running()
+    if !core.app.is_stopped()
       throw new Error 'Cannot register new services if app is running'
     @_services[name] = service
 
   #
   # Registers the executor for requests processing.
+  #
 	# @param {order, run, ...} executor
 	#
   register_executor: (type, executor) ->
-    if core.app.is_running()
+    if !core.app.is_stopped()
       throw new Error 'Cannot register new executors if app is running'
     @_executors[type] = executor
 
@@ -28,6 +30,7 @@ class core.Runtime
   # Registers the given request for later processing in a batch.
   # - Request will be executed with all other accumulated requests on flush().
   # - Requests should be threated as readonly.
+  #
   # @param String type
   # @param {...} req
   #
@@ -36,6 +39,7 @@ class core.Runtime
 
   #
   # Executes provided function inside the service with specified name.
+  #
   # @param String name
   # @param -> fn
   #
@@ -62,7 +66,7 @@ class core.Runtime
   #
   # Setups executors and services on application startup.
   #
-  _setup: =>
+  _setup: ->
     @_setup_resource service  for _, service of @_services
     @_setup_resource executor for _, executor of @_executors
 
@@ -70,6 +74,7 @@ class core.Runtime
   # Setups the resource after application is loaded.
   # - Performs depedency injection of requested services.
   # - Setups the resource if necessary.
+  #
   # @param resource
   #
   _setup_resource: (resource) ->

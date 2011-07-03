@@ -1,8 +1,13 @@
 class core.App
 
   constructor: ->
-    @_stop_arr = []
-    @_start_arr = []
+    @_behaviors =
+      stop:   []
+      start:  []
+      pause:  []
+      resume: []
+
+    @_paused = false
     @_running = false
 
   #
@@ -10,22 +15,43 @@ class core.App
   # Starts all of the desired functionality.
   #
   start: ->
-    @_running = true
-    fn() for fn in @_start_arr
+    if @_can 'start'
+      @_trigger_behaviour('start')
+      @_trigger_behaviour('resume')
+      @_running = true
 
   #
-  # Stops the applications.
-  # Stops all of the ongoing functionality.
+  # Stops the application and clears its state.
   #
   stop: ->
-    @_running = false
-    fn() for fn in @_stop_arr
+    if @_can 'stop'
+      @_running = false
+      @_trigger_behaviour('pause')
+      @_trigger_behaviour('stop')
 
   #
-  # Returns true if the application is running.
+  # Resumes the application (from inactive state).
+  # Restores all non-essential functionality.
+  #
+  resume: ->
+    if @_can 'resume'
+      @_trigger_behaviour('resume')
+      @_paused = false
+  
+  #
+  # Pauses the application (into inactive state).
+  # Stops all non-essential functionality.
+  #
+  pause: ->
+    if @_can 'pause'
+      @_paused = true
+      @_trigger_behaviour('pause')
+
+  #
+  # Returns true if the application is running and not paused.
   #
   is_running: ->
-    return @_running
+    return @_running and !@_paused
 
   #
   # Returns true if the application is stopped.
@@ -34,15 +60,37 @@ class core.App
     return !@_running
 
   #
-  # Registers handler function for starting the application.
+  # Returns true if the application is paused (inactive).
   #
-  add_start_handler: (fn) ->
-    @_start_arr.push(fn)
+  is_paused: ->
+    return @_paused
+
+  #
+  # Returns true if the application can change its state into the given one.
+  #
+  # @param String state
+  #
+  _can: (state) ->
+    switch state
+      when 'stop'   then  @_running
+      when 'start'  then !@_running
+      when 'pause'  then  @_running and !@_paused
+      when 'resume' then  @_running and  @_paused
+
+  #
+  # Triggers behavior binded with the given application state.
+  #
+  # @param String state
+  #
+  _trigger_behaviour: (state) ->
+    fn() for fn in @_behaviors[state]
     return
 
   #
-  # Registers handler funciton for stopping the application.
+  # Registers behaviour funciton for the given application state.
   #
-  add_stop_handler: (fn) ->
-    @_stop_arr.push(fn)
-    return
+  # @param String state
+  # @param Function fn
+  #
+  add_behavior: (state, fn) =>
+    @_behaviors[state].push(fn)

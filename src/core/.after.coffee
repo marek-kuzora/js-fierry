@@ -1,7 +1,8 @@
-core.app = new core.App()
-core.runtime = new core.Runtime()
+app = core.app = new core.App()
+runtime = core.runtime = new core.Runtime()
 
 #
-# Runtime will setup itself on application startup.
+# Binding Runtime setup on application startup.
 #
-core.app.add_start_handler(core.runtime._setup)
+app.add_behavior 'start', ->
+  runtime._setup()
