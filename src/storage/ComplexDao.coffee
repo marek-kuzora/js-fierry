@@ -8,7 +8,7 @@ class dao.Complex extends dao.Plain
 
     for np in @_nested
       np.register(@_update) if np
-        
+
   _update: =>
      if @_registered
        @_storage.unregister(@_array, @set_dirty, @_str)

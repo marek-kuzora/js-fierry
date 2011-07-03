@@ -159,3 +159,9 @@ class core.Storage
   #
   get_dao: (str, storage) ->
     return @_daos[uid storage][str]
+
+  _clear: ->
+    @_nps = {}
+    @_daos = []
+    @_root = {}
+

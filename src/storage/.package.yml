@@ -8,16 +8,18 @@ require:
   - fierry.scheduler
 namespace:
   # Core
-  core:    core
-  array:   array
-  object:  object
+  core:     core
+  array:    array
+  object:   object
 
   # Helpers
-  app:     core.app
-  uid:     core.uid
-  assert:  core.assert
+  app:      core.app
+  uid:      core.uid
+  assert:   core.assert
   
   # Internal namespaces
-  dao:     core.dao
-  pkg:     core.storage
-  storage: core.storage
+  dao:      core.dao
+  pkg:      core.storage
+  storage:  core.storage
+
+  behavior: core.app.add_behavior

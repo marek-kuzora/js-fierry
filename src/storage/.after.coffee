@@ -20,7 +20,7 @@ storage.get = (arr) ->
   return pkg.STORAGE_INSTANCE.get(arr)
 
 storage.set = (arr, str, v) ->
-  return pkg.STORAGE_INSTANCE.set(arr, str, v)
+  pkg.STORAGE_INSTANCE.set(arr, str, v)
 
 storage.register = (arr, str, fn) ->
   pkg.STORAGE_INSTANCE.register(arr, str, fn)
@@ -38,12 +38,23 @@ storage.register_rule = (raw) ->
   pkg.STORAGE_INSTANCE.register_rule(raw)
 
 
-core.async(pkg.NOTIFIER_INSTANCE.notify, 10)
+#
+# Binding Storage clear to the application shutdown.
+#
+behavior 'stop', ->
+  pkg.STORAGE_INSTANCE._clear()
 
-# dziala! :)
+#
+# Scheduling asynchronous, periodic notifications.
+#
+core.async(pkg.NOTIFIER_INSTANCE.notify, 10, true)
+
+
+# TODO remove!
 # Potrzeba testow na pewno na tworzenie samego dao
 # Potem testow na pobieranie danych...
 # I testow na utworzenie & pobranie tego, co trzeba
 # Plain mam, complex use-case tez trzeba.
-core.storage.set(['user'], 'user', {name: 'Bilbo', surname: 'Baggins', status: 'guest'})
-core.storage.get(['user'])
+behavior 'start', ->
+  core.storage.set(['user'], 'user', {name: 'Bilbo', surname: 'Baggins', status: 'guest'})
+  core.storage.get(['user'])

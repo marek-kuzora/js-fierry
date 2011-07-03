@@ -53,7 +53,7 @@ class core.Dao
     else
       str = str.substr(1)
       storage = instance
-    
+
     return instance.get_dao(str, storage)
 
   #
