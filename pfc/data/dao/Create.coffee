@@ -1,50 +1,19 @@
-pkg.get_dao_create_tests = ->
-
-  test
-    name: '   50 paths'
-    run: ->
-      i = @i++ % 50
-      dao.create(true, @str[i], @arr[i], @instance)
-
-  test
-    name: '  500 paths'
-    run: ->
-      i = @i++ % 500
-      dao.create(true, @str[i], @arr[i], @instance)
-
-  test
-    name: '2 500 paths'
-    run: ->
-      i = @i++ % 2500
-      dao.create(true, @str[i], @arr[i], @instance)
-
-  test
-    name: '5 000 paths'
-    run: ->
-      i = @i++ % 5000
-      dao.create(true, @str[i], @arr[i], @instance)
-
-  test
-    name: '10 000 paths'
-    run: ->
-      i = @i++ % 10000
-      dao.create(true, @str[i], @arr[i], @instance)
-
-
 group
   name: 'dao.create'
   before: ->
     storage  = new core.Storage()
-    @instance = {get_local_storage: -> return storage }
+    @instance = {get_local_storage: -> return storage } # as env ?
 
     @i = 0
     @str = gen.path_array(10000).slice()
     @arr = (str.split('.') for str in @str)
 
+
 group
   name: 'dao.create.plain'
 
-pkg.get_dao_create_tests()
+pkg.create_suite()
+
 
 group
   name: 'dao.create.complex'
@@ -59,7 +28,8 @@ group
       @str[i] = @str[i].replace('\.' + arr_path[1] + '\.', '{..movie.title}')
       arr_path[1] = @dao_a
 
-pkg.get_dao_create_tests()
+pkg.create_suite()
+
 
 group
   name: 'dao.create.complex.2 nested'
@@ -71,4 +41,4 @@ group
       arr_path[1] = @dao_a
       arr_path[3] = @dao_b
 
-pkg.get_dao_create_tests()
+pkg.create_suite()

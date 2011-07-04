@@ -1,4 +1,6 @@
-before: [.before.coffee]
+before:
+  - .before.coffee
+  - GetNotifyPoint.suite.coffee
 require:
   - fierry.storage
 namespace:

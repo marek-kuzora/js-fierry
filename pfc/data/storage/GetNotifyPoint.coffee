@@ -1,36 +1,3 @@
-pkg.get_np_tests = ->
-  test
-    name: '    50 paths'
-    run: ->
-      i = @i++ % 50
-      @storage._get_np(@arr[i], @str[i])
-
-  test
-    name: '   500 paths'
-    run: ->
-      i = @i++ % 500
-      @storage._get_np(@arr[i], @str[i])
-
-  test
-    name: ' 2 500 paths'
-    run: ->
-      i = @i++ % 2500
-      @storage._get_np(@arr[i], @str[i])
-
-
-  test
-    name: ' 5 000 paths'
-    run: ->
-      i = @i++ % 5000
-      @storage._get_np(@arr[i], @str[i])
-
-  test
-    name: '10 000 paths'
-    run: ->
-      i = @i++ % 10000
-      @storage._get_np(@arr[i], @str[i])
-
-
 #
 # Tests for getting the NotifyPoint for the given path.
 #
@@ -54,7 +21,7 @@ group
     for rule in gen.rules_array(1)
       @storage.register_rule(rule)
 
-pkg.get_np_tests()
+pkg.np_suite()
 
 group
   name: 'storage.np.5 rules'
@@ -62,4 +29,4 @@ group
     for rule in gen.rules_array(5)
       @storage.register_rule(rule)
 
-pkg.get_np_tests()
+pkg.np_suite()
