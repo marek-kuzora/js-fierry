@@ -37,7 +37,7 @@ Env.array =
   # @param it
   #
   contains: (arr, it) ->
-    arr.indexOf(it) is not -1
+    arr.indexOf(it) isnt -1
 
   #
   # Returns true if array does not contain any items.
