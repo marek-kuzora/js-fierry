@@ -4,10 +4,11 @@ class pkg.Group
     @name = group.name
 
     @_nodes = []
+    @_envs = group.envs || []
     @_after = group.after || (->)
     @_before = group.before || (->)
     @_min_arg = group.min_arg || 0
-
+  
   #
   # Accepts the given visitor for retrospection.
   # @param visitor
@@ -67,6 +68,17 @@ class pkg.Group
     @_after.call(ctx)
     @parent.run_after(ctx) if @parent
 
+  #
+  # Returns minimal number of loops for belonging pfc cases.
+  #
   get_min_arg: ->
     return @_min_arg || @parent.get_min_arg() if @parent
     return @_min_arg
+  
+  #
+  # Returns union of environments names used by the group.
+  #
+  get_envs: ->
+    return union(@_envs, @parent._envs) if @parent
+    return @_envs
+

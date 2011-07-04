@@ -9,8 +9,10 @@ namespace:
   array:   array
   string:  string
 
+  app:     core.app
   assert:  core.assert
   pfc:     performance
   pkg:     performance.internal
+  union:   set.union
 
   scheduler: core.scheduler.RAW

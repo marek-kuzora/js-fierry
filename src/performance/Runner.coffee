@@ -42,6 +42,8 @@ class pkg.Runner
   # @param last - true if the given item is last array's last item
   #
   _run_once: (test, last) =>
+    app.stop()
+
     arg = test.measure()
     time = test.run(arg)
     test.get_result().register(arg, time)

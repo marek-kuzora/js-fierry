@@ -7,8 +7,19 @@ class pkg.Test
     @_run = test.run
     @_after = test.after || (->)
     @_before = test.before || (->)
-    @_min_arg = test.min_arg || group.get_min_arg()
 
+    @_min_arg = test.min_arg || group.get_min_arg()
+    @_envs = @_get_envs(test.envs || [], @group.get_envs())
+
+  #
+  # Returns environments instances from the given arrays of string names.
+  #
+  # @param String[] t_names
+  # @param String[] g_names
+  #
+  _get_envs: (t_names, g_names) ->
+    pkg.ENVS.get(name) for name in union(t_names, g_names)
+  
   #
   # Accepts the given visitor for retrospection.
   # @param visitor
@@ -47,16 +58,23 @@ class pkg.Test
   # @param log - Boolean log the result.
   #
   run: (arg) ->
+    env.before() for env in @_envs
+
     @group.run_before(@)
     @_before()
 
+    app.start()
     start = new Date()
-    @_run() for i in [0..arg]
-    end = new Date()
 
+    @_run() for i in [0..arg]
+    
+    end = new Date()
+    app.stop()
+    
     @_after
     @group.run_after(@)
 
+    env.after() for env in @_envs
     return end - start
 
   #
@@ -64,7 +82,6 @@ class pkg.Test
   #
   create_test_result: ->
     @_results.push(new pkg.TestResult())
-
 
   #
   # Returns the active test result.

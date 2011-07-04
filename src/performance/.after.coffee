@@ -2,7 +2,7 @@
 # Global instance of pkg.Registry
 #
 pkg.INSTANCE = new pkg.Registry()
-
+pkg.ENVS = new pkg.Environments()
 
 #
 # Registers the performance group.
