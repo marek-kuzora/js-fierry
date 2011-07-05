@@ -38,4 +38,14 @@ test
   run: ->
     @cache[@strings[@i++ % @max]]
 
+test
+  name: 'prefix_string'
+  before: ->
+    @i = 0
+    @max = 100000
+    @strings = ('..' + str for str in gen.string_array(100000, 10))
 
+    @cache = {}
+    @cache[str] = str for str in @strings
+  run: ->
+    @cache[@strings[@i++ % @max]]
