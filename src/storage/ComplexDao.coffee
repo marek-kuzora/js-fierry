@@ -1,23 +1,22 @@
 class dao.Complex extends dao.Plain
 
-  constructor: (str, array, storage) ->
-    @_nested = ((np if dao.is(np)) for np in array)
-    @_registered = false
+  constructor: (_, @_nested, @_storage) ->
+    @_recompile()
 
-    super
+    for e in @_nested
+      e.register(@_on_nested_change) if dao.is(e)
 
-    for np in @_nested
-      np.register(@_update) if np
+    super(@_str, @_array, @_storage)
+    return
 
-  _update: =>
-     if @_registered
-       @_storage.unregister(@_array, @set_dirty, @_str)
+  _on_nested_change: =>
+    @_storage.unregister(@_array, @_str, @_on_change)
+    @_recompile()
+    @_storage.register(@_array, @_str, @_on_change)
+    @_on_change()
 
-     for np, i in @_nested
-       @_array[i] = np.get() if np
+  _recompile: ->
+    @_array = for e in @_nested
+      if dao.is(e) then e.get() else e
 
-     @_str = @_array.join('.')
-     @_storage.register(@_array, @_str, @set_dirty)
-     @_registered = true
-
-     @set_dirty()
+    @_str = @_array.join('.')

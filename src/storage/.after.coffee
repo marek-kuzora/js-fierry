@@ -6,15 +6,24 @@ pkg.NOTIFIER_INSTANCE = new storage.Notifier()
 dao.is = (o) ->
   return pkg.DAO_INSTANCE.is(o)
 
-dao.get = (str, instance, no_evaluate) ->
-  return pkg.DAO_INSTANCE.get(str, instance, no_evaluate)
-
-dao.set = (str, v, instance, no_evaluate) ->
-  pkg.DAO_INSTANCE.set(str, v, instance, no_evaluate)
-
 dao.create = (is_global, str, arr, instance) ->
   return pkg.DAO_INSTANCE.create(is_global, str, arr, instance)
 
+dao.compile = (raw) ->
+  return pkg.DAO_INSTANCE.compile(raw)
+
+core.get = (str, instance, no_evaluate) ->
+  return pkg.DAO_INSTANCE.get(str, instance, no_evaluate)
+
+core.set = (str, v, instance, no_evaluate) ->
+  pkg.DAO_INSTANCE.set(str, v, instance, no_evaluate)
+
+core.register = (str, fn, instance) ->
+  pkg.DAO_INSTANCE.get_dao(str, instance).register(fn)
+
+core.unregister = (str, fn, instance) ->
+  pkg.DAO_INSTANCE.get_dao(str, instance).unregister(fn)
+  
 
 storage.get = (arr) ->
   return pkg.STORAGE_INSTANCE.get(arr)

@@ -140,6 +140,7 @@ class core.Storage
   # @param core.Storage storage
   #
   _strategy_create: (str, arr, storage) ->
+    # TODO unify dao instances if can be done withot pfc loss!
     return new dao.Complex(str, arr, storage) if @_is_complex(str)
     return new dao.Plain(str, arr, storage)
 

@@ -20,7 +20,7 @@ class core.Dao
   #
   get: (str, instance, no_evaluate) ->
     arr = []
-    v   = @_get_dao(str, instance).get(arr, no_evaluate)
+    v   = @get_dao(str, instance).get(arr, no_evaluate)
 
     if instance and instance.track_dao
       instance.track_dao(dao) for dao in arr
@@ -35,7 +35,7 @@ class core.Dao
   # @param Object instance
   #
   set: (str, v, instance, no_evaluate) ->
-    @_get_dao(str, instance).set(v, no_evaluate)
+    @get_dao(str, instance).set(v, no_evaluate)
 
   #
   # Returns dao instance for specified path and dao_cache.
@@ -43,7 +43,7 @@ class core.Dao
   # @param String str
   # @param Object instance
   #
-  _get_dao: (str, instance) ->
+  get_dao: (str, instance) ->
     global   = @_is_global(str)
     instance = @_retrieve_dao_cache(global, instance)
 
@@ -54,6 +54,7 @@ class core.Dao
       str = str.substr(1)
       storage = instance
 
+    # Here we need to compile dao if not found...
     return instance.get_dao(str, storage)
 
   #
@@ -95,6 +96,51 @@ class core.Dao
   #
   _is_global: (str) ->
     return str.charCodeAt(0) is @_dot_code and str.charCodeAt(1) is @_dot_code
+
+  compile: (raw) ->
+    i  = 0
+    st = 0
+    l  = raw.length
+
+    arr = []
+    stack = []
+
+    while i < l and i isnt -1
+      char = raw.charCodeAt(i)
+
+      # . handling
+      if char is 46
+        if arr.length == 0 # should not compile that way??
+          arr[0] = raw.charCodeAt(i+1) is 46
+        else
+          if st isnt i
+            arr.push(raw.substring(st, i))
+        st = i + 1
+
+      # { handling
+      else if char is 123
+        if st isnt i
+          arr.push(raw.substring(st, i))
+        st = i+1
+
+        stack.push(arr)
+        arr.push([])
+        arr = arr[arr.length-1]
+
+      # } handling
+      else if char is 125
+        if st isnt i
+          arr.push(raw.substring(st, i))
+        st = i + 1
+        arr = stack.pop()
+      
+      #i = raw.search(/\.|\{|\}/, i)
+      i++
+
+    # . { } all not found
+    if st isnt l
+      arr.push(raw.substring(st, l))
+    return arr
 
 ###
 #

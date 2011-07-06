@@ -16,7 +16,7 @@ namespace:
   app:      core.app
   uid:      core.uid
   assert:   core.assert
-  
+
   # Internal namespaces
   dao:      core.dao
   pkg:      core.storage
