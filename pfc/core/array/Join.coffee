@@ -28,6 +28,13 @@ test
     @arr.join('.-.')
 
 test
+  name: ' 5 length -no-token'
+  before: ->
+    @arr = ['a', 'b', 'c', 'd', 'e']
+  run: ->
+    @arr.join('')
+
+test
   name: '10 length'
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']

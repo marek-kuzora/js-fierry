@@ -16,9 +16,8 @@ test
     @str.replace(/\ /g, '')
 
 test
-  name: '30 chars -6 replace'
+  name: '30 chars -3 replace'
   before: ->
     @str = '.xxx{.sasa{.fafa}gaga}cos{.xxx}'
   run: ->
     @str.replace(/\{/g, '')
-
