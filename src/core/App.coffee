@@ -26,7 +26,7 @@ class core.App
   stop: ->
     if @_can 'stop'
       @_running = false
-      @_trigger_behaviour('pause')
+      @_trigger_behaviour('pause') unless @_paused
       @_trigger_behaviour('stop')
 
   #
@@ -37,7 +37,7 @@ class core.App
     if @_can 'resume'
       @_trigger_behaviour('resume')
       @_paused = false
-  
+
   #
   # Pauses the application (into inactive state).
   # Stops all non-essential functionality.
