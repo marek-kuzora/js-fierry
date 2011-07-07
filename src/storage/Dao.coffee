@@ -1,194 +1,103 @@
 class core.Dao
 
-  constructor: ->
-    @_dot_code = 46
-
   #
-  # Returns true if the given expression is a dao instance
+  # Returns true if the given argument is a dao instance
   #
-  # @param dao.Plain dao
+  # @param Any o
   #
   is: (o) ->
     return o instanceof dao.Plain
 
   #
   # Returns value from the underlying dao expression.
-  # Tracks all affected daos if instance.track_dao() is present.
+  # Tracks the affected dao if o.track_dao() is present.
   #
-  # @param String str
-  # @param Object instance
+  # @param String key - string path _with_ leading dots.
+  # @param Object o
   #
-  get: (str, instance, no_evaluate) ->
-    arr = []
-    v   = @get_dao(str, instance).get(arr, no_evaluate)
+  get: (key, o) ->
+    dao = @_retrieve_dao(str, o)
 
-    if instance and instance.track_dao
-      instance.track_dao(dao) for dao in arr
-
-    return v
+    o.track_dao(dao) if o and o.track_dao
+    return dao.get()
 
   #
-  # Sets value to the underlying dao expression
+  # Sets value to the underlying dao expression.
   #
-  # @param String str
+  # @param String str - string path _with_ leading dots.
   # @param Any v
-  # @param Object instance
+  # @param Object o
   #
-  set: (str, v, instance, no_evaluate) ->
-    @get_dao(str, instance).set(v, no_evaluate)
+  set: (key, v, o) ->
+    @_retrieve_dao(key, o).set(nv)
 
   #
-  # Returns dao instance for specified path and dao_cache.
+  # @param Boolean g  - true if the path is global.
+  # @param String str - string path _without_ leading dots.
+  # @param Array arr  - compiled array path.
   #
-  # @param String str
-  # @param Object instance
-  #
-  get_dao: (str, instance) ->
-    global   = @_is_global(str)
-    instance = @_retrieve_dao_cache(global, instance)
-
-    if global
-      str = str.substr(2)
-      storage = pkg.STORAGE_INSTANCE
-    else
-      str = str.substr(1)
-      storage = instance
-
-    # Here we need to compile dao if not found...
-    return instance.get_dao(str, storage)
+  create: (g, str, arr, o) ->
+    storage = @_retrieve_storage(o)
+    return storage.create_dao(g, str, arr)
 
   #
-  # Creates dao expression and caches in the given dao_cache.
-  # It is assumed that String representation will be given without
-  # any leading dots.
-  # TODO it should be also possible to omit is_global & arr parameters!
+  # @param String key - string path _with_ leading dots.
   #
-  # @param Boolean is_global
-  # @param String str
-  # @param Array arr
-  # @param Object instance
-  #
-  create: (is_global, str, arr, instance) ->
-    instance = @_retrieve_dao_cache(is_global, instance)
-    storage  = if is_global then pkg.STORAGE_INSTANCE else instance
+  _retrieve_dao: (key, o) ->
+    storage = @_retrieve_storage(o)
+    dao = storage.retrieve_dao(key)
 
-    instance.create_dao(str, arr, storage)
+    unless dao
+      arr = @compile(key, o)
+      dao = storage.create_dao(arr.g, arr.s, arr)
 
-  #
-  # Returns dao_cache from the given instance object.
-  #
-  # @param Boolean is_global
-  # @param Object instance
-  #
-  _retrieve_dao_cache: (is_global, instance) ->
-    if instance and instance.get_local_storage
-      return instance.get_local_storage()
+    return dao
 
-    if is_global
-      return pkg.STORAGE_INSTANCE
+  _retrieve_storage: (o = pkg.STORAGE_INSTANCE) ->
+    return o if o instanceof core.Storage
+    return o.get_local_storage() if o.get_local_storage
 
-    throw new Error 'No dao cache found for local dao expression'
+    throw new Error 'No local storage found for dao expression'
 
-  #
-  # Returns true if String representation of the path is global.
-  #
-  # @param String str
-  #
-  _is_global: (str) ->
-    return str.charCodeAt(0) is @_dot_code and str.charCodeAt(1) is @_dot_code
+  compile: (str, o) ->
+    i = 0
+    p = 0
+    l = str.length
 
-  compile: (raw) ->
-    i  = 0
-    st = 0
-    l  = raw.length
-
+    st = []
     arr = []
-    stack = []
 
-    while i < l and i isnt -1
-      char = raw.charCodeAt(i)
+    while i < l
+      char = str.charCodeAt(i)
 
-      # . handling
-      if char is 46
-        if arr.length == 0 # should not compile that way??
-          arr[0] = raw.charCodeAt(i+1) is 46
+      if char is pkg.DOT
+        unless arr.g?
+          arr.g = str.charCodeAt(i+1) is pkg.DOT
+          arr.p = if arr.g then i + 2 else i + 1
         else
-          if st isnt i
-            arr.push(raw.substring(st, i))
-        st = i + 1
+          arr.push(str.substring(p, i)) if p isnt i
+        p = i + 1
 
-      # { handling
-      else if char is 123
-        if st isnt i
-          arr.push(raw.substring(st, i))
-        st = i+1
+      else if char is pkg.CLOSURE_BEGIN
+        arr.push(str.substring(p, i)) if p isnt i
+        st.push(arr)
 
-        stack.push(arr)
-        arr.push([])
-        arr = arr[arr.length-1]
+        arr = []
+        p = i + 1
 
-      # } handling
-      else if char is 125
-        if st isnt i
-          arr.push(raw.substring(st, i))
-        st = i + 1
-        arr = stack.pop()
-      
-      #i = raw.search(/\.|\{|\}/, i)
+      else if char is pkg.CLOSURE_END
+        arr.push(str.substring(p, i)) if p isnt i
+        arr.s = str.substring(arr.p, i)
+
+        dao = @create(arr.g, arr.s, arr, o)
+        arr = st.pop()
+        arr.push(dao)
+
+        p = i + 1
+
       i++
 
-    # . { } all not found
-    if st isnt l
-      arr.push(raw.substring(st, l))
+    arr.push(str.substr(p)) if p isnt i
+    arr.s = str.substr(arr.p)
+
     return arr
-
-###
-#
-# Transforms the given string raw path into array-based compiled path.
-#
-# @param String raw
-#
-dao.compile = (raw) ->
-  i  = 0
-  st = 0
-  l  = raw.length
-
-  arr = []
-  stack = []
-
-  while i < l
-    char = raw.charCodeAt(i)
-
-    # . handling
-    if char is 46
-      if arr.length == 0 # should not compile that way??
-        arr[0] = raw.charCodeAt(i+1) is 46
-      else
-        if st is not i
-          arr.push(raw.substring(st, i))
-      st = i + 1
-
-    # { handling
-    else if char is 123
-      if st is not i
-        arr.push(raw.substring(st, i))
-      st = i+1
-
-      stack.push(arr)
-      arr.push([])
-      arr = arr[arr.length-1]
-
-    # } handling
-    else if char is 125
-      if st is not i
-        arr.push(raw.substring(st, i))
-      st = i + 1
-      arr = stack.pop()
-    
-    i++
-
-  # . { } all not found
-  if st is not l
-    arr.push(raw, substring, st, l)
-  return arr
-

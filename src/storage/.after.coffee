@@ -67,3 +67,8 @@ core.async(pkg.NOTIFIER_INSTANCE.notify, 10, true)
 behavior 'start', ->
   core.storage.set(['user'], 'user', {name: 'Bilbo', surname: 'Baggins', status: 'guest'})
   core.storage.get(['user'])
+
+#console.log 'arr', dao.compile('.anna{..but.not.here}has.a.cat{..dada{.i.ii.iii}something}')
+#console.log 'str', dao.compile('.anna{..but.not.here}has.a.cat{..dada{.i.ii.iii}something}').s
+#console.log 'arr', dao.compile('.anna{..but.not.here}')
+#console.log 'str', dao.compile('.anna{..but.not.here}').s

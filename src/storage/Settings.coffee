@@ -1,0 +1,5 @@
+pkg.DOT = 46
+
+pkg.CLOSURE_BEGIN = 123
+
+pkg.CLOSURE_END = 125

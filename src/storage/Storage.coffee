@@ -7,7 +7,7 @@ class core.Storage
 
   constructor: ->
     @_nps = {}
-    @_daos = []
+    @_daos = {}
     @_root = {}
     @_rules = {}
 
@@ -124,14 +124,14 @@ class core.Storage
   #
   # Creates and caches dao if not found.
   #
-  # @param String str
-  # @param Array arr
-  # @param core.Storage storage 
+  # @param Boolean g  - true if the path is global.
+  # @param String str - string path _without_ leading dots.
+  # @param Array arr  - compiled array path.
   #
-  create_dao: (str, arr, storage) ->
-    daos = @_daos[uid storage] ?= {}
-    daos[str] ?= @_strategy_create(str, arr, storage)
-
+  create_dao: (g, str, arr) ->
+    pfx = if g then '..' else '.'
+    return @_daos[pfx + str] ?= @_strategy_create(g, str, arr, @)
+  
   #
   # Creates the appropriate dao instance.
   #
@@ -139,8 +139,10 @@ class core.Storage
   # @param Array arr
   # @param core.Storage storage
   #
-  _strategy_create: (str, arr, storage) ->
-    # TODO unify dao instances if can be done withot pfc loss!
+  _strategy_create: (g, str, arr, storage) ->
+    storage = pkg.STORAGE_INSTANCE if g
+    
+    # TODO remove str from complex!
     return new dao.Complex(str, arr, storage) if @_is_complex(str)
     return new dao.Plain(str, arr, storage)
 
@@ -150,16 +152,16 @@ class core.Storage
   # @param String str
   #
   _is_complex: (str) ->
+    # TODO check if this is faster than loop through the array and find dao.
     return str.indexOf('{') isnt -1
 
   #
   # Returns dao from the cache.
   #
-  # @param String str
-  # @param core.Storage storage
+  # @param String key - string path _with_ leading dots.
   #
-  get_dao: (str, storage) ->
-    return @_daos[uid storage][str]
+  retrieve_dao: (key) ->
+    return @_daos[key]
 
   _clear: ->
     @_nps = {}
