@@ -1,9 +1,12 @@
 before: [.before.coffee]
 require:
+  - event
   - fierry.dom
   - fierry.performance
 namespace:
   dom:    dom
+  event:  Event
+
   pkg:    performance.dom
   test:   performance.register_test
   group:  performance.register_group

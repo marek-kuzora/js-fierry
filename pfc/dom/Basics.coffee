@@ -32,6 +32,11 @@ test
     document.getElementById('stub')
 
 test
+  name: 'getElementsByTagName'
+  run: ->
+    document.getElementsByTagName('div')
+
+test
   name: 'querySelector'
   run: ->
     document.querySelector('[id="stub"]')
