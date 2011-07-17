@@ -18,7 +18,7 @@ class core.Dao
   get: (key, o) ->
     dao = @_retrieve_dao(str, o)
 
-    o.track_dao(dao) if o and o.track_dao
+    o.track(dao) if o and o.track_dao
     return dao.get()
 
   #
@@ -53,12 +53,23 @@ class core.Dao
 
     return dao
 
+  #
+  # Retrieves storages from the given object.
+  #
+  # @param Object o
+  #
   _retrieve_storage: (o = pkg.STORAGE_INSTANCE) ->
     return o if o instanceof core.Storage
     return o.get_local_storage() if o.get_local_storage
 
     throw new Error 'No local storage found for dao expression'
 
+  #
+  # Compiles the raw path into valid dao expression.
+  #
+  # @param String str - string path _with_ leading dots.
+  # @param Object o
+  #
   compile: (str, o) ->
     i = 0
     p = 0

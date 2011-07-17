@@ -1,6 +1,6 @@
 class dao.Complex extends dao.Plain
 
-  constructor: (_, @_nested, @_storage) ->
+  constructor: (@_nested, @_storage) ->
     @_recompile()
 
     for e in @_nested

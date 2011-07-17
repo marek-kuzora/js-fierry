@@ -2,7 +2,6 @@ class dao.Plain extends storage.NotifyPoint
 
   constructor: (@_str, @_array, @_storage) ->
     super()
-    #@_str = @_array.join('.')
     @_storage.register(@_array, @_str, @_on_change)
 
   _on_change: =>

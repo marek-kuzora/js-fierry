@@ -7,9 +7,11 @@ class core.Storage
 
   constructor: ->
     @_nps = {}
-    @_daos = {}
     @_root = {}
     @_rules = {}
+    
+    @_gdaos = {}
+    @_ldaos = {}
 
   #
   # Returns value from the path.
@@ -80,7 +82,7 @@ class core.Storage
   #
   _get_np: (arr, str) ->
     str = arr.join('.') unless str
-    
+
     return @_nps[str] ?= do =>
       np = @_get_np_path(arr[0], str)
       @_nps[np] ?= new pkg.NotifyPoint()
@@ -99,7 +101,7 @@ class core.Storage
       for rule in rules
         tmp = raw.match(rule)
         max = tmp[0] if tmp and tmp[0].length > max.length
-    
+
     return head if max is ''
     return max
 
@@ -122,6 +124,14 @@ class core.Storage
     @_rules[head].push(new RegExp('^' + raw))
 
   #
+  # Returns dao from the cache.
+  #
+  # @param String key - string path _with_ leading dots.
+  #
+  retrieve_dao: (key) ->
+    return (if @_is_global(key) then @_gdaos else @_ldaos)[key]
+
+  #
   # Creates and caches dao if not found.
   #
   # @param Boolean g  - true if the path is global.
@@ -129,9 +139,9 @@ class core.Storage
   # @param Array arr  - compiled array path.
   #
   create_dao: (g, str, arr) ->
-    pfx = if g then '..' else '.'
-    return @_daos[pfx + str] ?= @_strategy_create(g, str, arr, @)
-  
+    cache = if g then @_gdaos else @_ldaos
+    return cache[str] ?= @_strategy_create(g, str, arr, @)
+
   #
   # Creates the appropriate dao instance.
   #
@@ -141,9 +151,9 @@ class core.Storage
   #
   _strategy_create: (g, str, arr, storage) ->
     storage = pkg.STORAGE_INSTANCE if g
-    
+
     # TODO remove str from complex!
-    return new dao.Complex(str, arr, storage) if @_is_complex(str)
+    return new dao.Complex(arr, storage) if @_is_complex(str)
     return new dao.Plain(str, arr, storage)
 
   #
@@ -152,19 +162,16 @@ class core.Storage
   # @param String str
   #
   _is_complex: (str) ->
-    # TODO check if this is faster than loop through the array and find dao.
     return str.indexOf('{') isnt -1
 
   #
-  # Returns dao from the cache.
-  #
-  # @param String key - string path _with_ leading dots.
-  #
-  retrieve_dao: (key) ->
-    return @_daos[key]
+  # Returns true if the given String path points to the global storage.
+  _is_global: (str) ->
+    return str.charCodeAt(0) is pkg.DOT and str.charCodeAt(1) is pkg.DOT
 
   _clear: ->
     @_nps = {}
-    @_daos = []
     @_root = {}
 
+    @_daos_local = {}
+    @_daos_global = {}
