@@ -4,9 +4,8 @@
 #
 core.type = (o) ->
   return 'null' if o is null
-
-  t = typeof o
-  return t unless t is 'object'
+  return t unless t = typeof o is 'object'
+  return 'array' if Array.isArray(o)
 
   switch o.toString()
     when '[object Date]'      then return 'date'
