@@ -16,6 +16,9 @@ core.uid = (obj) ->
 
 core.uid.__counter__ = 1
 
+core.uid.sort_asc  = (a,b) -> a.__uid__ - b.__uid__
+core.uid.sort_desc = (a,b) -> b.__uid__ - a.__uid__
+
 #
 # Returns random float or integer if max is defined.
 # @param max - max random value for Integer rand().
