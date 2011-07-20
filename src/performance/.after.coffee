@@ -8,15 +8,31 @@ pkg.ENVS = new pkg.Environments()
 # Registers the performance group.
 # @param group - {name, *parent, *args, *before, *after}
 #
-pfc.register_group = (group) ->
-  pkg.INSTANCE.register_group(group)
+pfc.register_group = (group, arg) ->
+  pkg.INSTANCE.register_group(group, arg)
 
 #
 # Registers the performance test case.
 # @param test - {group, name, run, *args, *before, *after, *retry}
 #
-pfc.register_test = (test) ->
-  pkg.INSTANCE.register_test(test)
+pfc.register_test = (test, arg) ->
+  pkg.INSTANCE.register_test(test, arg)
+
+#
+# Registers performance test cases that are already registed to another group.
+# @param name - group name from which to import test cases.
+#
+pfc.register_tests_from = (name) ->
+  pkg.INSTANCE.register_tests_from(name)
+
+#
+# Registers environment with the given name.
+#
+# @param String name
+# @param {} env
+#
+pfc.register_environment = (name, env) ->
+  pkg.ENVS.register(name, env)
 
 #
 # Runs the tests corresponding to the given group/test names.

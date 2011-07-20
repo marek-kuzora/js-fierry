@@ -1,13 +1,13 @@
 class pkg.Group
 
-  constructor: (group, @parent) ->
-    @name = group.name
-
+  constructor: (@_ref, @parent) ->
+    @name = @_ref.name
+    
     @_nodes = []
-    @_envs = group.envs || []
-    @_after = group.after || (->)
-    @_before = group.before || (->)
-    @_min_arg = group.min_arg || 0
+    @_envs = @_ref.envs || []
+    @_after = @_ref.after || (->)
+    @_before = @_ref.before || (->)
+    @_min_arg = @_ref.min_arg || 0
   
   #
   # Accepts the given visitor for retrospection.
@@ -51,6 +51,14 @@ class pkg.Group
       if n instanceof pkg.Test  then arr.push(n)
       if n instanceof pkg.Group then arr = arr.concat(n.get_tests())
     return arr
+
+  #
+  # Exports tests to the given group.
+  # @param pkg.Group group
+  #
+  export_tests: (group) ->
+    for n in @_nodes when n instanceof pkg.Test
+      group.add(n.clone(group))
 
   #
   # Runs before method starting with the top parent group and going down.

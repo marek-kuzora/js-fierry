@@ -1,15 +1,22 @@
 class pkg.Test
 
-  constructor: (test, @group) ->
+  constructor: (@_ref, @group) ->
     @_results = []
 
-    @name = test.name
-    @_run = test.run
-    @_after = test.after || (->)
-    @_before = test.before || (->)
+    @name = @_ref.name
+    @_run = @_ref.run
+    @_after = @_ref.after || (->)
+    @_before = @_ref.before || (->)
 
-    @_min_arg = test.min_arg || group.get_min_arg()
-    @_envs = @_get_envs(test.envs || [], @group.get_envs())
+    @_min_arg = @_ref.min_arg || group.get_min_arg()
+    @_envs = @_get_envs(@_ref.envs || [], @group.get_envs())
+
+  #
+  # Clones test and attaches to the given group.
+  # @param pkg.Group group
+  #
+  clone: (group) ->
+    return new pkg.Test(@_ref, group)
 
   #
   # Returns environments instances from the given arrays of string names.
@@ -58,7 +65,7 @@ class pkg.Test
   # @param log - Boolean log the result.
   #
   run: (arg) ->
-    env.before() for env in @_envs
+    env.before().call(@) for env in @_envs
 
     @group.run_before(@)
     @_before()
@@ -67,14 +74,14 @@ class pkg.Test
     start = new Date()
 
     @_run() for i in [0..arg]
-    
+
     end = new Date()
     app.stop()
-    
+
     @_after
     @group.run_after(@)
 
-    env.after() for env in @_envs
+    env.after().call(@) for env in @_envs
     return end - start
 
   #
