@@ -1,21 +1,17 @@
-group
-  name: 'utils.instanceof'
+group '/utils.instanceof'
 
-test
-  name: 'class -true'
+test 'class -true',
   before: ->
     @o = new core.Event()
   run: ->
     @o instanceof core.Event
 
-test
-  name: 'class -false'
+test 'class -false',
   before: ->
     @o = new core.Event()
   run: ->
     @o instanceof core.Runtime
 
-test
-  name: 'string'
+test 'string',
   run: ->
     'a' instanceof core.Event

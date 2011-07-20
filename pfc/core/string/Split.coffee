@@ -1,31 +1,20 @@
-group
-  name: 'string.split'
-
-test
-  name: 'to_array'
+group '/string.split',
   before: ->
-    @str = 'simple.path.with.five.parts'
+    @str = 'simple.path/with.six.parts/yep'
+
+test 'to_array',
   run: ->
     @str.split('')
 
-test
-  name: 'character'
-  before: ->
-    @str = 'simple.path.with.five.parts'
+test 'character',
   run: ->
     @str.split('.')
 
-test
-  name: 'regexp'
-  before: ->
-    @str = 'simple.path/with.six.parts/yep'
+test 'regexp',
   run: ->
     @str.split(/\/|\./)
 
-test
-  name: 'double'
-  before: ->
-    @str = 'simple.path/with.six.parts/yep'
+test 'double',
   run: ->
     arr = @str.split('/')
     str.split('.') for str in arr

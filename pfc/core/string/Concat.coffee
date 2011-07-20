@@ -1,32 +1,27 @@
-group
-  name: 'string.concat'
+group '/string.concat'
 
-test
-  name: '1 char'
+test '1 char',
   before: ->
     @a = 'a'
     @b = 'b'
   run: ->
     str = @a + @b
 
-test
-  name: '5 chars'
+test '5 chars',
   before: ->
     @a = 'abcde'
     @b = 'fghij'
   run: ->
     str = @a + @b
 
-test
-  name: '25 chars'
+test '25 chars',
   before: ->
     @a = 'abcdeabcdeabcdeabcdeabcde'
     @b = 'fghijfghijfghijfghijfghij'
   run: ->
     str = @a + @b
 
-test
-  name: 'big'
+test 'big',
   before: ->
     @str = ''
   run: ->

@@ -1,22 +1,18 @@
-group
-  name: 'string.regexp.search'
+group '/string.search'
 
-test
-  name: 'string'
+test 'string',
   before: ->
     @str = 'simple.path.with.five.parts'
   run: ->
     @str.search('path')
 
-test
-  name: 'regexp'
+test 'regexp',
   before: ->
     @str = 'simple.path.with.five.parts'
   run: ->
     @str.search(/\./)
 
-test
-  name: 'regexp_or'
+test 'regexp_or',
   before: ->
     @str = 'simple.path.with.five.parts'
   run: ->

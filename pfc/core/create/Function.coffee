@@ -3,36 +3,30 @@
 # Creating empty or very simple functions are somehow optimized at 75k ops/ms.
 # Creating any kind of no-trivial functions results in 10k ops/ms.
 #
-group
-  name: 'create.function'
+group '/create.function'
 
-test
-  name: '1 line -empty'
+test '1 line -empty',
   run: ->
     fn = ->
 
-test
-  name: '1 line -simple'
+test '1 line -simple',
   run: ->
     fn = (a,b,c) ->
       return a+b+c
 
-test
-  name: '1 line -compex'
+test '1 line -compex',
   run: ->
     fn = ->
       return ['a', ['a', 'b', 'c'], 'b', ['a', 'b', 'c'], 'c']
 
-test
-  name: '3 lines -simple'
+test '3 lines -simple',
   run: ->
     fn = (a,b,c) ->
       while a != b
         a++
         b--
 
-test
-  name: '3 lines -complex'
+test '3 lines -complex',
   run: ->
     fn = (a,b,c) ->
       x = ['a', ['a', 'b', 'c'], 'b', ['a', 'b', 'c'], 'c']

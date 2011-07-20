@@ -1,2 +1,1 @@
-group
-  name: 'utils'
+group '/utils'

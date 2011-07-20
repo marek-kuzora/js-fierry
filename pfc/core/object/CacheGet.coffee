@@ -1,8 +1,6 @@
-group
-  name: 'object.cache.get'
+group '/object.cache.get'
 
-test
-  name: ' 25 000'
+test ' 25 000',
   before: ->
     @i = 0
     @max = 25000
@@ -13,8 +11,7 @@ test
   run: ->
     @cache[@strings[@i++ % @max]]
 
-test
-  name: ' 50 000'
+test ' 50 000',
   before: ->
     @i = 0
     @max = 50000
@@ -26,8 +23,7 @@ test
     @cache[@strings[@i++ % @max]]
 
 
-test
-  name: '100 000'
+test '100 000',
   before: ->
     @i = 0
     @max = 100000
@@ -38,8 +34,7 @@ test
   run: ->
     @cache[@strings[@i++ % @max]]
 
-test
-  name: 'prefix_string'
+test 'prefix_string',
   before: ->
     @i = 0
     @max = 100000

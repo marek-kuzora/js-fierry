@@ -1,8 +1,6 @@
-group
-  name: 'array.cache.get'
+group '/array.cache.get'
 
-test
-  name: ' 25 000'
+test ' 25 000',
   before: ->
     @i = 0
     @max = 25000
@@ -13,8 +11,7 @@ test
   run: ->
     @cache[@ints[@i++ % @max]]
 
-test
-  name: ' 50 000'
+test ' 50 000',
   before: ->
     @i = 0
     @max = 50000
@@ -26,8 +23,7 @@ test
     @cache[@ints[@i++ % @max]]
 
 
-test
-  name: '100 000'
+test '100 000',
   before: ->
     @i = 0
     @max = 100000

@@ -1,22 +1,17 @@
-group
-  name: 'utils.other'
+group '/utils.other'
 
-test
-  name: 'core.uid'
+test 'core.uid',
   run: ->
     core.uid({})
 
-test
-  name: 'core.assert'
+test 'core.assert',
   run: ->
     core.assert true, 'Illegal state occurred'
 
-test
-  name: 'core.rand -float'
+test 'core.rand -float',
   run: ->
     core.rand()
 
-test
-  name: 'core.rand -int'
+test 'core.rand -int',
   run: ->
     core.rand(1000)

@@ -1,34 +1,24 @@
 #
 # Styles performance is very low. 10x slower than setting attributes or classes!
 #
-group
-  name: 'dom.styles'
-
-test
-  name: 'background'
+group '/dom.styles',
   before: ->
     @flag = true
     @div = document.createElement('div')
+
+test 'background',
   run: ->
     @flag = !@flag
     @div.style.background = 'black' if @flag
     @div.style.background = 'white' if !@flag
 
-test
-  name: 'position'
-  before: ->
-    @flag = true
-    @div = document.createElement('div')
+test 'position',
   run: ->
     @flag = !@flag
     @div.style.position = 'absolute' if @flag
     @div.style.position = 'static' if !@flag
 
-test
-  name: 'opacity'
-  before: ->
-    @flag = true
-    @div = document.createElement('div')
+test 'opacity',
   run: ->
     @flag = !@flag
     @div.style.opacity = '0.5' if @flag

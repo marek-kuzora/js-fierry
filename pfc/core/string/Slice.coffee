@@ -1,11 +1,9 @@
 #
 # Exactly same performance as string.substr
 #
-group
-  name: 'string.slice'
+group '/string.slice'
 
-test
-  name: '   25 chars'
+test '   25 chars',
   before: ->
     @i = 0
     @str = gen.big_string(25)
@@ -13,8 +11,7 @@ test
   run: ->
     @str.slice(@i++ % @len)
 
-test
-  name: '  250 chars'
+test '  250 chars',
   before: ->
     @i = 0
     @str = gen.big_string(250)
@@ -22,8 +19,7 @@ test
   run: ->
     @str.slice(@i++ % @len)
 
-test
-  name: '2 500 chars'
+test '2 500 chars',
   before: ->
     @i = 0
     @str = gen.big_string(2500)
@@ -31,8 +27,7 @@ test
   run: ->
     @str.slice(@i++ % @len)
 
-test
-  name: '   25 chars -10-length'
+test '   25 chars -10-length',
   before: ->
     @i = 0
     @str = gen.big_string(25)
@@ -41,8 +36,7 @@ test
     inx = @i++ % @len
     @str.slice(inx, inx+10)
 
-test
-  name: '  250 chars -10-length'
+test '  250 chars -10-length',
   before: ->
     @i = 0
     @str = gen.big_string(250)
@@ -51,8 +45,7 @@ test
     inx = @i++ % @len
     @str.slice(inx, inx+10)
 
-test
-  name: '2 500 chars -10-length'
+test '2 500 chars -10-length',
   before: ->
     @i = 0
     @str = gen.big_string(2500)

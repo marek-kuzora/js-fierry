@@ -1,43 +1,36 @@
-group
-  name: 'array.indexOf'
+group '/array.indexOf'
 
-test
-  name: 'empty'
+test 'empty',
   before: ->
     @arr = []
   run: ->
     @arr.indexOf('path')
 
-test
-  name: 'standard -first-found'
+test '10 length -first-found',
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
   run: ->
     @arr.indexOf('a')
 
-test
-  name: 'standard -middle-found'
+test '10 length -middle-found',
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
   run: ->
     @arr.indexOf('d')
 
-test
-  name: 'standard -last-found'
+test '10 length -last-found',
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
   run: ->
     @arr.indexOf('j')
 
-test
-  name: 'standard -not-found'
+test '10 length -not-found',
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
   run: ->
     @arr.indexOf('z')
 
-test
-  name: 'big -found'
+test '40 length -found',
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'
             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'
@@ -46,8 +39,7 @@ test
   run: ->
     @arr.indexOf('j')
 
-test
-  name: 'big -not-found'
+test '40 length -not-found',
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'
             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'

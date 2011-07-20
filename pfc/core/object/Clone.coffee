@@ -1,8 +1,6 @@
-group
-  name: 'object.clone'
+group '/object.clone'
 
-test
-  name: 'for-in'
+test 'for-in',
   before: ->
     @a = {a: 'a', b: 'b', c: 'c', d: 'd', e: 'e', f: 'f', g: 'g', h: 'h', i: 'i', j: 'j'}
   run: ->
@@ -10,8 +8,7 @@ test
     @b[k] = v for k, v of @a
     return
 
-test
-  name: 'explicit'
+test 'explicit',
   before: ->
     @a = {a: 'a', b: 'b', c: 'c', d: 'd', e: 'e', f: 'f', g: 'g', h: 'h', i: 'i', j: 'j'}
   run: ->

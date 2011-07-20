@@ -1,43 +1,36 @@
-group
-  name: 'array.slice'
+group '/array.slice'
 
-test
-  name: 'small -clone'
+test 'small -clone',
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e']
   run: ->
     @arr.slice()
 
-test
-  name: 'standard -clone'
+test 'standard -clone',
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
   run: ->
     @arr.slice()
 
-test
-  name: 'inx-1'
+test 'inx-1',
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
   run: ->
     @arr.slice(1)
 
-test
-  name: 'inx-5'
+test 'inx-5',
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
   run: ->
     @arr.slice(5)
 
-test
-  name: 'inx-9'
+test 'inx-9',
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
   run: ->
     @arr.slice(9)
 
-test
-  name: 'big'
+test 'big',
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'
           'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'

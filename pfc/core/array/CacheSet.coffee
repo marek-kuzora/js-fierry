@@ -1,8 +1,6 @@
-group
-  name: 'array.cache.set'
+group '/array.cache.set'
 
-test
-  name: 'random_int'
+test 'random_int',
   before: ->
     @i = 0
     @cache = []
@@ -11,8 +9,7 @@ test
   run: ->
     @cache[@ints[@i++ % @max]] = true
 
-test
-  name: 'core.uid'
+test 'core.uid',
   before: ->
     @i = 0
     @cache = []

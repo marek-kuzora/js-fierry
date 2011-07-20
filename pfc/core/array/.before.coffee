@@ -1,5 +1,3 @@
-group
-  name: 'array'
+group '/array'
 
-group
-  name: 'array.cache'
+group '/array.cache'

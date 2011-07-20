@@ -1,75 +1,65 @@
 #
 # Creating primitives
 #
-group
-  name: 'create.primitives'
+group '/create.primitives'
 
-test
-  name: 'boolean'
+test 'boolean',
   run: ->
     r = true
 
-test
-  name: 'integer'
+test 'integer',
   run: ->
     r = 101
 
-test
-  name: 'float'
+test 'float',
   run: ->
     r = 1.01
 
-test
-  name: 'string'
+test 'string',
   run: ->
     r = 'string'
 
-test
-  name: 'regexp'
+test 'regexp',
   run: ->
     r = /regexp/
 
 #
 # Creating primitives via object wrappers.
 #
-group
-  name: 'create.wrappers'
+group '/create.wrappers'
 
-test
-  name: 'boolean'
+test 'boolean',
   run: ->
     r = new Boolean(true)
 
-test
-  name: 'integer'
+test 'integer',
   run: ->
     r = new Number(101)
 
-test
-  name: 'float'
+test 'float',
   run: ->
     r = new Number(1.01)
 
-test
-  name: 'string'
+test 'string',
   run: ->
     r = new String('string')
 
-test
-  name: 'regexp'
+test 'regexp',
   run: ->
     r = new RegExp('regexp')
 
 #
 # Creating other primitive-like objects.
 #
-group
-  name: 'create.others'
+group '/create.others'
 
 #
 # Building new date is relatively slow.
 #
-test
-  name: 'Date'
+test 'Date',
   run: ->
     o = new Date()
+
+test 'Date.now',
+  run: ->
+    o = Date.now()

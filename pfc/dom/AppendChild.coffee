@@ -4,21 +4,18 @@
 # However, there is very poor performance of recursive appending - should NOT BE USED.
 # (the browser usually hangs or performs 0.002 ops/ms...)
 #
-group
-  name: 'dom.append'
+group '/dom.append',
   before: ->
     @i = 0
     @node = @stub
 
-test
-  name: 'flat'
+test 'flat',
   run: ->
     e = document.createElement('div')
     @node.appendChild(e)
 
 pkg.create_tree_test = (count) ->
-  test
-    name: count + ' nodes'
+  test count + ' nodes',
     before: ->
       @i = 0
       @l = 0

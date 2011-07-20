@@ -1,11 +1,8 @@
-group
-  name: 'array.join'
+group '/array.join'
 
-group
-  name: 'array.join.str'
+group 'str'
 
-test
-  name: ' 5 length -primitive'
+test ' 5 length -primitive',
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e']
   run: ->
@@ -13,36 +10,31 @@ test
     for i in @arr
       str += if str then '.' + i else i
 
-test
-  name: ' 5 length -default-token'
+test ' 5 length -default-token',
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e']
   run: ->
     @arr.join()
 
-test
-  name: ' 5 length -custom-token'
+test ' 5 length -custom-token',
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e']
   run: ->
     @arr.join('.-.')
 
-test
-  name: ' 5 length -no-token'
+test ' 5 length -no-token',
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e']
   run: ->
     @arr.join('')
 
-test
-  name: '10 length'
+test '10 length',
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
   run: ->
     @arr.join()
 
-test
-  name: '40 length'
+test '40 length',
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'
             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'
@@ -51,8 +43,7 @@ test
   run: ->
     @arr.join()
 
-test
-  name: '40 length -no-token'
+test '40 length -no-token',
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'
             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'
@@ -61,42 +52,37 @@ test
   run: ->
     @arr.join('')
 
-group
-  name: 'array.join.recursive'
 
-test
-  name: 'small'
+group 'recursive'
+
+test 'small',
   before: ->
     @arr = [['a', 'b', 'c', 'd']]
   run: ->
     @arr.join()
 
-test
-  name: 'standard'
+test 'standard',
   before: ->
     @arr = ['a', ['b', 'c', 'd'], 'e']
   run: ->
     @arr.join()
 
-test
-  name: 'recursive -big'
+test 'recursive -big',
   before: ->
     @arr = ['a', ['b', 'c', 'd', 'e'], 'f', 'g', ['h', 'i', 'j', 'k', 'l']]
   run: ->
     @arr.join()
 
-group
-  name: 'array.join.int'
 
-test
-  name: '10 length -one-int'
+group 'int'
+
+test '10 length -one-int',
   before: ->
     @arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 10]
   run: ->
     @arr.join()
 
-test
-  name: '10 length -all-ints'
+test '10 length -all-ints',
   before: ->
     @arr = [1,2,3,4,5,6,7,8,9,10]
   run: ->

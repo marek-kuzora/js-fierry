@@ -1,16 +1,13 @@
-group
-  name: 'string.regexp.match'
+group '/string.match'
 
-test
-  name: 'regexp -same'
+test 'regexp -same',
   before: ->
     @str = 'menu.items.0'
     @regexp = /^menu\.items\.[a-zA-Z0-9_]+/
   run: ->
     @str.match(@regexp)
 
-test
-  name: 'regexp -dynamic'
+test 'regexp -dynamic',
   before: ->
     @i = 0
     @max = 50000
@@ -20,16 +17,14 @@ test
     @arr[@i % @max].match(@regexp)
 
 
-test
-  name: 'regexp_from_string'
+test 'regexp_from_string',
   before: ->
     @str = 'menu.items.0'
     @regexp = new RegExp("^menu\.items\.[a-zA-Z0-9_]+")
   run: ->
     @str.match(@regexp)
 
-test
-  name: 'string'
+test 'string',
   before: ->
     @str = 'menu.items.0'
     @regexp = '^menu\.items\.[a-zA-Z0-9_]+'

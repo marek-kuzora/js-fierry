@@ -1,15 +1,13 @@
-group
-  name: 'string.sequential-read'
+group '/string.sequential-read'
+
 
 #
 # About 2x faster than direct, char-at access.
 # Currently can handle 25k string in less than 1ms.
 #
-group
-  name: 'string.sequential-read.char-code-at'
+group 'char-code-at'
 
-test
-  name: '   250 chars'
+test '   250 chars',
   before: ->
     @str = gen.big_string(250)
     @len = @str.length - 1
@@ -17,8 +15,7 @@ test
     @str.charCodeAt(core.rand(i)) for i in [0..@len]
     return
 
-test
-  name: ' 2 500 chars'
+test ' 2 500 chars',
   before: ->
     @str = gen.big_string(2500)
     @len = @str.length - 1
@@ -26,8 +23,7 @@ test
     @str.charCodeAt(core.rand(i)) for i in [0..@len]
     return
 
-test
-  name: '25 000 chars'
+test '25 000 chars',
   before: ->
     @str = gen.big_string(25000)
     @len = @str.length - 1
@@ -35,11 +31,9 @@ test
     @str.charCodeAt(core.rand(i)) for i in [0..@len]
     return
 
-group
-  name: 'string.sequential-read.char-at'
+group 'char-at'
 
-test
-  name: '   250 chars'
+test '   250 chars',
   before: ->
     @str = gen.big_string(250)
     @len = @str.length - 1
@@ -47,8 +41,7 @@ test
     @str.charAt(core.rand(i)) for i in [0..@len]
     return
 
-test
-  name: ' 2 500 chars'
+test ' 2 500 chars',
   before: ->
     @str = gen.big_string(2500)
     @len = @str.length - 1
@@ -56,8 +49,7 @@ test
     @str.charAt(core.rand(i)) for i in [0..@len]
     return
 
-test
-  name: '25 000 chars'
+test '25 000 chars',
   before: ->
     @str = gen.big_string(25000)
     @len = @str.length - 1
@@ -65,11 +57,9 @@ test
     @str.charAt(core.rand(i)) for i in [0..@len]
     return
 
-group
-  name: 'string.sequential-read.direct'
+group 'direct'
 
-test
-  name: '   250 chars'
+test '   250 chars',
   before: ->
     @str = gen.big_string(250)
     @len = @str.length - 1
@@ -77,8 +67,7 @@ test
     @str.charAt(core.rand(i)) for i in [0..@len]
     return
 
-test
-  name: ' 2 500 chars'
+test ' 2 500 chars',
   before: ->
     @str = gen.big_string(2500)
     @len = @str.length - 1
@@ -86,8 +75,7 @@ test
     @str.charAt(core.rand(i)) for i in [0..@len]
     return
 
-test
-  name: '25 000 chars'
+test '25 000 chars',
   before: ->
     @str = gen.big_string(25000)
     @len = @str.length - 1

@@ -1,5 +1,3 @@
-group
-  name: 'object'
+group '/object'
 
-group
-  name: 'object.cache'
+group '/object.cache'

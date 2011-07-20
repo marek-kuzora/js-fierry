@@ -1,5 +1,4 @@
-group
-  name: 'dom'
+group '/dom',
   before: ->
     @stub = dom.$('stub')
   after: ->

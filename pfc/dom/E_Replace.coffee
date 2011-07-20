@@ -1,3 +1,4 @@
+###
 group
   name: 'dom.replace'
   min_arg: 2500
