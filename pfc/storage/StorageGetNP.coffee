@@ -37,3 +37,8 @@ group '5 rules',
     @storage.register_rule(r) for r in @rules_5
 
 repeat '1 rule'
+
+
+group 'no rules'
+
+repeat '1 rule'
