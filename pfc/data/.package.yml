@@ -1,3 +1,0 @@
-require:
-  - fierry.pfc.data.dao
-  - fierry.pfc.data.storage
