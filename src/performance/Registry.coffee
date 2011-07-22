@@ -10,7 +10,7 @@ class pkg.Registry
   #
   register_group: (name, h = {}) ->
     [h.name, h.is_node] = @_resolve_name(name)
-    
+
     parent = @get(@_get_parent(h.name))
     group  = new pkg.Group(h, parent)
 
@@ -45,16 +45,16 @@ class pkg.Registry
     h.name = name
     parent = if h.group then @get(h.group) else @_last_group
     test   = new pkg.Test(h, parent)
-    
-    parent.add(test)
+
+    parent.add(test, false)
 
   #
   # Registers performance test cases that are already registed to another group.
   # @param name - group name from which to import test cases.
   #
   register_tests_from: (name) ->
-    group = @get(@_resolve_name(name))
-    group.export_tests(@_last_group)
+    [name] = @_resolve_name(name)
+    @get(name).export_tests(@_last_group)
 
   #
   # Returns the group/test corresponding to the given name.

@@ -22,10 +22,10 @@ class pkg.Group
   # Adds new node as a child.
   # @param node - group/test object.
   #
-  add: (node) ->
-    name = node.name
-    for n in @_nodes when n.name == name
-      throw new Error("Node #{name} already exists")
+  add: (node, ignore) ->
+    for n in @_nodes when n.name is node.name
+      return if ignore
+      throw new Error "Node #{node.name} already exists"
 
     @_nodes.push(node)
 
@@ -34,11 +34,11 @@ class pkg.Group
   # @param name - group/test name.
   #
   get: (name) ->
-    name = @name + "." + name if @name != ''
-    for n in @_nodes when n.name == name
+    name = @name + "." + name if @name isnt ''
+    for n in @_nodes when n.name is name
       return n
 
-    throw new Error("Node not found #{@name}.#{name}")
+    throw new Error "Node not found #{@name}.#{name}"
 
   #
   # Extracts tests from the group.
@@ -58,7 +58,7 @@ class pkg.Group
   #
   export_tests: (group) ->
     for n in @_nodes when n instanceof pkg.Test
-      group.add(n.clone(group))
+      group.add(n.clone(group), true)
 
   #
   # Runs before method starting with the top parent group and going down.
@@ -89,4 +89,3 @@ class pkg.Group
   get_envs: ->
     return union(@_envs, @parent._envs) if @parent
     return @_envs
-
