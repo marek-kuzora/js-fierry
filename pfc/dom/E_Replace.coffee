@@ -1,49 +1,15 @@
-###
-group
-  name: 'dom.replace'
-  min_arg: 2500
+group '/dom.replace'
 
-#
-# Predefined test cases for 3 different test groups.
-#
-naive_replace =
-  name: 'naive -cached'
-  run: ->
-    @stub.appendChild(e.cloneNode(true)) for e in @arr
-    @stub = dom.replace_html(@stub)
 
-fragment_replace =
-  name: 'fragment -cached'
-  run: ->
-    frag = document.createDocumentFragment()
-    frag.appendChild(e) for e in @arr
-
-    @stub.appendChild(frag.cloneNode(true))
-    @stub = dom.replace_html(@stub)
-
-inner_html_replace =
-  name: 'inner_html'
-  run: ->
-    @stub.innerHTML = @html
-    @stub.innerHTML = ''
-
-mixed_html_replace =
-  name: 'replace_html'
-  run: ->
-    @stub = dom.replace_html(@stub, @html)
-
-#
-# DOM approach is the fastest one.
-# There is no visible difference between cached & uncached cases.
-#
-group
-  name: 'dom.replace.small'
+group 'small',
   before: ->
     @html = '<div></div><span>text node</span><a></a>'
     @arr = dom.create_html(@html)
 
-test
-  name: 'naive'
+#
+# This test case uses DOM approach without any elements caching.
+#
+test 'naive'
   run: ->
     @arr = []
     @arr[0] = document.createElement('div')
@@ -54,13 +20,30 @@ test
     @stub.appendChild(e) for e in @arr
     @stub = dom.replace_html(@stub)
 
-test naive_replace
-test fragment_replace
-test inner_html_replace
-test mixed_html_replace
+test 'naive -cached',
+  run: ->
+    @stub.appendChild(e.cloneNode(true)) for e in @arr
+    @stub = dom.replace_html(@stub)
 
-group
-  name: 'dom.replace.flat'
+test 'fragment -cached',
+  run: ->
+    frag = document.createDocumentFragment()
+    frag.appendChild(e) for e in @arr
+
+    @stub.appendChild(frag.cloneNode(true))
+    @stub = dom.replace_html(@stub)
+
+test 'inner_html',
+  run: ->
+    @stub.innerHTML = @html
+    @stub.innerHTML = ''
+
+test 'replace_html',
+  run: ->
+    @stub = dom.replace_html(@stub, @html)
+
+
+group 'flat',
   before: ->
     @html = '<a>A</a><a>B</a><a>C</a><a>D</a><a>E</a><a>F</a><a>G</a><a>H</a><a>I</a><a>J</a><a>K</a>
              <a>L</a><a>M</a><a>N</a><a>O</a><a>P</a><a>R</a><a>S</a><a>T</a><a>U</a><a>W</a><a>X</a>
@@ -70,8 +53,7 @@ group
 #
 # This test case uses DOM approach without any elements caching.
 #
-test
-  name: 'naive'
+test 'naive',
   run: ->
     for _ in [1..25]
       a = document.createElement('a')
@@ -82,8 +64,7 @@ test
 #
 # This test case uses wrong order when appending children.
 #
-test
-  name: 'naive -bad'
+test 'naive -bad',
   run: ->
     for _ in [1..25]
       a = document.createElement('a')
@@ -91,17 +72,10 @@ test
       a.appendChild(document.createTextNode('A'))
     @stub = dom.replace_html(@stub)
 
-test naive_replace
-test fragment_replace
-test inner_html_replace
-test mixed_html_replace
+repeat 'small'
 
-#
-# Naive approach is the fastest one.
-# Interesting is the fact that cached approach is visibly faster than no-cached.
-#
-group
-  name: 'dom.replace.deep'
+
+group 'deep',
   before: ->
     @html = '''
             <div><div><div>
@@ -120,8 +94,7 @@ group
 #
 # This test case uses DOM approach without any elements caching.
 #
-test
-  name: 'naive'
+test 'naive',
   run: ->
     for _i in [0..1]
       div_0 = document.createElement('div')
@@ -146,8 +119,7 @@ test
 #
 # This test case uses wrong order when appending children.
 #
-test
-  name: 'naive -bad'
+test 'naive -bad',
   run: ->
     for _i in [0..1]
       div_0 = document.createElement('div')
@@ -170,8 +142,4 @@ test
 
     @stub = dom.replace_html(@stub)
 
-test naive_replace
-test fragment_replace
-test inner_html_replace
-test mixed_html_replace
-
+repeat 'small'

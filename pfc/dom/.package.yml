@@ -10,3 +10,4 @@ namespace:
   pkg:    performance.dom
   test:   performance.register_test
   group:  performance.register_group
+  repeat: performance.register_tests_from
