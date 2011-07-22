@@ -24,10 +24,10 @@ class pkg.PathGenerator
   #
   rules_array: (count, length = 5, arr = pkg.PATHS_ARRAY) ->
     l = arr.length
-    arr = @path_array(arr, count * l, length - 1, arr)
+    parr = @path_array(count * l, length - 1, arr)
 
-    for path, i in arr
-      arr[i % l] + '.' + path.replace(arr[rand l-1], '*')
+    for path, i in parr
+      parr[i % l] + '.' + path.replace(parr[rand l-1], '*')
 
   #
   # Returns array of paths with the given count & length.

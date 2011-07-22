@@ -13,10 +13,10 @@ pkg.big_string = (length, range) ->
   return pkg.STRING_INSTANCE.big_string(length, range)
 
 pkg.path_array = (count, length, arr) ->
-  return pkg.PATH_INSTANCE.path_array(count, length, arr)
+  return pkg.PATH_INSTANCE.path_array(count, length, arr).slice()
 
 pkg.rules_array = (count, length, arr) ->
-  return pkg.PATH_INSTANCE.rules_array(count, length, arr)
+  return pkg.PATH_INSTANCE.rules_array(count, length, arr).slice()
 
 
 pkg.PATHS_ARRAY = [
