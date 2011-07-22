@@ -8,10 +8,6 @@ test '2 length',
   run: ->
     @storage.get(['view', 'active'])
 
-test '3 length',
-  run: ->
-    @storage.get(['items', 'menu', '0'])
-
 test '5 length',
   run: ->
     @storage.get(['simple', 'path', 'with', 'five', 'parts'])
@@ -25,7 +21,7 @@ test '    50 paths',
     i = @i++ % 50
     @storage.get(@path_arr_5[i])
 
-test '  500 paths',
+test '   500 paths',
   run: ->
     i = @i++ % 500
     @storage.get(@path_arr_5[i])
