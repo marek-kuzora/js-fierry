@@ -100,8 +100,7 @@ class core.Storage
         tmp = raw.match(rule)
         max = tmp[0] if tmp and tmp[0].length > max.length
 
-    return head if max is ''
-    return max
+    return max || head
 
   #
   # Creates rule described by the raw.
@@ -136,9 +135,8 @@ class core.Storage
   # @param String str - string path _without_ leading dots.
   # @param Array arr  - compiled array path.
   #
-  create_dao: (g, str, arr) ->
-    key = (if g then '..' else '.') + str
-    return @_daos[key.substr()] ?= @_strategy_create(g, str, arr, @)
+  create_dao: (key, g, str, arr) ->
+    return @_daos[key] ?= @_strategy_create(g, str, arr, @)
 
   #
   # Creates the appropriate dao instance.
@@ -160,11 +158,6 @@ class core.Storage
   #
   _is_complex: (str) ->
     return str.indexOf('{') isnt -1
-
-  #
-  # Returns true if the given String path points to the global storage.
-  _is_global: (str) ->
-    return str.charCodeAt(0) is pkg.DOT and str.charCodeAt(1) is pkg.DOT
 
   _clear: ->
     @_nps = {}

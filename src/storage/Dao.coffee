@@ -36,9 +36,9 @@ class core.Dao
   # @param String str - string path _without_ leading dots.
   # @param Array arr  - compiled array path.
   #
-  create: (g, str, arr, o) ->
+  create: (key, g, str, arr, o) ->
     storage = @_retrieve_storage(o)
-    return storage.create_dao(g, str, arr)
+    return storage.create_dao(key, g, str, arr)
 
   #
   # @param String key - string path _with_ leading dots.
@@ -49,7 +49,7 @@ class core.Dao
 
     unless dao
       arr = @compile(key, o)
-      dao = storage.create_dao(arr.g, arr.s, arr)
+      dao = storage.create_dao(key, arr.g, arr.s, arr)
 
     return dao
 
@@ -84,7 +84,7 @@ class core.Dao
       if char is pkg.DOT
         unless arr.g?
           arr.g = str.charCodeAt(i+1) is pkg.DOT
-          arr.p = if arr.g then i + 2 else i + 1
+          arr.p = i
         else
           arr.push(str.substring(p, i)) if p isnt i
         p = i + 1
@@ -98,17 +98,18 @@ class core.Dao
 
       else if char is pkg.CLOSURE_END
         arr.push(str.substring(p, i)) if p isnt i
-        arr.s = str.substring(arr.p, i)
 
-        dao = @create(arr.g, arr.s, arr, o)
+        nkey = str.substring(arr.p, i)
+        nstr = nkey.substr(if arr.g then 2 else 1)
+        
+        dao = @create(nkey, arr.g, nstr, arr, o)
         arr = st.pop()
-        arr.push(dao)
 
+        arr.push(dao)
         p = i + 1
 
       i++
 
     arr.push(str.substr(p)) if p isnt i
     arr.s = str.substr(arr.p)
-
     return arr
