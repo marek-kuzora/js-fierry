@@ -8,10 +8,8 @@ class core.Storage
   constructor: ->
     @_nps = {}
     @_root = {}
+    @_daos = {}
     @_rules = {}
-    
-    @_gdaos = {}
-    @_ldaos = {}
 
   #
   # Returns value from the path.
@@ -129,7 +127,7 @@ class core.Storage
   # @param String key - string path _with_ leading dots.
   #
   retrieve_dao: (key) ->
-    return (if @_is_global(key) then @_gdaos else @_ldaos)[key]
+    return @_daos[key]
 
   #
   # Creates and caches dao if not found.
@@ -139,8 +137,8 @@ class core.Storage
   # @param Array arr  - compiled array path.
   #
   create_dao: (g, str, arr) ->
-    cache = if g then @_gdaos else @_ldaos
-    return cache[str] ?= @_strategy_create(g, str, arr, @)
+    key = (if g then '..' else '.') + str
+    return @_daos[key.substr()] ?= @_strategy_create(g, str, arr, @)
 
   #
   # Creates the appropriate dao instance.
@@ -151,8 +149,7 @@ class core.Storage
   #
   _strategy_create: (g, str, arr, storage) ->
     storage = pkg.STORAGE_INSTANCE if g
-
-    # TODO remove str from complex!
+    
     return new dao.Complex(arr, storage) if @_is_complex(str)
     return new dao.Plain(str, arr, storage)
 
@@ -172,6 +169,5 @@ class core.Storage
   _clear: ->
     @_nps = {}
     @_root = {}
-
-    @_daos_local = {}
-    @_daos_global = {}
+    @_daos = {}
+    @_rules = {}

@@ -16,9 +16,9 @@ class core.Dao
   # @param Object o
   #
   get: (key, o) ->
-    dao = @_retrieve_dao(str, o)
+    dao = @_retrieve_dao(key, o)
 
-    o.track(dao) if o and o.track_dao
+    o.track?(dao) if o
     return dao.get()
 
   #
@@ -60,7 +60,7 @@ class core.Dao
   #
   _retrieve_storage: (o = pkg.STORAGE_INSTANCE) ->
     return o if o instanceof core.Storage
-    return o.get_local_storage() if o.get_local_storage
+    return o.get_local_storage?()
 
     throw new Error 'No local storage found for dao expression'
 
