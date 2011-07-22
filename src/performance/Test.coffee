@@ -65,7 +65,7 @@ class pkg.Test
   # @param log - Boolean log the result.
   #
   run: (arg) ->
-    env.before().call(@) for env in @_envs
+    env.before.call(@) for env in @_envs
 
     @group.run_before(@)
     @_before()
@@ -81,7 +81,7 @@ class pkg.Test
     @_after
     @group.run_after(@)
 
-    env.after().call(@) for env in @_envs
+    env.after.call(@) for env in @_envs
     return end - start
 
   #

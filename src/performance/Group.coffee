@@ -87,5 +87,5 @@ class pkg.Group
   # Returns union of environments names used by the group.
   #
   get_envs: ->
-    return union(@_envs, @parent._envs) if @parent
+    return union(@_envs, @parent.get_envs()) if @parent
     return @_envs
