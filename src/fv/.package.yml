@@ -1,0 +1,10 @@
+after: [.after.coffee]
+require:
+  - fierry.core
+namespace:
+  core:   core
+
+  app:    core.app
+  uid:    core.uid
+  assert: core.assert
+  pkg:    core.fv
