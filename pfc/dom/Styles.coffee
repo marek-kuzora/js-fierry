@@ -23,4 +23,3 @@ test 'opacity',
     @flag = !@flag
     @div.style.opacity = '0.5' if @flag
     @div.style.opacity = '1.0' if !@flag
-
