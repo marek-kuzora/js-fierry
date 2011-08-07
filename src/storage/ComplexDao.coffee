@@ -1,20 +1,36 @@
+#
+# Dao instance that can handle nested dao expressions. 
+# The object will behave exactly as PlainDao instance. 
+# Underlying data will be tracked internally so whenever 
+# the direct path or its value changes the listeners 
+# will be notified.
+#
 class dao.Complex extends dao.Plain
 
-  constructor: (@_nested, @_storage) ->
+  constructor: (@_nested) ->
     @_recompile()
 
     for e in @_nested
       e.register(@_on_nested_change) if dao.is(e)
 
-    super(@_str, @_array, @_storage)
+    super(@_str, @_array)
     return
 
+  #
+  # Listener binded with ComplexDao instance.
+  # Will trigger whenever the underlying path changes.
+  #
   _on_nested_change: =>
-    @_storage.unregister(@_array, @_str, @_on_change)
+    storage.unregister(@_array, @_str, @_on_change)
     @_recompile()
-    @_storage.register(@_array, @_str, @_on_change)
+    storage.register(@_array, @_str, @_on_change)
     @_on_change()
 
+  #
+  # Recompiles the nested dao expressions in order to
+  # update the underlying path which value should be 
+  # presented.
+  #
   _recompile: ->
     @_array = for e in @_nested
       if dao.is(e) then e.get() else e

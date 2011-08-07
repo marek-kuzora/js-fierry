@@ -1,3 +1,11 @@
+#
+# Data Access class definition. High level API that enables
+# clients to easily retrieve value from the storage, set value
+# to the storage and track dao instances that were used to 
+# access the data.
+#
+# @ singleton
+#
 class core.Dao
 
   #
@@ -17,8 +25,7 @@ class core.Dao
   #
   get: (key, o) ->
     dao = @_retrieve_dao(key, o)
-
-    o.track?(dao) if o
+    o.track_dao?(dao) if o
     return dao.get()
 
   #
@@ -29,7 +36,7 @@ class core.Dao
   # @param Object o
   #
   set: (key, v, o) ->
-    @_retrieve_dao(key, o).set(nv)
+    @_retrieve_dao(key, o).set(v)
 
   #
   # @param Boolean g  - true if the path is global.
@@ -37,32 +44,20 @@ class core.Dao
   # @param Array arr  - compiled array path.
   #
   create: (key, g, str, arr, o) ->
-    storage = @_retrieve_storage(o)
-    return storage.create_dao(key, g, str, arr)
+    #str = key.substr(1) # Spowalnia gdy tworze utworzone, natomiast nie wplywa na predkosc tworzenia...
+    return pkg.STORAGE.create_dao(key, g, str, arr)
 
   #
   # @param String key - string path _with_ leading dots.
   #
   _retrieve_dao: (key, o) ->
-    storage = @_retrieve_storage(o)
-    dao = storage.retrieve_dao(key)
+    dao = pkg.STORAGE.retrieve_dao(key)
 
     unless dao
       arr = @compile(key, o)
-      dao = storage.create_dao(key, arr.g, arr.s, arr)
+      dao = pkg.STORAGE.create_dao(key, arr.g, arr.s, arr)
 
     return dao
-
-  #
-  # Retrieves storages from the given object.
-  #
-  # @param Object o
-  #
-  _retrieve_storage: (o = pkg.STORAGE_INSTANCE) ->
-    return o if o instanceof core.Storage
-    return o.get_local_storage?()
-
-    throw new Error 'No local storage found for dao expression'
 
   #
   # Compiles the raw path into valid dao expression.
@@ -70,6 +65,8 @@ class core.Dao
   # @param String str - string path _with_ leading dots.
   # @param Object o
   #
+  # I could check someday if recursive @_retrieve_dao when found its name isn't
+  # faster than standard compile. It could be faster with big cache founds.
   compile: (str, o) ->
     i = 0
     p = 0
@@ -101,7 +98,7 @@ class core.Dao
 
         nkey = str.substring(arr.p, i)
         nstr = nkey.substr(if arr.g then 2 else 1)
-        
+
         dao = @create(nkey, arr.g, nstr, arr, o)
         arr = st.pop()
 

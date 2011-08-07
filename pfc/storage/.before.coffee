@@ -1,11 +1,11 @@
 group '/storage'
   before: ->
-    @storage = storage.STORAGE_INSTANCE
+    @storage = storage.STORAGE
 
 
 group '/dao'
   before: ->
-    @dao = storage.DAO_INSTANCE
+    @dao = storage.DAO
 
 
 env 'storage.paths',

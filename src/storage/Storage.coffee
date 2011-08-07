@@ -1,7 +1,11 @@
 #
-# Data Storage class definition.
-# One instance always exists as global storage.
-# There can be unlimited number of local storage instances.
+# Data Storage class definition. Low level API that enables
+# clients to retrieve value from the storage, set value to 
+# the storage, register rules of notify points creation, 
+# register & unregister listeners to observe if underlying 
+# path's value has changed, create & retrieve dao instances.
+#
+# @singleton
 #
 class core.Storage
 
@@ -136,20 +140,17 @@ class core.Storage
   # @param Array arr  - compiled array path.
   #
   create_dao: (key, g, str, arr) ->
-    return @_daos[key] ?= @_strategy_create(g, str, arr, @)
+    return @_daos[key] ?= @_strategy_create(g, str, arr)
 
   #
   # Creates the appropriate dao instance.
   #
   # @param String str
   # @param Array arr
-  # @param core.Storage storage
   #
-  _strategy_create: (g, str, arr, storage) ->
-    storage = pkg.STORAGE_INSTANCE if g
-    
-    return new dao.Complex(arr, storage) if @_is_complex(str)
-    return new dao.Plain(str, arr, storage)
+  _strategy_create: (g, str, arr) ->
+    return new dao.Complex(arr) if @_is_complex(str)
+    return new dao.Plain(str, arr)
 
   #
   # Returns true if String representation of the path is complex.

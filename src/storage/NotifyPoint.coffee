@@ -1,3 +1,12 @@
+#
+# Notification point that, when dirty, sets all its listeners 
+# as dirty in order to notify them about the changes. Will only
+# notify that a change has occurred, will not notify what has
+# changed.
+#
+# Its creation is defined by storage rules and should be created
+# foreach entry path, where the data is directly set.
+#
 class storage.NotifyPoint
 
   constructor: ->
@@ -34,5 +43,5 @@ class storage.NotifyPoint
   #
   set_dirty: ->
     if @_enabled
-      pkg.NOTIFIER_INSTANCE.set_dirty(o) for o in @_queue
+      pkg.NOTIFIER.set_dirty(o) for o in @_queue
     return
