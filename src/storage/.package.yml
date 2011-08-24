@@ -5,7 +5,7 @@ after:
   - .after.coffee
 require:
   - fierry.core
-  - fierry.scheduler
+  - fierry.async
 namespace:
   # Core
   core:     core
@@ -13,13 +13,13 @@ namespace:
   object:   object
 
   # Helpers
-  app:      core.app
-  uid:      core.uid
-  assert:   core.assert
+  app:      app
+  uid:      uid
+  assert:   assert
 
   # Internal namespaces
   dao:      core.dao
   pkg:      core.storage
   storage:  core.storage
 
-  behavior: core.app.add_behavior
+  behavior: app.add_behavior

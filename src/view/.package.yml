@@ -1,0 +1,11 @@
+after: [Dom.coffee, .after.coffee]
+require:
+  - fierry.core
+namespace:
+  app:    app
+  uid:    uid
+  core:   core
+  array:  array
+  assert: assert
+
+  pkg:    core.view

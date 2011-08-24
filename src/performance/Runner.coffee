@@ -19,7 +19,7 @@ class pkg.Runner
     i = 1
 
     while i < arr.length
-      bool = arr[i].indexOf(arr[i - 1]) == 0
+      bool = arr[i].indexOf(arr[i - 1] + '.') is 0
       if bool then arr.splice(i, 1) else i++
     return arr
 
@@ -76,6 +76,6 @@ class pkg.Runner
     return r
 
 #
-# Includes core.Event functionality in the pkg.Runner.
+# Includes emitter mixin in the pkg.Runner.
 #
-core.include(pkg.Runner, core.Event)
+core.install 'emitter', pkg.Runner

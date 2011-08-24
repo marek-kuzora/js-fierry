@@ -1,0 +1,12 @@
+before: [.before.coffee]
+require:
+  - fierry.view
+  - fierry.storage
+namespace:
+  app:     app
+  core:    core
+
+  fv:      core.view
+  storage: core.storage
+
+  pkg:     example.view

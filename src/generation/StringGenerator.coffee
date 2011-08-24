@@ -43,7 +43,7 @@ class pkg.StringGenerator
   _gen_string_array: (count, range, min_char = @_min_char) ->
     for _ in [1..count]
       arr = for j in [1..@_max_length]
-        i = core.rand(range) + min_char
+        i = math.rand(range) + min_char
         char = String.fromCharCode(i)
       str = arr.join('')
 

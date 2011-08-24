@@ -27,7 +27,7 @@ class pkg.PathGenerator
     parr = @path_array(count * l, length - 1, arr)
 
     for path, i in parr
-      parr[i % l] + '.' + path.replace(parr[rand l-1], '*')
+      parr[i % l] + '.' + path.replace(parr[math.rand l-1], '*')
 
   #
   # Returns array of paths with the given count & length.
@@ -54,4 +54,4 @@ class pkg.PathGenerator
   _permutate_paths: (arr, count, length) ->
     l = arr.length
     while count--
-      (arr[rand l-1] for _ in [0..length - 1]).join('.')
+      (arr[math.rand l-1] for _ in [0..length - 1]).join('.')

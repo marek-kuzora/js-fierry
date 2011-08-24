@@ -3,8 +3,8 @@ require:
   - fierry.core
 namespace:
   core:  core
+  math:  math
   array: array
   
-  uid:   core.uid
-  rand:  core.rand
+  uid:   uid
   pkg:   core.generation

@@ -54,7 +54,7 @@ class pkg.Test
 
     arr = (@run(arg) for i in [1..pkg.MEASURE_RETRY])
     
-    @_arg = pkg.EXECUTE_LIMIT / array.avg(arr) * arg
+    @_arg = pkg.EXECUTE_LIMIT / math.avg(arr) * arg
     @_arg = @_min_arg if @_arg < @_min_arg
     return @_arg
 

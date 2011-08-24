@@ -35,7 +35,7 @@ class core.Storage
   #
   set: (arr, str, v) ->
     object.set(@_root, arr, v)
-    @_get_np(arr, str).set_dirty() if app.is_running()
+    @_get_np(arr, str).dispatch() if app.is_running()
 
   #
 	# Registers listener for the given path.
@@ -44,8 +44,8 @@ class core.Storage
   # @param String str
 	# @param Function fn
 	#
-  register: (arr, str, fn) ->
-    @_get_np(arr, str).register(fn)
+  subscribe: (arr, str, fn) ->
+    @_get_np(arr, str).subscribe(fn)
 
   #
 	# Unregisters listener from the given path.
@@ -54,8 +54,8 @@ class core.Storage
   # @param String str
 	# @param Function fn
 	#
-  unregister: (arr, str, fn) ->
-    @_get_np(arr, str).unregister(fn)
+  unsubscribe: (arr, str, fn) ->
+    @_get_np(arr, str).unsubscribe(fn)
 
   #
   # Disables notifications of matching NotifyPoint.
@@ -64,7 +64,7 @@ class core.Storage
   # @param String str
   #
   disable_notify: (arr, str) ->
-    @_get_np(arr, str).set_enabled(false)
+    @_get_np(arr, str).set_emitter_disabled(true)
 
   #
   # Enables notifications of matching NotifyPoint.
@@ -74,7 +74,7 @@ class core.Storage
   #
 
   enable_notify: (arr, str) ->
-    @_get_np(arr, str).set_enabled(true)
+    @_get_np(arr, str).set_emitter_disabled(false)
 
   #
   # Returns NotifyPoint for the given path.

@@ -18,15 +18,15 @@ class storage.NotifyPoint
   #
   # @param Function fn
   #
-  register: (fn) ->
-    @_queue.push(fn) if array.contains(@_queue, fn)
+  subscribe: (fn) ->
+    @_queue.push(fn)
 
   #
   # Unregisters listener from the NP.
   #
   # @param Function fn
   #
-  unregister: (fn) ->
+  unsubscribe: (fn) ->
     array.erase(@_queue, fn)
 
   #
@@ -35,13 +35,17 @@ class storage.NotifyPoint
   #
   # @param Boolean enabled
   #
-  set_enabled: (enabled) ->
-    @_enabled = enabled
+  set_emitter_disabled: (enabled) ->
+    @_enabled = not enabled
 
   #
   # Sets all registered listeners as dirty in the storage.Notifier.
   #
-  set_dirty: ->
+  dispatch: ->
     if @_enabled
-      pkg.NOTIFIER.set_dirty(o) for o in @_queue
+      core.async_notify(o) for o in @_queue
     return
+
+class storage.NotifyPoint
+
+core.install 'async.emitter', storage.NotifyPoint

@@ -11,7 +11,7 @@ class dao.Complex extends dao.Plain
     @_recompile()
 
     for e in @_nested
-      e.register(@_on_nested_change) if dao.is(e)
+      e.subscribe(@_on_nested_change) if dao.is(e)
 
     super(@_str, @_array)
     return
@@ -21,9 +21,9 @@ class dao.Complex extends dao.Plain
   # Will trigger whenever the underlying path changes.
   #
   _on_nested_change: =>
-    storage.unregister(@_array, @_str, @_on_change)
+    storage.unsubscribe(@_array, @_str, @_on_change)
     @_recompile()
-    storage.register(@_array, @_str, @_on_change)
+    storage.subscribe(@_array, @_str, @_on_change)
     @_on_change()
 
   #

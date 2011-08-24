@@ -3,19 +3,18 @@
 # the specified path. Enables clients to get / set / listen for
 # changes of the value presented by underlying storage path.
 #
-class dao.Plain extends storage.NotifyPoint
+class dao.Plain
 
-  constructor: (@_str, @_array, @_storage) ->
-    super()
-    storage.register(@_array, @_str, @_on_change)
+  constructor: (@_str, @_array) ->
+    storage.subscribe(@_array, @_str, @_on_change)
 
   #
   # Listenr binded with PlainDao instance. Will trigger whenever
   # value from the underlying storage path changes.
   #
   _on_change: =>
-    @_value = @_storage.get(@_array)
-    @set_dirty()
+    @_value = storage.get(@_array)
+    @dispatch()
 
   #
   # Returns value from the underlying storage path.
@@ -30,3 +29,6 @@ class dao.Plain extends storage.NotifyPoint
   #
   set: (nv) ->
     storage.set(@_array, @_str, nv)
+
+
+core.install 'async.emitter', dao.Plain

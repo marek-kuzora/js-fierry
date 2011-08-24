@@ -15,7 +15,7 @@ class pkg.IntGenerator
 
     return @_ireg[k] ?= do =>
       i = 0
-      arr = (i += core.rand(step - 1) + 1 for j in [1..count])
+      arr = (i += math.rand(step - 1) + 1 for j in [1..count])
 
       if !sorted then array.shuffle(arr)
       return arr

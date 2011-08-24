@@ -25,7 +25,7 @@ class core.Dao
   #
   get: (key, o) ->
     dao = @_retrieve_dao(key, o)
-    o.track_dao?(dao) if o
+    o?.register_dao?(dao)
     return dao.get()
 
   #

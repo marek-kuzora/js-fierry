@@ -2,15 +2,16 @@ after:
   - .after.coffee
 require:
   - fierry.core
-  - fierry.scheduler
+  - fierry.async
 
 namespace:
+  app:     app
   core:    core
+  math:    math
   array:   array
   string:  string
+  assert:  assert
 
-  app:     core.app
-  assert:  core.assert
   pfc:     performance
   pkg:     performance.internal
   union:   set.union
