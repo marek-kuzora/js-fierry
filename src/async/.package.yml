@@ -1,0 +1,10 @@
+before: [Async.coffee]
+after:  [Emitter.coffee]
+require:
+  - fierry.core
+namespace:
+  uid:        uid
+  core:       core
+
+  pkg:        core.scheduler
+  behaviour:  app.add_behavior
