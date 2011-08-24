@@ -1,12 +1,14 @@
 before: [.before.coffee]
 require:
-  - fierry.generation
+  - fierry.core
   - fierry.performance
 namespace:
+  uid:    uid
   core:   core
+  lang:   lang
+  math:   math
   array:  array
-  gen:    core.generation
+  assert: assert
 
-  pkg:    performance.array
   test:   performance.register_test
   group:  performance.register_group

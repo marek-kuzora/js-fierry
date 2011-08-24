@@ -8,52 +8,46 @@ test 'bool',
   before: ->
     @o = true
   run: ->
-    core.type @o
+    lang.boolean(@o)
 
-test 'int',
+test 'number',
   before: ->
     @o = 12
   run: ->
-    core.type @o
+    lang.number(@o)
 
 test 'string',
   before: ->
-    @o = 'string'
+   @o = 'string'
   run: ->
-    core.type @o
+    lang.string(@o)
 
 test 'function',
   before: ->
     @o = ->
   run: ->
-    core.type @o
-
-test 'null',
-  before: ->
-    @o = null
-  run: ->
-    core.type @o
-
-test 'undefined',
-  before: ->
-    @o = undefined
-  run: ->
-    core.type @o
+    lang.function(@o)
 
 test 'array',
   before: ->
     @o = []
   run: ->
-    core.type @o
+    lang.array(@o)
 
 test 'object',
   before: ->
     @o = {}
   run: ->
-    core.type @o
+    lang.object(@o)
+
+test 'date',
+  before: ->
+    @o = new Date()
+  run: ->
+    lang.date(@o)
 
 test 'regexp',
   before: ->
     @o = /regexp/
   run: ->
-    core.type @o
+    lang.regexp(@o)

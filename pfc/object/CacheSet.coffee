@@ -10,10 +10,10 @@ test 'random_int',
   run: ->
     @cache[@ints[@i++ % @max]] = true
 
-test 'core.uid',
+test 'uid',
   before: ->
   run: ->
-    @cache[core.uid({})] = true
+    @cache[uid {}] = true
 
 test 'random_string',
   before: ->

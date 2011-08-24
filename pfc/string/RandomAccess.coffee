@@ -1,10 +1,6 @@
-group '/string.sequential-read'
+group '/string.access'
 
 
-#
-# About 2x faster than direct, char-at access.
-# Currently can handle 25k string in less than 1ms.
-#
 group 'char-code-at'
 
 test '   250 chars',
@@ -12,24 +8,22 @@ test '   250 chars',
     @str = gen.big_string(250)
     @len = @str.length - 1
   run: ->
-    @str.charCodeAt(core.rand(i)) for i in [0..@len]
-    return
+    @str.charCodeAt(math.rand(@len))
 
 test ' 2 500 chars',
   before: ->
     @str = gen.big_string(2500)
     @len = @str.length - 1
   run: ->
-    @str.charCodeAt(core.rand(i)) for i in [0..@len]
-    return
+    @str.charCodeAt(math.rand(@len))
 
 test '25 000 chars',
   before: ->
     @str = gen.big_string(25000)
     @len = @str.length - 1
   run: ->
-    @str.charCodeAt(core.rand(i)) for i in [0..@len]
-    return
+    @str.charCodeAt(math.rand(@len))
+
 
 group 'char-at'
 
@@ -38,24 +32,22 @@ test '   250 chars',
     @str = gen.big_string(250)
     @len = @str.length - 1
   run: ->
-    @str.charAt(core.rand(i)) for i in [0..@len]
-    return
+    @str.charAt(math.rand(@len))
 
 test ' 2 500 chars',
   before: ->
     @str = gen.big_string(2500)
     @len = @str.length - 1
   run: ->
-    @str.charAt(core.rand(i)) for i in [0..@len]
-    return
+    @str.charAt(math.rand(@len))
 
 test '25 000 chars',
   before: ->
     @str = gen.big_string(25000)
     @len = @str.length - 1
   run: ->
-    @str.charAt(core.rand(i)) for i in [0..@len]
-    return
+    @str.charAt(math.rand(@len))
+
 
 group 'direct'
 
@@ -64,21 +56,21 @@ test '   250 chars',
     @str = gen.big_string(250)
     @len = @str.length - 1
   run: ->
-    @str.charAt(core.rand(i)) for i in [0..@len]
-    return
+    @str[math.rand(@len)]
+
 
 test ' 2 500 chars',
   before: ->
     @str = gen.big_string(2500)
     @len = @str.length - 1
   run: ->
-    @str.charAt(core.rand(i)) for i in [0..@len]
-    return
+    @str[math.rand(@len)]
+
 
 test '25 000 chars',
   before: ->
     @str = gen.big_string(25000)
     @len = @str.length - 1
   run: ->
-    @str[core.rand(i)] for i in [0..@len]
-    return
+    @str[math.rand(@len)]
+

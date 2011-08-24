@@ -5,6 +5,7 @@ require:
   - fierry.performance
 
 namespace:
+  uid:    uid
   core:   core
   object: object
   gen:    core.generation

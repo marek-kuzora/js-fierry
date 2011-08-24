@@ -3,9 +3,12 @@ require:
   - fierry.generation
   - fierry.performance
 namespace:
+  uid:    uid
   core:   core
-  string: string
+  math:   math
+  array:  array
   gen:    core.generation
 
+  pkg:    performance.array
   test:   performance.register_test
   group:  performance.register_group

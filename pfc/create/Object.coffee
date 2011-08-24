@@ -63,9 +63,9 @@ test '10 length',
 #
 group 'class'
 
-test 'core.Event',
+test 'core.App',
   run: ->
-    o = new core.Event()
+    o = new core.App()
 
 test '0 length -prototype',
   before: ->

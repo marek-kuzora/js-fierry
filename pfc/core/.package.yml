@@ -1,7 +1,0 @@
-require:
-  - fierry.pfc.core.array
-  - fierry.pfc.core.string
-  - fierry.pfc.core.object
-  - fierry.pfc.core.function
-  - fierry.pfc.core.create
-  - fierry.pfc.core.utils

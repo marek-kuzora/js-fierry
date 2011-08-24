@@ -9,11 +9,11 @@ test 'random_int',
   run: ->
     @cache[@ints[@i++ % @max]] = true
 
-test 'core.uid',
+test 'uid',
   before: ->
     @i = 0
     @cache = []
     @max = 100000
     @objects = ({} for i in [0..@max])
   run: ->
-    @cache[core.uid @objects[@i++ % @max]] = true
+    @cache[uid @objects[@i++ % @max]] = true
