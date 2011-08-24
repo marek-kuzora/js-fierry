@@ -1,22 +1,11 @@
 #
-# Event emitter mixin for synchronous events notification.
-# Enables clients to synchronously dispatch events, with optional
+# Event emitter for synchronous events notification. Enables
+# clients to synchronously dispatch events, with optional
 # additional arguments, to subscribed listeners. The emitter can
 # be temporary disabled - will not dispatch any events to
 # subscribed listeners while in such state.
 #
-# Configuration: none available.
-#
-core.register_mixin 'emitter', (cls, conf) ->
-
-  #
-  # Sets emitter as disabled or enabled. Disabled emitters will
-  # not dispatch changes to their listeners.
-  #
-  # @param Boolean enabled
-  #
-  cls::set_emitter_disabled = (disable) ->
-    @__emitter_disabled = true
+class core.Emitter
 
   #
   # Subscribes listener to the emitter. For performance reasons,
@@ -27,7 +16,7 @@ core.register_mixin 'emitter', (cls, conf) ->
   # @param String type - event's type.
   # @param Function fn - listener.
   #
-  cls::subscribe = (type, fn) ->
+  subscribe: (type, fn) ->
     @__get_listeners(type).push(fn)
 
   #
@@ -39,18 +28,8 @@ core.register_mixin 'emitter', (cls, conf) ->
   # @param String type - event's type.
   # @param Function fn - listener.
   #
-  cls::unsubscribe = (type, fn) ->
+  unsubscribe: (type, fn) ->
     array.erase(@__get_listeners(type), fn)
-
-  #
-  # Retrieves listeners subscribed for notification for events 
-  # of the given type.
-  #
-  # @param String type
-  #
-  cls::__get_listeners = (type) ->
-    reg = @__listeners_registry ?= {}
-    return reg[type] ?= []
 
   #
   # Notifies subscribed listeners. Optionally provides additional
@@ -60,7 +39,25 @@ core.register_mixin 'emitter', (cls, conf) ->
   # @param String type
   # @param Any[] args
   #
-  cls::dispatch = (type, args...) ->
+  dispatch: (type, args...) ->
     unless @__emitter_disabled
       fn.apply(null, args) for fn in @__get_listeners(type)
     return
+  #
+  # Retrieves listeners subscribed for notification for events 
+  # of the given type.
+  #
+  # @param String type
+  #
+  __get_listeners: (type) ->
+    reg = @__listeners_registry ?= {}
+    return reg[type] ?= []
+
+  #
+  # Sets emitter as disabled or enabled. Disabled emitters will
+  # not dispatch changes to their listeners.
+  #
+  # @param Boolean enabled
+  #
+  set_emitter_disabled: (disable) ->
+    @__emitter_disabled = disable

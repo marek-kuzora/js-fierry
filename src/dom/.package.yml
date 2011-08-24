@@ -4,3 +4,4 @@ require:
 namespace:
   core:  core
   array: array
+  pkg:   dom

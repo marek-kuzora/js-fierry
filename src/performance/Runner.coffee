@@ -1,4 +1,4 @@
-class pkg.Runner
+class pkg.Runner extends core.Emitter
 
   #
   # Constructs test Runner.
@@ -74,8 +74,3 @@ class pkg.Runner
       test.create_test_result()
       r.push(test) for i in [1..pkg.EXECUTE_RETRY]
     return r
-
-#
-# Includes emitter mixin in the pkg.Runner.
-#
-core.install 'emitter', pkg.Runner
