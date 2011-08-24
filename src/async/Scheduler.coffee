@@ -24,8 +24,8 @@ class pkg.Scheduler
   # @param delay - time to invoke [ms].
   # @param periodic - Boolean
   #
-  async: (fn, delay, periodic) ->
-    async = new pkg.AsyncFunction(fn, periodic, @, delay)
+  async_exec: (fn, delay, periodic) ->
+    async = new pkg.Function(fn, periodic, @, delay)
     return async._reschedule()
 
   #
@@ -36,7 +36,7 @@ class pkg.Scheduler
   # @param fn - Function
   #
   async_array: (arr, fn) ->
-    async = new pkg.AsyncArray(fn, arr.slice(), @, @_interval)
+    async = new pkg.Array(fn, arr.slice(), @, @_interval)
     return async._reschedule()
 
   #
@@ -82,8 +82,8 @@ class pkg.Scheduler
 #
 INSTANCE = new pkg.Scheduler()
 
-core.async = (fn, delay, periodic) ->
-  return INSTANCE.async(fn, delay, periodic)
+core.async_exec = (fn, delay, periodic) ->
+  return INSTANCE.async_exec(fn, delay, periodic)
 
 core.async_array = (arr, fn) ->
   return INSTANCE.async_array(arr, fn)

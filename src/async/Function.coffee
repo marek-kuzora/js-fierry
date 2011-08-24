@@ -1,4 +1,4 @@
-class pkg.AsyncFunction extends pkg.Async
+class pkg.Function extends pkg.Async
 
   constructor: (@_fn, @_periodic, scheduler, time) ->
     super time, scheduler

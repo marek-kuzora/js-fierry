@@ -16,4 +16,4 @@ namespace:
   pkg:     performance.internal
   union:   set.union
 
-  scheduler: core.scheduler.RAW
+  scheduler: core.async.RAW

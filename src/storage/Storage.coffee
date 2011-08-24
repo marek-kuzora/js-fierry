@@ -25,9 +25,9 @@ class core.Storage
     return object.get(@_root, arr)
 
   #
-  # Sets value at the end of the path.
-  # If path does not exist, creates it.
-  # Sets listeners corresponding to the given path as dirty.
+  # Sets value at the end of the path. If path does not exist,
+  # creates it. Sets listeners corresponding to the given path 
+  # as dirty.
   #
   # @param Array arr
   # @param String str
@@ -38,7 +38,7 @@ class core.Storage
     @_get_np(arr, str).dispatch() if app.is_running()
 
   #
-	# Registers listener for the given path.
+	# Subscribes listener for the given path.
   #
   # @param Array arr
   # @param String str
@@ -48,7 +48,7 @@ class core.Storage
     @_get_np(arr, str).subscribe(fn)
 
   #
-	# Unregisters listener from the given path.
+	# Unsubscribes listener from the given path.
   #
   # @param Array arr
   # @param String str
@@ -58,7 +58,7 @@ class core.Storage
     @_get_np(arr, str).unsubscribe(fn)
 
   #
-  # Disables notifications of matching NotifyPoint.
+  # Disables notifications of matching async emitter.
   #
   # @param Array arr
   # @param String str
@@ -67,7 +67,7 @@ class core.Storage
     @_get_np(arr, str).set_emitter_disabled(true)
 
   #
-  # Enables notifications of matching NotifyPoint.
+  # Enables notifications of matching async emitter.
   #
   # @param Array arr
   # @param String str
@@ -77,7 +77,7 @@ class core.Storage
     @_get_np(arr, str).set_emitter_disabled(false)
 
   #
-  # Returns NotifyPoint for the given path.
+  # Returns asynchronous events emitter for the given path.
   #
   # @param Array arr
   # @param String str
@@ -87,10 +87,10 @@ class core.Storage
 
     return @_nps[str] ?= do =>
       np = @_get_np_path(arr[0], str)
-      @_nps[np] ?= new pkg.NotifyPoint()
+      @_nps[np] ?= new core.async.Emitter()
 
   #
-	# Returns path to the closest NotifyPoint available.
+	# Returns path to the closest async emitter available.
   #
 	# @param String head
   # @param String raw

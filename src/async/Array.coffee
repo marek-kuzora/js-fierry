@@ -1,4 +1,4 @@
-class pkg.AsyncArray extends pkg.Async
+class pkg.Array extends pkg.Async
 
   constructor: (@_fn, @_arr, scheduler, time) ->
     super time, scheduler

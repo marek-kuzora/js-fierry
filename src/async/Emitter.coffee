@@ -1,69 +1,63 @@
 #
-# Class responsible for executing asynchronous notifications. 
-# It collects listeners sent from asynchronous events emitters 
-# & executes them in a batch when Emitter#notify() is invoked.
+# Event emitter for asynchronous events notifications. Whenever 
+# a change occurrs and dispatch() method is invoked, all of the
+# subscribed listeners are registered into core.async.
+# GlobalEmitter for scheduled notification in batch. For
+# performance reasons, this emitter will not provide data what
+# has changed, or why the listener is invoked - it will only
+# notify that a change has occurred - listener itself needs to
+# investigate what has changed whenever necessary.
 #
-# @singleton
-# 
+# Each listener is guaranteed to be invoked once only, even if
+# multiple changes has occurred and the listener was 'dispatched'
+# from many asynchronous emitters during that time.
+#
 class pkg.Emitter
 
-  constructor: ->
-    @_dirty = []
-    @_visited = []
+  #
+  # Subscribes listener to the emitter. For performance reasons,
+  # the emitter does not prevent from subscribing same listener
+  # multiple times. Client is reponsible for assuring that each
+  # listener will be subscribed only once.
+  #
+  # @param Function fn - listener.
+  #
+  subscribe: (fn) ->
+    @__get_listeners().push(fn)
 
   #
-  # Registers the given listener as dirty. Each unique listener
-  # can be registered only once. The listener function will be
-  # executed at the nearest invocation of notify().
+  # Unsubscribes listener from the emitter. This method will
+  # unsubscribe all instances of the same listener if found.
+  # However it is unnecessary for clients to register same
+  # listeners multiple times.
   #
-  # @param Function fn
+  # @param Function fn - listener.
   #
-  register_listener: (fn) ->
-    unless @_visited[uid fn]
-      @_visited[uid fn] = true
-      @_dirty.push(fn)
-
-  #
-  # Executes all queued dirty functions. Commonly used to notify
-  # listeners about storage changes. This method is invoked
-  # asynchronously once each 10 miliseconds.
-  #
-  notify: =>
-    i = 0
-    l = @_dirty.length
-
-    while i < l
-      @_execute(i++)
-      l = @_dirty.length if i is l
-
-    @_dirty = []
+  unsubscribe: (fn) ->
+    array.erase(@__get_listeners(), fn)
 
   #
-  # Executes the function with specified index. Removes function
-  # identificator from @_visited array in order to allow later
-  # registering its listener for notification (even during same
-  # notify loop). 
+  # Asynchronously notifies subscribed listeners. Registers all
+  # listeners into global emitter instance, where they will be
+  # notified once the core.async.GlobalEmiter.notify() is invoked.
+  # Will do nothing if the emitter is disabled.
   #
-  # @param Integer i - function index.
+  dispatch: ->
+    unless @__emitter_disabled
+      core.async_notify(fn) for fn in @__get_listeners()
+    return
+
   #
-  _execute: (i) ->
-    fn = @_dirty[i]
-    
-    fn()
-    @_visited[uid fn] = false
+  # Retrieves listeners subscribed for notification.
+  #
+  __get_listeners: ->
+    return @__listeners_registry ?= []
 
-
-#
-# Global Emitter instance and its public API.
-#
-EMITTER = new pkg.Emitter()
-
-core.async_notify = (fn) ->
-  EMITTER.register_listener(fn)
-
-
-#
-# Scheduling asynchronous, periodic notifications.
-#
-core.async(EMITTER.notify, 10, true)
-
+  #
+  # Sets emitter as disabled or enabled. Disabled emitters will
+  # not dispatch changes to their listeners.
+  #
+  # @param Boolean enabled
+  #
+  set_emitter_disabled: (disable) ->
+    @__emitter_disabled = disable

@@ -3,7 +3,7 @@
 # the specified path. Enables clients to get / set / listen for
 # changes of the value presented by underlying storage path.
 #
-class dao.Plain
+class dao.Plain extends core.async.Emitter
 
   constructor: (@_str, @_array) ->
     storage.subscribe(@_array, @_str, @_on_change)
@@ -29,6 +29,3 @@ class dao.Plain
   #
   set: (nv) ->
     storage.set(@_array, @_str, nv)
-
-
-core.install 'async.emitter', dao.Plain
