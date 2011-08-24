@@ -1,3 +1,10 @@
+#
+# Class responsible for managing application's state. Enables
+# clients to hook into starting, stopping, resuming & pausing
+# the application and executing custom logic.
+#
+# @singleton
+#
 class core.App
 
   constructor: ->
@@ -16,8 +23,8 @@ class core.App
   #
   start: ->
     if @_can 'start'
-      @_trigger_behaviour('start')
-      @_trigger_behaviour('resume')
+      @_trigger_behavior('start')
+      @_trigger_behavior('resume')
       @_running = true
 
   #
@@ -26,8 +33,8 @@ class core.App
   stop: ->
     if @_can 'stop'
       @_running = false
-      @_trigger_behaviour('pause') unless @_paused
-      @_trigger_behaviour('stop')
+      @_trigger_behavior('pause') unless @_paused
+      @_trigger_behavior('stop')
 
   #
   # Resumes the application (from inactive state).
@@ -35,7 +42,7 @@ class core.App
   #
   resume: ->
     if @_can 'resume'
-      @_trigger_behaviour('resume')
+      @_trigger_behavior('resume')
       @_paused = false
 
   #
@@ -45,7 +52,7 @@ class core.App
   pause: ->
     if @_can 'pause'
       @_paused = true
-      @_trigger_behaviour('pause')
+      @_trigger_behavior('pause')
 
   #
   # Returns true if the application is running and not paused.
@@ -66,7 +73,8 @@ class core.App
     return @_paused
 
   #
-  # Returns true if the application can change its state into the given one.
+  # Returns true if the application can change its state 
+  # into the given one.
   #
   # @param String state
   #
@@ -82,15 +90,20 @@ class core.App
   #
   # @param String state
   #
-  _trigger_behaviour: (state) ->
+  _trigger_behavior: (state) ->
     fn() for fn in @_behaviors[state]
     return
 
   #
-  # Registers behaviour funciton for the given application state.
+  # Registers behavior funciton for the given application state.
   #
   # @param String state
   # @param Function fn
   #
   add_behavior: (state, fn) =>
     @_behaviors[state].push(fn)
+
+#
+# Singleton instance visible as app namespace.
+#
+Env.app = new core.App()

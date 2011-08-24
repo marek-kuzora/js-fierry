@@ -1,23 +1,25 @@
-Env.array =
+#
+# Module providing additional functionality for arrays: binary
+# search, contains element, erase element, suffling, building
+# unique sets and casting collections to arrays.
+#
+Env.array = $arr =
 
   #
-  # Returns average value from array of numbers.
-  # @param Array arr
+  # Performs binary search on sorted array. Returns index of 
+  # the found key or negative value if key wasn't found. 
+  # Having negative value, one can obtain index where to insert
+  # that key to retain the sorted order: index = -1 * (value+1).
   #
-  avg: (arr) ->
-    sum = 0
-    sum += i for i in arr
-    return sum / arr.length
-
+  # Compares items via '<' - primitives only. For comparing
+  # other content use bsearch_cst which takes additional 
+  # custom comparator.
   #
-  # Performs binary search on sorted array.
-  # Returns idx of the found key or -idx if key wasn't found.
-  #   Transformation for splicing the new element: idx = -1*(idx+1)
-  # Works only on primitive array content!
   # @param Array arr
   # @param Any key
+  # @param Function cmp *
   #
-  binary_search: (arr, key) ->
+  bsearch: (arr, key) ->
     l = 0
     h = arr.length - 1
 
@@ -28,69 +30,122 @@ Env.array =
       if mval < key then l = mid + 1
       else h = mid - 1
 
-    if mval == key then return mid
+    if mval is key then return mid
     else return -(l+1)
 
   #
-  # Returns true if array contains the given item.
-  # @param arr
-  # @param it
+  # Performs binary search on sorted array. Returns index of 
+  # the found key or negative value if key wasn't found. 
+  # Having negative value, one can obtain index where to insert
+  # that key to retain the sorted order: index = -1 * (value+1).
+  # @see array.bsearch()
   #
-  contains: (arr, it) ->
-    arr.indexOf(it) isnt -1
+  # @param Array arr
+  # @param Any key
+  # @param Function fn 
+  #     - comparator, that should return -1 if a < b
+  #
+  bsearch_cst: (arr, key, fn) ->
+    l = 0
+    h = arr.length - 1
 
-  #
-  # Returns true if array does not contain any items.
-  # @param arr
-  #
-  empty: (arr) ->
-    arr.length is 0
+    while l <= h
+      mid = l + h >> 1
+      mval = arr[mid]
+
+      if fn(mval, key) < 0 then l = mid + 1
+      else h = mid - 1
+
+    if mval is key then return mid
+    else return -(l+1)
 
   #
   # Erases all instances of the given item from the array.
+  # Compares items via '===' - references only. For comparing
+  # other content use erase_cst which takes additional custom 
+  # comparator.
+  #
   # @param Array arr
   # @param Any it - item to remove.
-  # @param Integer i - offset.
   #
-  erase: (arr, it, i=0) ->
-    while i < arr.length
-      if arr[i] is it then arr.splice(i, 1) else i++
+  erase: (arr, it) ->
+    l = arr.length
+    (arr.splice(l, 1) if arr[l] is it) while l--
     return
 
   #
-  # Returns if the given object is array.
-  # @param Any o
+  # Erases all instances of the given item from the array using
+  # custom equality comparator.
   #
-  is: (o) ->
-    return core.type(o) is 'array'
+  # @param Array arr
+  # @param Any it - item to remove.
+  # @param Function fn - comparator.
+  #
+  erase_cst: (arr, it, fn) ->
+    l = arr.length
+    (arr.splice(l, 1) if fn(arr[l],it)) while l--
+    return
+
+  #
+  # Inserts item into the sorted array. Compares items via '<'
+  # - primitives only. For comparing other content use
+  # insert_cst() which takes additional custom comparator.
+  #
+  # To workaround Chrome bug of native Array.splice() function,
+  # the index is explicitly casted into primitive integer.
+  #
+  # @param Array arr
+  # @param Any it
+  #
+  insert: (arr, it) ->
+    i = $arr.bsearch(arr, it)
+    i = -1 * (i + 1) if i < 0
+    arr.splice(i >> 0, 0, it)
+
+  #
+  # Inserts item into the sorted array using custom comparator.
+  # @see array.insert()
+  #
+  # @param Array arr
+  # @param Any it
+  # @param Function fn 
+  #     - comparator, that should return -1 if a < b
+  #
+  insert_cst: (arr, it, fn) ->
+    i = $arr.bsearch_cst(arr, it, fn)
+    i = -1 * (i + 1) if i < 0
+    arr.splice(i >> 0, 0, it)
 
   #
   # Shuffles the given array.
+  #
   # @param Array arr
   #
   shuffle: (arr) ->
     i = arr.length
-    while i
-      j = parseInt(Math.random()*i)
-      x = arr[--i]
-      [arr[i], arr[j]] = [arr[j], x]
+
+    while i--
+      v = arr[i]
+      j = Math.random() * i << 0
+      arr[i] = arr[j]
+      arr[j] = v
     return arr
 
   #
-  # Cast collection into JavaScript Array
-  # @param Collection arr - arguments, live dom collection, ...
+  # Casts collection into JavaScript Array.
   #
-  to_array: (arr) ->
-    return Array.prototype.slice.call(arr)
+  # @param Any any - arguments, live dom collection, etc.
+  #
+  to_array: (any) ->
+    return Array.prototype.slice.call(any)
 
   #
-  # Returns unique array from the given one.
-  # Will work only on array of primitives
+  # Returns unique array from the given one. Will work only for
+  # arrays containing strings and numbers.
+  #
   # @param Array arr
   #
   unique: (arr) ->
-    r = []
-    hash = {}
-    hash[i] = 0 for i in arr
-    r.push(i) for i of hash
-    return r
+    h = {}
+    h[i] = true for i in arr
+    return (k for k of h)

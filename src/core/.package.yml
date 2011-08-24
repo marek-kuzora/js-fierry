@@ -1,7 +1,16 @@
 #
-# fierry.core provides basic functionality to the fierry framework.
-# Inside this package developer should not access core namespace from anywhere but .after.coffee.
+# Module providing core functionality for the Fierry Framework.
+# When editing this package keep in mind that most of its
+# functionalities won't be accessible from anywhere but
+# .after.coffee file.
 #
-after: [.after.coffee]
+before: 
+  - .before.coffee
+  - Assert.coffee
+after:
+  - Registry.mixin.coffee
+  - Emitter.mixin.coffee
+  - .after.coffee
+
 namespace:
   core: core

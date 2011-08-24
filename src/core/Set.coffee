@@ -27,6 +27,5 @@ Env.set =
 
     for arr in args
       for i in arr
-        Env.array.erase(set, i) if set.indexOf(i) isnt -1
-
+        Env.array.erase(set, i)
     return set
