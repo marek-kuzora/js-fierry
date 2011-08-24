@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Fun</title>
+  </head>
+
+  <body>
+    <div id="stub"></div>
+
+    <script type="text/javascript" src="/Code/JavaScript/YUI/yui/yui-min.js"></script>
+    <script type="text/javascript" src="fierry.example.js"></script>
+    <script type="text/javascript">
+      YUI().use("fierry.example.view", function(Env) {
+        window.Env = Env;
+        window.example = Env.example
+        window.core = Env.core;
+
+        Env.app.start();
+      });
+    </script>
+  </body>
+</html>
+

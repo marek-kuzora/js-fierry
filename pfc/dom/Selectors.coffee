@@ -13,8 +13,8 @@ test 'getElementsByTagName',
 
 test 'querySelector',
   run: ->
-    document.querySelector('[id="stub"]')
+    document.querySelector('#stub')
 
 test 'querySelectorAll',
   run: ->
-    document.querySelectorAll('[id="stub"]')
+    document.querySelectorAll('#stub')
