@@ -7,9 +7,12 @@
 class pkg.Registry
 
   constructor: ->
-    @_reg   = {}
+    @_cache = {}
+    @_scopes = {}
     @_queue = []
 
+  #
+  # FIXME outdated
   #
   # Registers action's behavior for the given scopes.
   # Function takes variable number of arguments:
@@ -20,15 +23,19 @@ class pkg.Registry
   # @param String... scopes
   # @param {} handler
   #
-  register: (args...) ->
-    behavior = args.pop()
+  register: ->
+    return @_register_behavior(arguments...) if arguments[2]?
+    return @_register_scope(arguments...)
 
-    for arg in args
-      i = arg.lastIndexOf('.')
-      [scope, type] = [arg.substr(0, i), arg.substr(i + 1)]
+  # TODO comment
+  _register_scope: (scope, factory) ->
+    assert !@_scopes[scope], "Behavior factory for scope #{scope} already defined."
+    @_scopes[scope] = factory
 
-      @_reg[scope] ?= {}
-      @_reg[scope][type] = behavior
+  # TODO comment
+  _register_behavior: (scope, type, behavior) ->
+    @_cache[scope] ?= {}
+    @_cache[scope][type] ?= behavior
 
   #
   # Executes the given configuration. Creates the root action
@@ -70,6 +77,8 @@ class pkg.Registry
     )
 
   #
+  # FIXME outdated
+  #
   # Retrieves action's behavior for the given type. Assuming the
   # scope is 'dom.img' and the type is 'src', function will
   # search for behaviors in 'dom.img.src', 'dom.src', 'src' 
@@ -79,11 +88,11 @@ class pkg.Registry
   # @param String scope
   #
   _get_behavior: (scope, type) ->
-    scope_reg = @_reg[scope] ?= {}
-    
-    return scope_reg[type] ?= do =>
-      assert scope isnt '', "Action handler for #{type} not found"
-      return @_get_handler(scope.substr(0, scope.lastIndexOf('.')), type)
+    @_cache[scope] ?= {}
+
+    return @_cache[scope][type] ?= do =>
+      assert @_scopes[scope], "Behavior factory for scope #{scope} not found"
+      return @_scopes[scope](type)
 
   #
   # Executes all of the queued configuration on application
@@ -106,7 +115,7 @@ class pkg.Registry
 REGISTRY = new pkg.Registry()
 
 pkg.register = ->
-  REGISTRY.register.apply(REGISTRY, arguments)
+  REGISTRY.register(arguments...)
 
 core.execute = (type, value_def, nodes_def) ->
   return REGISTRY.execute(type, value_def, nodes_def)

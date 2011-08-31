@@ -7,8 +7,9 @@ class pkg.Action extends core.PriorityMap
 
     @_curr_daos = []
 
+    # Chcemy parenta przekazywac oraz trzymac stara value?
     @_behavior.create?(@)
-    @_behavior.update?(@, @_value_def())
+    @_behavior.update?(@, @_value_def(@))
 
     @_children = @_process_nodes()
     @_register_all()
@@ -27,7 +28,7 @@ class pkg.Action extends core.PriorityMap
     @_prev_daos = @_curr_daos
     @_curr_daos = []
 
-    @_behavior.update?(@, @_value_def())
+    @_behavior.update?(@, @_value_def(@))
     [old_nodes, new_nodes] = @_get_changed_nodes()
     
     node.dispose() for node in old_nodes
@@ -107,3 +108,6 @@ class pkg.Action extends core.PriorityMap
 
     for dao in @_curr_daos when @_prev_daos.indexOf(dao) is -1
       dao.subscribe(@update)
+
+  find: (fn) ->
+    return fn(@_children)
