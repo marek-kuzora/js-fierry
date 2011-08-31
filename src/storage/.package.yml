@@ -1,5 +1,4 @@
 before:
-  - NotifyPoint.coffee
   - PlainDao.coffee
 after:
   - .after.coffee

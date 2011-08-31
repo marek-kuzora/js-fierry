@@ -8,8 +8,6 @@ before:
   - .before.coffee
   - Assert.coffee
 after:
-  - Registry.mixin.coffee
-  - Emitter.mixin.coffee
   - .after.coffee
 
 namespace:
