@@ -1,46 +1,64 @@
 #
-# Responsible for registering the provided action handlers 
-# and creating Action instances from the reference declarations.
+# Responsible for registering the provided Actions and creating 
+# their instances from the reference declarations.
 #
 # @singleton
 #
 class pkg.Registry
 
   constructor: ->
-    @_cache = {}
-    @_scopes = {}
     @_queue = []
+    @_scache = {}
+    @_tcache = {}
 
-  #
-  # FIXME outdated
-  #
-  # Registers action's behavior for the given scopes.
-  # Function takes variable number of arguments:
-  # - first argument is expected to be a String scope.
-  # - arguments between first & last are expected to be a String scope.
-  # - last argument is expected to be {} handler.
-  #
-  # @param String... scopes
-  # @param {} handler
-  #
   register: ->
     return @_register_behavior(arguments...) if arguments[2]?
     return @_register_scope(arguments...)
 
-  # TODO comment
   _register_scope: (scope, factory) ->
-    assert !@_scopes[scope], "Behavior factory for scope #{scope} already defined."
-    @_scopes[scope] = factory
+    assert !@_scache[scope], "Behavior factory for scope #{scope} already defined."
+    @_scache[scope] = factory
 
-  # TODO comment
   _register_behavior: (scope, type, behavior) ->
-    @_cache[scope] ?= {}
-    @_cache[scope][type] ?= behavior
+    @_tcache[scope] ?= {}
+    @_tcache[scope][type] ?= behavior
+
+  #
+  # Creates new Action instance. Each action will be configured
+  # with appropriate class, matching the provided type & scope.
+  #
+  # @param String scope
+  # @param String type
+  # @param String uid
+  # @param String id* - null if not provided.
+  # @param String[] tags* - empty array if not provided.
+  # @param Function value_def
+  # @param Function nodes_def
+  #
+  create: (scope, type, uid, id, tags, value_def, nodes_def) ->
+    cls = @_get_class(scope, type)
+    return new cls(type, uid, id, tags, value_def, nodes_def)
+  
+  create_cst: (parent, type, uid, id, tags, value_def, nodes_def) ->
+    cls = parent.get_class_type(type)
+    return new cls(type, uid, id, tags, value_def, nodes_def)
+
+  #
+  # Retrieves action's class for the given scope & type.
+  # This class will be used to initialize the action instance
+  # in Registry.create() method.
+  #
+  _get_class: (scope, type) ->
+    @_tcache[scope] ?= {}
+
+    return @_tcache[scope][type] ?= do =>
+      assert @_scache[scope], "Behavior factory for scope #{scope} not found"
+      return @_scache[scope](type)
 
   #
   # Executes the given configuration. Creates the root action
   # and executes it. Root action has negative uid (because uid
-  # for root does not matter), null id and empty tags list. 
+  # for root does not matter), null id and empty tags list.
   # Other params are passed as provided in the arguments list.
   #
   # Executing actions is expected to happen while the application
@@ -60,41 +78,6 @@ class pkg.Registry
     return action
 
   #
-  # Creates new Action instance. Each action will be configured
-  # with appropriate behavior, matching the provided type & scope.
-  #
-  # @param String scope
-  # @param String type
-  # @param String uid
-  # @param String id* - null if not provided.
-  # @param String[] tags* - empty array if not provided.
-  # @param Function value_def
-  # @param Function nodes_def
-  #
-  create: (scope, type, uid, id, tags, value_def, nodes_def) ->
-    return new pkg.Action(uid, id, tags, value_def, nodes_def,
-      @_get_behavior(scope, type)
-    )
-
-  #
-  # FIXME outdated
-  #
-  # Retrieves action's behavior for the given type. Assuming the
-  # scope is 'dom.img' and the type is 'src', function will
-  # search for behaviors in 'dom.img.src', 'dom.src', 'src' 
-  # and will return the first matching handler.
-  #
-  # @param String type
-  # @param String scope
-  #
-  _get_behavior: (scope, type) ->
-    @_cache[scope] ?= {}
-
-    return @_cache[scope][type] ?= do =>
-      assert @_scopes[scope], "Behavior factory for scope #{scope} not found"
-      return @_scopes[scope](type)
-
-  #
   # Executes all of the queued configuration on application
   # startup.
   #
@@ -107,7 +90,6 @@ class pkg.Registry
   #
   on_stop: =>
     action.dispose() for action in @_queue
-
 
 #
 # Global Registry instance and its public API.
@@ -123,8 +105,14 @@ core.execute = (type, value_def, nodes_def) ->
 pkg.create = (scope, type, uid, id, tags, value_def, nodes_def) ->
   return REGISTRY.create(scope, type, uid, id, tags, value_def, nodes_def)
 
+pkg.create_cst = (parent, type, uid, id, tags, value_def, nodes_def) ->
+  return REGISTRY.create_cst(parent, type, uid, id, tags, value_def, nodes_def)
+
+
 #
 # Registers execute/dispose Registry behavior.
 #
 app.add_behavior 'start', REGISTRY.on_start
 app.add_behavior 'stop',  REGISTRY.on_stop
+
+pkg.register '', 'dd-dummy', pkg.SolidDummy
