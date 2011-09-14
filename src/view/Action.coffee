@@ -1,85 +1,51 @@
-class pkg.Action extends core.PriorityMap
+class pkg.Action
 
-  constructor: (@type, @uid, @id, @tags, @_value_def, @_nodes_def) ->
+  #
+  # Constructor for Action class. Instances of this class are
+  # usually created inside array literal that is returned from
+  # directly from a function. Because of that, creating an array
+  # or function property inside the constructor will compromise
+  # the object's initialization performance (by a factor of 2).
+  #
+  constructor: (@type, @uid, @_value_fn, @_nodes_fn, @parent, @_behavior) ->
 
-  execute: (@parent) ->
-    @parent.attach(@) if @parent?.finalized
+  create: ->
+    @parent.attach(@) if @parent && @parent.finalized
 
-    @_curr_daos = []
+    @_daos = []
+    @value = @_value_fn()
+    @nodes = @_nodes_fn()
 
-    @on_create()
-    @on_update()
+    @_behavior ?= @parent.get_behavior_for(@type)
+    @_behavior.create(@)
+    @_behavior.update(@)
 
-    @_children = @execute_children(@_nodes_def())
+    @_update = => @update()
     @_register_all()
-
-    @on_finalize()
-    return @
-
-  update: =>
-    return if @disposed
-
-    @_prev_daos = @_curr_daos
-    @_curr_daos = []
-
-    @on_update()
-
-    [old_nodes, new_nodes] = @_get_changed_nodes()
-    @dispose_children(old_nodes)
-    @execute_children(new_nodes)
-
-    @_submit_changes()
-
-  dispose: ->
-    @parent.detach(@) if @parent && !@parent.disposed
-    
-    @on_dispose()
-    @_unregister_all()
-
-    @dispose_children(@_children)
-
-    @_children  = []
-    @_curr_daos = []
-
-  # @extendable
-  on_create: ->
-
-  # @extendable
-  on_update: ->
-    @old_value = @value
-    @value = @_value_def()
-
-  # @extendable
-  on_finalize: ->
-    @finalized = true
-
-  # @extendable
-  on_dispose: ->
-    @disposed = true
-
-  # @extendable
-  execute_children: (nodes) ->
-    node.execute(@) for node in nodes
-
-  # @extendable
-  dispose_children: (nodes) ->
-    node.dispose() for node in nodes
-
-  attach: (child) ->
-    array.insert_cst(@_children, child, (a,b) -> a.uid - b.uid)
-
-  detach: (child) ->
-    array.erase(@_children, child)
-
-  register_dao: (dao) ->
-    @_curr_daos.push(dao)
-
-  _register_all: ->
-    dao.subscribe(@update) for dao in @_curr_daos
     return
 
-  _unregister_all: ->
-    dao.unsubscribe(@update) for dao in @_curr_daos
+  finalize: ->
+    @_behavior.finalize(@)
+    @finalized = true
+    return @
+
+  update: ->
+    return if @disposed
+
+    @_prev_daos = @_daos
+    @_daos = []
+
+    @value = @_value_fn()
+    @nodes = @_nodes_fn()
+
+    @_behavior.update(@)
+
+    [old_nodes, new_nodes] = @_get_changed_nodes()
+
+    pkg.dispose_node(node) for node in old_nodes
+    pkg.execute_node(node) for node in new_nodes
+
+    @_submit_changes()
     return
 
   _get_changed_nodes: ->
@@ -88,8 +54,8 @@ class pkg.Action extends core.PriorityMap
 
     a = 0
     b = 0
-    arra = @_children
-    arrb = @_nodes_def()
+    arra = @nodes
+    arrb = @_nodes_fn()
     
     while a < arra.length and b < arrb.length
       ua = arra[a].uid
@@ -115,23 +81,52 @@ class pkg.Action extends core.PriorityMap
     
     return [old_nodes, new_nodes]
 
-  _submit_changes: ->
-    for dao in @_prev_daos when @_curr_daos.indexOf(dao) is -1
-      dao.unsubscribe(@update)
+  dispose: ->
+    @parent.detach(@) if @parent && not @parent.disposed
+    @disposed = true
 
-    for dao in @_curr_daos when @_prev_daos.indexOf(dao) is -1
-      dao.subscribe(@update)
+    @_behavior.dispose(@)
+    @_unregister_all()
+
+    pkg.dispose_node(node) for node in @nodes
+    @nodes = []
+
+  attach: (node) ->
+    array.insert_cst(@nodes, node, compare_fn)
+
+  detach: (child) ->
+    array.erase(@nodes, child)
+
+  get_behavior_for: (type) ->
+    behavior = @_behavior.get_cached_behavior(type)
+
+    assert behavior, "Behavior for '#{type}' not found."
+    return behavior
+
+  register_dao: (dao) ->
+    @_daos.push(dao)
+
+  _register_all: ->
+    dao.subscribe(@_update) for dao in @_daos
+    return
+
+  _unregister_all: ->
+    dao.unsubscribe(@_update) for dao in @_daos
+    @_daos = []
+
+  _submit_changes: ->
+    for dao in @_prev_daos when @_daos.indexOf(dao) is -1
+      dao.unsubscribe(@_update)
+
+    for dao in @_daos when @_prev_daos.indexOf(dao) is -1
+      dao.subscribe(@_update)
     return
 
   find: (fn) ->
-    return fn(@_children)
-
-  get_scope: -> ''
+    return fn(@nodes)
 
 
-class pkg.Dummy extends pkg.Action
-  get_scope: -> ''
-
-class pkg.AbstractDummy extends pkg.Dummy
-
-class pkg.SolidDummy extends pkg.AbstractDummy
+#
+# Compares two pkg.Action instances.
+#
+compare_fn = (a,b) -> a.uid - b.uid

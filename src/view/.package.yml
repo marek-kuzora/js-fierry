@@ -1,4 +1,4 @@
-after: [Dom.coffee, .after.coffee]
+before: [.before.coffee]
 require:
   - fierry.core
 namespace:
