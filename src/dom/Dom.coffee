@@ -1,4 +1,7 @@
-class core.Dom
+#
+# @deprecated - left only for pfc/dom tests that are using Dom.replace.html.
+#
+class Dom
 
   #
   # Returns element with the given id.
@@ -33,3 +36,5 @@ class core.Dom
 
   append_text: (e, text) ->
     e.appendChild(document.createTextNode(text))
+
+pkg.Dom = new Dom()

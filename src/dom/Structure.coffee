@@ -20,11 +20,10 @@ class pkg.Section extends pkg.Abstract
   get_element_type: -> 'section'
 
 
-pkg.ELEMENTS['div']     = (p, a) -> new pkg.Div(p, a)
-pkg.ELEMENTS['nav']     = (p, a) -> new pkg.Nav(p, a)
-pkg.ELEMENTS['aside']   = (p, a) -> new pkg.Aside(p, a)
-pkg.ELEMENTS['header']  = (p, a) -> new pkg.Header(p, a)
-pkg.ELEMENTS['footer']  = (p, a) -> new pkg.Footer(p, a)
-pkg.ELEMENTS['article'] = (p, a) -> new pkg.Article(p, a)
-pkg.ELEMENTS['section'] = (p, a) -> new pkg.Section(p, a)
-
+pkg.ELEMENTS['div']     = new pkg.Div()
+pkg.ELEMENTS['nav']     = new pkg.Nav()
+pkg.ELEMENTS['aside']   = new pkg.Aside()
+pkg.ELEMENTS['header']  = new pkg.Header()
+pkg.ELEMENTS['footer']  = new pkg.Footer()
+pkg.ELEMENTS['article'] = new pkg.Article()
+pkg.ELEMENTS['section'] = new pkg.Section()

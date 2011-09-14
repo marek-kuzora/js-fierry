@@ -1,17 +1,18 @@
-pkg.ATTRIBUTE = 0
-pkg.EVENT = 2
-pkg.STYLE = 1
-
 pkg.ELEMENTS = {}
 
+pkg.TAG = 'tag'
+
 pkg.ATTRIBUTES = [
-  'id', 'class', 'accesskey', 'contenteditable', 'contextmenu', 'dir'
-  'draggable', 'dropzone', 'hidden', 'lang', 'spellcheck', 'style'
-  'tabindex', 'title'
+  'id', 'accesskey', 'contenteditable', 'contextmenu', 'dir', 'draggable'
+  'dropzone', 'hidden', 'lang', 'spellcheck', 'tabindex', 'title'
 ]
 
 pkg.ANCHOR_ATTRIBUTES = [
   'href', 'hreflang', 'media', 'rel', 'target', 'type'
+]
+
+pkg.ORDERED_LIST_ATTRIBUTES = [
+  'reversed', 'start', 'type'
 ]
 
 pkg.EVENTS = [

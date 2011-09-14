@@ -1,83 +1,34 @@
-class pkg.Abstract
-
-  constructor: (@_parent, @_after) ->
-    @node = document.createElement(@get_element_type())
-
-  create_child: (type, after) ->
-    assert !@text, 'Text only elements cannot contain other nodes.'
-    
-    assert pkg.ELEMENTS[type]?, "Factory for type #{type} not found."
-    return pkg.ELEMENTS[type](@node, after)
-
-  get: (name) ->
-    switch @get_attribute_type(name)
-
-      when pkg.ATTRIBUTE
-        return @node.getAttribute(name)
-
-      when pkg.STYLE
-        return @node.style[name]
-
-      when pkg.EVENT
-        throw new Error 'Cannot retrieve event listener from HTMLElement.'
-
-    return @text if name is 'text'
+class pkg.Abstract extends view.Behavior
   
-  set: (name, value, old_value) ->
+  create: ($) ->
+    $.pnode = $.parent.node
+    $.node  = document.createElement(@get_element_type())
 
-    switch @get_attribute_type(name)
+  update: ($) ->
+    $.text_node = $.value?
+    $.node.textContent = $.value if $.text_node
 
-      when pkg.ATTRIBUTE
-        return @node.setAttribute(name, value)
-        
-      when pkg.STYLE
-        return @node.style[name] = value
+  finalize: ($) ->
+    if $.parent.text_node
+      throw new Error 'Cannot attach elements to text node.'
 
-      when pkg.EVENT
-        @node.removeEventListener(name, old_value) if old_value?
-        return @node.addEventListener(name, value)
-    
-    # Lepszy text handling potrzebuje!
-    if name is 'text'
-      @node.textContent = value
-#      @node.innerText = value
-      
-    #if name is 'text'
-      #return @text.nodeValue = value if @text
-      
-      #assert !@node.firstChild?, 'Element is not text only.' # FIXME error text
-      #@text = document.createTextNode(value)
-      #@node.appendChild(@text)
+    if $.parent.finalized
+      return $.pnode.injectBefore($.node, $.parent.find (nodes) ->
+        i = nodes.indexOf($)
+        l = nodes.length
 
-  remove: (name, old_value) ->
-    switch @get_attribute_type(name)
-      
-      when pkg.ATTRIBUTE
-        @node.removeAttribute(name)
-        return
+        while i++ < l when nodes[i].node instanceof pkg.Abstract
+          return nodes[i].node
+      )
+    return $.pnode.appendChild($.node)
 
-      when pkg.STYLE
-        @node.style[name] = undefined
-        return
+  dispose: ($) ->
+    $.pnode.removeChild($.node)
 
-      when pkg.EVENT
-        @node.removeEventListener(name, old_value)
-        return
+  get_behavior: (type) ->
+    return pkg.ELEMENTS[type] if type of pkg.ELEMENTS
+    return pkg.Tag            if type is pkg.TAG
 
-    if name is 'text' && @text?
-      @text.parentNode.removeChild(@text)
-
-
-  get_attribute_type: (name) ->
-    return if name is 'text'
-
-    return pkg.ATTRIBUTE if name in pkg.ATTRIBUTES
-    return pkg.EVENT     if name in pkg.EVENTS
-    return pkg.STYLE
-
-  attach: ->
-    return @_parent.injectBefore(@node, @_after.node) if @_after
-    return @_parent.appendChild(@node)
-
-  detach: ->
-    @_parent.removeChild(@node)
+    return pkg.Attribute      if type in pkg.ATTRIBUTES
+    return pkg.Event          if type in pkg.EVENTS
+    return pkg.Style

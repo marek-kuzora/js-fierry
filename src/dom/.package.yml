@@ -1,16 +1,12 @@
 before: [.before.coffee, Abstract.coffee]
-after:  [.after.coffee]
-
 require:
   - fierry.core
   - fierry.view
-  - fierry.view2
 namespace:
   core:   core
   lang:   lang
   array:  array
   assert: assert
+  view:   core.view
 
   pkg:    core.dom
-  view:   core.view
-  view2:  core.view2
