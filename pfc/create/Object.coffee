@@ -67,6 +67,12 @@ test 'core.App',
   run: ->
     o = new core.App()
 
+test 'core.App -indirect',
+  before: ->
+    @types = {app: core.App}
+  run: ->
+    new @types["app"]()
+
 test '0 length -prototype',
   before: ->
     @cls = ->

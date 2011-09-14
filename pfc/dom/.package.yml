@@ -4,7 +4,7 @@ require:
   - fierry.dom
   - fierry.performance
 namespace:
-  dom:    dom
+  dom:    core.dom.Dom
   event:  Event
 
   pkg:    performance.dom
