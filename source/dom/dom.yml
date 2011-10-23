@@ -1,0 +1,80 @@
+behaviors:
+  dom/root:
+    location: @{get:dom/root}
+    conflict: false
+
+  dom/element:
+    location: @{get:dom/element}
+    conflict: false
+
+  dom/tag:
+    location: @{get:dom/tag}
+    conflict: false
+
+  dom/attribute:
+    location: @{get:dom/attribute}
+    conflict: true
+
+  dom/style:
+    location: @{get:dom/style}
+    conflict: true
+
+  dom/event:
+    location: @{get:dom/event}
+    conflict: true
+
+
+actions:
+
+  dom/body:
+    is_root: true
+    behavior: dom/root
+    tags:
+      - dom/root
+      - dom/attrs/basic
+
+  dom/blocks:
+    behavior: dom/element
+    types:
+      - div
+      - nav
+      - aside
+      - header
+      - footer
+      - article
+      - section
+    tags:
+      - dom/element
+      - dom/attribute/base
+    from:
+      - dom/root
+      - dom/element
+
+  dom/tag:
+    behavior: dom/tag
+    tags:
+      - dom/tag
+    from:
+      - dom/element
+
+  dom/attribute/base:
+    behavior: dom/attribute
+    types:
+      - id
+      - accesskey
+      - contenteditable
+      - contextmenu
+      - dir
+      - draggable
+      - dropzone
+      - hidden
+      - lang
+      - spellcheck
+      - tabindex
+      - title
+    tags:
+      - dom/attribute
+    from:
+      - dom/attribute/base
+
+# Dluuugie to bedzie! :-O

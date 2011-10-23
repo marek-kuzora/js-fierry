@@ -1,0 +1,5 @@
+projects:
+
+  fierry-performance:
+    main:   performance/app.coffee
+    source: [source, performance]
