@@ -15,3 +15,6 @@ test 'Double complement',
   run: ->
     x = ~~12.3456
 
+test 'Reminder',
+  run: ->
+    x = 1000 % 32

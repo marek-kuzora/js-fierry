@@ -41,13 +41,13 @@ class Style extends AbstractAttribute
 class Event extends AbstractAttribute
 
   update: ($) ->
+    $.node.removeEventListener($.old_value) if $.old_value
     $.node.addEventListener($.value) if $.value
-    $.node.removeEventListener($.old_value) if $.old_value?
 
     $.old_value = $.value
 
   dispose: ($) ->
-    $.node.removeEventListener($.value) if $.value?
+    $.node.removeEventListener($.value) if $.old_value
 
 pkg.Tag = new Tag()
 pkg.Style = new Style()
