@@ -1,4 +1,4 @@
-object = require '/source/core/object'
+object = require '/fierry/core/object'
 
 group '/object.get'
 

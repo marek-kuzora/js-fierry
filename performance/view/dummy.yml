@@ -1,0 +1,35 @@
+behaviors:
+  pfc/dummy:
+    location: /fierry-performance/view/dummy_behavior
+    conflict: false
+
+  pfc/html:
+    location: /fierry-performance/view/html_behavior
+    conflict: false
+
+actions:
+
+  pfc/html:
+    root: true
+    behavior: pfc/html
+    groups:
+      - dom/root
+      - dom/element/common
+
+  pfc/dummy:
+    root: true
+    behavior: pfc/dummy
+    groups:
+      - dummy/root
+
+  pfc/dummy-nodes:
+    behavior: pfc/dummy
+    types:
+      - dummy-1
+      - dummy-2
+      - dummy-3
+    groups:
+      - dummy/node
+    from:
+      - dummy/root
+      - dummy/node

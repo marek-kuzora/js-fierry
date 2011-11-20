@@ -1,7 +1,7 @@
-storage = require '/source/storage/storage'
-path    = require '/source/generators/path'
-rules   = require '/source/generators/rules'
-env     = require '/source/performance/environments'
+storage = require '/fierry/storage/storage'
+path    = require '/fierry/generators/path'
+rules   = require '/fierry/generators/rules'
+env     = require '/fierry/performance/environments'
 
 
 #

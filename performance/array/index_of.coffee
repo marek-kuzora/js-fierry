@@ -1,6 +1,6 @@
 #gen = require '/'
 
-{group, test} = require '/source/performance/registry'
+{group, test} = require '/fierry/performance/registry'
 
 
 group '/array.indexOf'

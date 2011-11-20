@@ -1,4 +1,4 @@
-array = require '/source/core/array'
+array = require '/fierry/core/array'
 
 group '/array.insert'
 

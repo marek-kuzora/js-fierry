@@ -20,9 +20,7 @@ return class Action
   # or function property inside the constructor will compromise
   # the object's initialization performance (by a factor of 2).
   #
-  # @{set:action}
-  #
-  constructor: (@type, @uid, @_value_fn, @_nodes_fn, @parent, @_behavior) ->
+  constructor: (@type, @uid, @parent, @_behavior, @_value_fn, @_nodes_fn) ->
 
   create: ->
     @parent.attach(@) if @parent && @parent.finalized

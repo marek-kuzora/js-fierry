@@ -1,5 +1,19 @@
 projects:
 
+  fierry:
+    main:   source/app.coffee
+    source: source
+
   fierry-performance:
     main:   performance/app.coffee
-    source: [source, performance]
+    source: performance
+    dependences:
+      - fierry
+    libs:
+      - /Code/JavaScript/jQuery/jquery-1.5.2.js
+
+  fierry-example:
+    main:   source/app.coffee
+    source: example
+    dependences:
+      - fierry

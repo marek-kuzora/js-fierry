@@ -1,4 +1,4 @@
-math = require '/source/core/math'
+math = require '/fierry/core/math'
 
 group '/array.splice'
 

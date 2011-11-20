@@ -1,4 +1,4 @@
-dao = require '/source/storage/dao'
+dao = require '/fierry/storage/dao'
 
 
 group '/dao.get'

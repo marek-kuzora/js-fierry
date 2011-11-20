@@ -1,63 +1,148 @@
 behaviors:
   dom/root:
-    location: @{get:dom/root}
+    location: /fierry/dom/root
     conflict: false
 
   dom/element:
-    location: @{get:dom/element}
+    location: /fierry/dom/element
     conflict: false
 
   dom/tag:
-    location: @{get:dom/tag}
+    location: /fierry/dom/tag
     conflict: false
 
   dom/attribute:
-    location: @{get:dom/attribute}
+    location: /fierry/dom/attribute
     conflict: true
 
   dom/style:
-    location: @{get:dom/style}
+    location: /fierry/dom/style
     conflict: true
 
   dom/event:
-    location: @{get:dom/event}
+    location: /fierry/dom/event
     conflict: true
 
 
 actions:
 
   dom/body:
-    is_root: true
+    root: true
     behavior: dom/root
-    tags:
-      - dom/root
-      - dom/attrs/basic
+    groups:
+      - dom/element
+      - dom/element/common
 
-  dom/blocks:
+  dom/structure:
     behavior: dom/element
     types:
       - div
-      - nav
-      - aside
       - header
       - footer
+      - nav
+      - aside
       - article
       - section
-    tags:
+      - details
+    groups:
       - dom/element
-      - dom/attribute/base
+      - dom/element/common
+    from: [dom/element/common]
+
+  dom/text:
+    behavior: dom/element
+    types:
+      - p
+      - pre
+      - span
+      - br
+      - wbr
+      - samp
+      - blockquote
+    groups:
+      - dom/element
+      - dom/element/common
+    from: [dom/element/common]
+
+  dom/heading:
+    behavior: dom/element
+    types:
+      - h1
+      - h2
+      - h3
+      - h4
+      - h5
+      - h6
+    groups:
+      - dom/element
+      - dom/element/common
+    from: [dom/element/common]
+
+  dom/emphasis:
+    behavior: dom/element
+    types:
+      - b
+      - i
+      - q
+      - s
+      - em
+      - strong
+      - sub
+      - sup
+      - small
+    groups:
+      - dom/element
+      - dom/element/common
+    from: [dom/element/common]
+
+  dom/list:
+    behavior: dom/element
+    types:
+      - ol
+      - ul
+    groups:
+      - dom/element
+      - dom/element/list
     from:
-      - dom/root
+      - dom/element/common
+
+  dom/list-item:
+    behavior: dom/element
+    types: [li]
+    groups:
       - dom/element
+      - dom/element/common
+    from:
+      - dom/element/list
+
+  dom/anchor:
+    behavior: dom/element
+    types: [a]
+    groups:
+      - dom/element
+      - dom/element/common
+      - dom/element/anchor
+    from: [dom/element/common]
+
+  dom/image:
+    behavior: dom/element
+    types: [img]
+    groups:
+      - dom/element
+      - dom/element/common
+      - dom/element/image
+    from: [dom/element/common]
+
+#
+# TODO introduce ul, ol, li, table, form & input elements.
+# TODO introduce attributes specific to uncommon elements.
+#
 
   dom/tag:
     behavior: dom/tag
-    tags:
-      - dom/tag
-    from:
-      - dom/element
+    from: [dom/element]
 
-  dom/attribute/base:
+  dom/attribute/common:
     behavior: dom/attribute
     types:
       - id
@@ -72,9 +157,18 @@ actions:
       - spellcheck
       - tabindex
       - title
-    tags:
-      - dom/attribute
-    from:
-      - dom/attribute/base
+    from: [dom/element]
 
-# Dluuugie to bedzie! :-O
+  dom/style/common:
+    behavior: dom/style
+    types:
+      - color
+      - background
+      - border
+      - width
+      - height
+    from: [dom/element]
+
+#
+# TODO introduce left styles & events.
+#

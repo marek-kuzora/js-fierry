@@ -90,7 +90,7 @@ return array =
   erase: (arr, it) ->
     l = arr.length
     (arr.splice(l, 1) if arr[l] is it) while l--
-    return
+    return it
 
   #
   # Erases all instances of the given item from the array using
@@ -103,7 +103,16 @@ return array =
   erase_cst: (arr, it, fn) ->
     l = arr.length
     (arr.splice(l, 1) if fn(arr[l],it)) while l--
-    return
+    return it
+
+  #
+  # TODO test if working, document, pfc cover!
+  #
+  index_of_cst: (arr, it, fn) ->
+    l = arr.length
+    while i++ < l
+      return i - 1 if fn(arr[i - 1], it)
+    return -1
 
   #
   # Inserts item into the sorted array. Compares items via '<'

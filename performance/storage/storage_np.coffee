@@ -1,4 +1,4 @@
-storage = require '/source/storage/storage'
+storage = require '/fierry/storage/storage'
 
 
 # W ten sposob okreslamy base group do ktorej nastepnie mozna sie dopinac

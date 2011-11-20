@@ -1,4 +1,4 @@
-{group, test, repeat} = require '/source/performance/registry'
+{group, test, repeat} = require '/fierry/performance/registry'
 
 
 #
@@ -12,7 +12,7 @@ window['repeat'] = repeat
 #
 # Exposing API for running test cases.
 #
-window['run'] = require '/source/performance/runner'
+window['run'] = require '/fierry/performance/runner'
 
 
 #

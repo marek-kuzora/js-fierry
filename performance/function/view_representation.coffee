@@ -183,3 +183,4 @@ test 'outside -arr'
     @n()
 
 # Jak moge tutaj modelowac ify oraz fory??
+###

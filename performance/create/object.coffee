@@ -1,4 +1,4 @@
-cls = require '/source/core/emitter'
+cls = require '/fierry/core/emitter'
 
 group '/create.object'
 

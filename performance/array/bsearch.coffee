@@ -1,6 +1,6 @@
-array  = require '/source/core/array'
-int    = require '/source/generators/number'
-string = require '/source/generators/string'
+array  = require '/fierry/core/array'
+int    = require '/fierry/generators/number'
+string = require '/fierry/generators/string'
 
 
 #

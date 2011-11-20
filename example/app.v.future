@@ -1,0 +1,46 @@
+/run header:body
+  /div .top-header
+    /h1 'The freaking Erlang tutorial!'
+
+/run container:body
+  /div .container
+
+    /div .left-sidebar
+      /div .header
+        /p '1. Creating new project'
+
+      /div .content
+        /ol .task-steps
+          /li
+            "Start new project by running command 'fierry -n example/source'. 
+            The tool should initialize the project."
+          /li
+            "Create empty directory for the project. 
+            Use command 'mkdir example' and enter that directory."
+
+    /div .top-content
+      /div .header
+        /p 'Editing: /source/app.coffee'
+
+      /div .content
+
+    /div .right-sidebar
+      /div .header
+        /p 'File System'
+
+      /div .content
+
+        /div .file
+          /div .file-item 'source'
+          /div .file
+            /div .file-item 'app.coffee'
+        /div .file
+          /div .file-item 'release'
+          /div .file
+            /div .file-item 'example.html'
+        /div .file
+          /div .file-item '.build.yml'
+
+/run footer:body
+  /div .top-footer
+    /p "Task 1 of 5 | Step 3 of 8."

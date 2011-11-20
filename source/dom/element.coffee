@@ -7,6 +7,7 @@ class Element extends Behavior
     $.pnode = $.parent.node
     $.node  = document.createElement($.type)
 
+  # When textContent instead of innerHTML, user cant code &nbsp; :/
   update: ($) ->
     $.text_node = $.value?
     $.node.textContent = $.value if $.text_node
@@ -27,14 +28,6 @@ class Element extends Behavior
 
   dispose: ($) ->
     $.pnode.removeChild($.node)
-
-#  get_behavior: (type) ->
-#    return pkg.ELEMENTS[type] if type of pkg.ELEMENTS
-#    return pkg.Tag            if type is pkg.TAG
-#
-#    return pkg.Attribute      if type in pkg.ATTRIBUTES
-#    return pkg.Event          if type in pkg.EVENTS
-#    return pkg.Style
 
 
 return new Element()

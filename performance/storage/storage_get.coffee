@@ -1,4 +1,4 @@
-storage = require '/source/storage/storage'
+storage = require '/fierry/storage/storage'
 
 
 group '/storage.get'
