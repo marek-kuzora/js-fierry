@@ -23,7 +23,9 @@ return class Action
   constructor: (@type, @uid, @parent, @_behavior, @_value_fn, @_nodes_fn) ->
 
   create: ->
-    @parent.attach(@) if @parent && @parent.finalized
+    # Getting @parent.finalized makes flat representation 
+    # 2.5 times slower. Don't know why, dont care (?)
+    @parent.attach(@) if @parent and @parent.finalized
 
     @_daos = []
     @value = @_value_fn()
@@ -33,7 +35,11 @@ return class Action
     @_behavior.create(@)
     @_behavior.update(@)
 
-    @_update = => @update()
+    # Chrome optimalization bug. The following lines makes view
+    # 5-7 times faster than running "@_update = => @update()" 
+    # which yields exactly the same results.
+    @_update = (fn = => @update())
+
     @_register_all()
     return
 
